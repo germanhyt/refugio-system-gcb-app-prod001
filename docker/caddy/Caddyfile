@@ -1,0 +1,8 @@
+{
+    email {$LETSENCRYPT_EMAIL}
+}
+
+{$APP_DOMAIN} {
+    encode gzip zstd
+    reverse_proxy web:80
+}
