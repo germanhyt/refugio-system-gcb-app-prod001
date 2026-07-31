@@ -32,20 +32,22 @@ class HeroSlideResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Contenido')
+                    ->description('El slide 1 del home usa la imagen de fondo CMS. Tipografía/CTAs visuales del hero original son assets de diseño fijos; el slide 2 toma la dirección de Visítanos.')
                     ->schema([
                         Forms\Components\TextInput::make('title')
-                            ->label('Título')
+                            ->label('Título interno')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->helperText('Referencia en admin; el arte del hero usa tipografía gráfica fija.'),
                         Forms\Components\TextInput::make('subtitle')
-                            ->label('Subtítulo')
+                            ->label('Subtítulo interno')
                             ->maxLength(500),
                         Forms\Components\Textarea::make('description')
-                            ->label('Descripción')
+                            ->label('Notas / descripción')
                             ->rows(3)
                             ->columnSpanFull(),
                         SpatieMediaLibraryFileUpload::make('background_image')
-                            ->label('Imagen de fondo')
+                            ->label('Imagen de fondo (slide 1)')
                             ->collection('background_image')
                             ->image()
                             ->imageEditor()

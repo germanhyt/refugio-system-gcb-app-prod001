@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Models\SiteSetting;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -27,7 +28,12 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('Refugio Admin')
+            ->brandName('Panel Refugio')
+            ->brandLogo(fn () => view('filament.admin-brand', [
+                'logoUrl' => $this->brandLogoUrl(),
+            ]))
+            ->brandLogoHeight('2.75rem')
+            ->favicon(fn (): string => $this->faviconUrl())
             ->colors([
                 'primary' => Color::hex('#A7623D'),
             ])
@@ -59,5 +65,33 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+
+    private function brandLogoUrl(): string
+    {
+        try {
+            $logo = SiteSetting::current()->getFirstMediaUrl('logo');
+            if (filled($logo)) {
+                return $logo;
+            }
+        } catch (\Throwable) {
+            // DB may be unavailable during early boot / artisan package discovery.
+        }
+
+        return asset('images/refugio/logo-v2.svg');
+    }
+
+    private function faviconUrl(): string
+    {
+        try {
+            $favicon = SiteSetting::current()->getFirstMediaUrl('favicon');
+            if (filled($favicon)) {
+                return $favicon;
+            }
+        } catch (\Throwable) {
+            // ignore
+        }
+
+        return asset('images/refugio/logo-v2.svg');
     }
 }

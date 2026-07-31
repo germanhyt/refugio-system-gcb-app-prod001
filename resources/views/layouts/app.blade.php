@@ -13,9 +13,9 @@
     @if($ogImage)
         <meta property="og:image" content="{{ $ogImage }}">
     @endif
-    @if($siteSettings->getFirstMediaUrl('favicon'))
-        <link rel="icon" href="{{ $siteSettings->getFirstMediaUrl('favicon') }}">
-    @endif
+    @php($faviconUrl = $siteSettings->getFirstMediaUrl('favicon') ?: asset('images/refugio/logo-v2.svg'))
+    <link rel="icon" type="image/svg+xml" href="{{ $faviconUrl }}">
+    <link rel="shortcut icon" href="{{ $faviconUrl }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
 </head>

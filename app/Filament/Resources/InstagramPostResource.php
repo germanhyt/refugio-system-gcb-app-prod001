@@ -35,6 +35,10 @@ class InstagramPostResource extends Resource
                 ->required()
                 ->url()
                 ->maxLength(500),
+            Forms\Components\TextInput::make('external_id')
+                ->label('ID externo IG')
+                ->maxLength(100)
+                ->helperText('Identificador del post en Instagram (scraper).'),
             Forms\Components\Select::make('media_type')
                 ->label('Tipo')
                 ->options([
@@ -48,6 +52,12 @@ class InstagramPostResource extends Resource
             Forms\Components\TextInput::make('comments_count')->label('Comentarios')->numeric()->default(0),
             Forms\Components\TextInput::make('sort_order')->label('Orden')->numeric()->default(0),
             Forms\Components\Textarea::make('caption')->label('Caption')->rows(4)->columnSpanFull(),
+            Forms\Components\TextInput::make('source_image_url')
+                ->label('URL imagen origen')
+                ->url()
+                ->maxLength(1000)
+                ->helperText('Usada como fallback si no hay media local (p. ej. CDN bloqueado).')
+                ->columnSpanFull(),
             SpatieMediaLibraryFileUpload::make('image')
                 ->label('Imagen')
                 ->collection('image')
@@ -71,6 +81,9 @@ class InstagramPostResource extends Resource
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
+            ->filters([
+                Tables\Filters\TernaryFilter::make('is_active')->label('Activo'),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

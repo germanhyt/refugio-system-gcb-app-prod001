@@ -81,6 +81,15 @@ class ManageSiteSettings extends Page implements HasForms
                             ->rows(3)
                             ->columnSpanFull(),
                     ]),
+                Forms\Components\Section::make('Secciones del sitio')
+                    ->description('Controla qué bloques aparecen en el frontend público.')
+                    ->schema([
+                        Forms\Components\Toggle::make('show_blog_section')
+                            ->label('Mostrar sección Blog (home y /blog)')
+                            ->helperText('Si está desactivado, se oculta el bloque de foodies en home y las rutas /blog responden 404.')
+                            ->default(true)
+                            ->inline(false),
+                    ]),
             ])
             ->statePath('data')
             ->model($this->record);

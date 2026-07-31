@@ -126,7 +126,7 @@
 
         @if($posts->count() > 0)
             <div class="mt-10 text-center" data-aos="fade-up">
-                <a href="{{ $instagramUrl }}" target="_blank" rel="noopener" class="btn-outline">Load More</a>
+                <a href="{{ $instagramUrl }}" target="_blank" rel="noopener" class="btn-outline">Ver más</a>
             </div>
         @endif
     </div>

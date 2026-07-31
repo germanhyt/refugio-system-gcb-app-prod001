@@ -4,6 +4,15 @@
     $fallbackBg = asset('images/refugio/fondohome.jpg');
     $firstSlide = $slides->first();
     $slide1Bg = $firstSlide?->getFirstMediaUrl('background_image') ?: $fallbackBg;
+
+    $visit = $visitInfo ?? \App\Models\VisitInfo::current();
+    $rawAddress = (string) ($visit->address ?: 'Av. Javier Prado Este 4492 – Santiago de Surco');
+    $addressParts = preg_split('/\s*[–\-]\s*/u', $rawAddress, 2) ?: [$rawAddress];
+    $addressLine1 = trim($addressParts[0] ?? $rawAddress);
+    $addressLine2 = trim($addressParts[1] ?? 'Surco');
+    if ($addressLine2 === '' || strcasecmp($addressLine2, 'Santiago de Surco') === 0) {
+        $addressLine2 = 'Surco';
+    }
 @endphp
 
 <section class="rg-hero relative min-h-screen overflow-hidden bg-[#1a1210]" id="top">
@@ -14,7 +23,7 @@
                 <div class="absolute inset-0">
                     <img
                         src="{{ $slide1Bg }}"
-                        alt="Refugio Gastronómico"
+                        alt="{{ $firstSlide?->title ?: 'Refugio Gastronómico' }}"
                         class="hero-kenburns h-full w-full object-cover"
                         fetchpriority="high"
                     >
@@ -74,7 +83,7 @@
 
                     <div class="rg-loc-col rg-loc-col--address">
                         <img src="{{ asset('images/refugio/hero-leaf-6.png') }}" alt="" class="rg-loc-icon" aria-hidden="true">
-                        <p class="rg-loc-address-title">Av. Javier Prado Este 4492<br>Surco</p>
+                        <p class="rg-loc-address-title">{{ $addressLine1 }}<br>{{ $addressLine2 }}</p>
                         <p class="rg-loc-address-sub">Al costado del Jockey Plaza<br>Frente a la Universidad de Lima</p>
                     </div>
                 </div>

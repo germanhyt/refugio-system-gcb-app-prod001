@@ -20,7 +20,15 @@ class SiteSetting extends Model implements HasMedia
         'tiktok_url',
         'seo_title',
         'seo_description',
+        'show_blog_section',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'show_blog_section' => 'boolean',
+        ];
+    }
 
     public function registerMediaCollections(): void
     {
@@ -50,6 +58,7 @@ class SiteSetting extends Model implements HasMedia
                 'tiktok_url' => 'https://www.tiktok.com/@refugio.peru',
                 'seo_title' => 'Refugio Gastronómico | Juntos todo sabe mejor',
                 'seo_description' => '¡Descubre Refugio! Disfruta de una gran variedad de opciones gastronómicas, bebidas, música en vivo, talleres y actividades en Surco.',
+                'show_blog_section' => true,
             ]
         );
     }

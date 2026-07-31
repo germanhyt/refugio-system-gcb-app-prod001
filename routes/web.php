@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
@@ -15,6 +16,9 @@ Route::get('/restaurantes/{restaurant:slug}', [RestaurantController::class, 'sho
 
 Route::get('/eventos', [EventController::class, 'index'])->name('events.index');
 Route::get('/eventos/{event:slug}', [EventController::class, 'show'])->name('events.show');
+
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
 
 Route::get('/contacto', ContactController::class)->name('contact');
 Route::get('/nosotros', AboutController::class)->name('about');

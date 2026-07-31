@@ -11,6 +11,9 @@
             <h2 class="section-title text-3xl tablet:text-5xl">
                 Blog <span class="accent reveal-line">de foodies para foodies</span>
             </h2>
+            <a href="{{ route('blog.index') }}" class="mt-4 inline-flex font-display text-sm font-medium uppercase tracking-wide text-accent transition hover:text-accent-hover">
+                Ver todo el blog →
+            </a>
         </div>
 
         <div class="grid gap-6 tablet:grid-cols-2 desktop:grid-cols-4">
@@ -21,7 +24,7 @@
                     data-aos="fade-up"
                     data-aos-delay="{{ min($i * 80, 320) }}"
                 >
-                    <a href="{{ $post->external_url ?: '#' }}" @if($post->external_url) target="_blank" rel="noopener" @endif class="relative block overflow-hidden">
+                    <a href="{{ route('blog.show', $post) }}" class="relative block overflow-hidden">
                         <div class="aspect-[16/9] bg-[#1a1210]">
                             @if($img)
                                 <img
@@ -43,10 +46,15 @@
                     </a>
                     <div class="flex flex-1 flex-col p-4">
                         <h3 class="font-display text-lg font-semibold leading-snug text-primary transition group-hover:text-accent">
-                            <a href="{{ $post->external_url ?: '#' }}" @if($post->external_url) target="_blank" rel="noopener" @endif>
+                            <a href="{{ route('blog.show', $post) }}">
                                 {{ $post->title }}
                             </a>
                         </h3>
+                        @if($post->excerpt)
+                            <p class="mt-2 line-clamp-2 font-display text-sm font-light leading-relaxed text-[#776f69]">
+                                {{ $post->excerpt }}
+                            </p>
+                        @endif
                         @if($post->rating)
                             <div class="mt-3 flex items-center gap-2 text-accent" aria-label="{{ number_format($post->rating, 1) }} de 5">
                                 <div class="flex gap-0.5 text-sm">

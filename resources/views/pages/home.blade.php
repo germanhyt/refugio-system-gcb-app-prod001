@@ -8,5 +8,7 @@
     <x-restaurant-grid :features="$featuredRestaurants" />
     <x-event-carousel :events="$events" />
     <x-instagram-feed :posts="$instagramPosts" />
-    <x-blog-foodies :posts="$blogPosts" />
+    @if(($siteSettings->show_blog_section ?? true) && $blogPosts->isNotEmpty())
+        <x-blog-foodies :posts="$blogPosts" />
+    @endif
 @endsection

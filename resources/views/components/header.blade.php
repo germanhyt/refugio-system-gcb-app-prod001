@@ -107,11 +107,7 @@
                         @click="menuOpen = false"
                     >¿Qué te provoca?</a>
                     <button type="button" class="rg-menu-close" @click="menuOpen = false" aria-label="Cerrar menú">
-                        <svg viewBox="0 0 58 58" fill="none" aria-hidden="true">
-                            <circle cx="29" cy="29" r="28.25" fill="#A7623D"/>
-                            <path d="M42.07 43.32a1.29 1.29 0 0 1-.89-.37L22.75 24.51a1.24 1.24 0 0 1 1.76-1.76L43 41.18a1.26 1.26 0 0 1-.88 2.14Z" fill="#fff"/>
-                            <path d="M23.63 43.32a1.26 1.26 0 0 1-.88-2.14L41.18 22.75A1.25 1.25 0 0 1 43 24.51L24.51 43a1.25 1.25 0 0 1-1.12.32Z" fill="#fff"/>
-                        </svg>
+                        <span class="rg-menu-close-x" aria-hidden="true"></span>
                     </button>
                 </div>
 
