@@ -1,0 +1,24 @@
+change: refugio-platform
+status: applying
+created: 2026-07-30
+phases:
+  explore: completed
+  propose: completed
+  spec: completed
+  design: completed
+  tasks: completed
+  apply: in_progress
+  verify: pending
+  archive: pending
+progress:
+  phase_1_foundation: completed
+  phase_2_database_models: completed
+  phase_3_scraper: completed
+  phase_4_filament_admin: completed
+  phase_5_frontend_layout: completed
+  phase_6_frontend_pages: completed
+  next: phase_7_seo_performance
+notes:
+  - Public site live at http://127.0.0.1:8000
+  - Pages: / /restaurantes /eventos /contacto /nosotros
+  - Admin: /admin — admin@refugio.pe / RefugioAdmin2026!

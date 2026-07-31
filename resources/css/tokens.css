@@ -1,0 +1,157 @@
+/**
+ * Design tokens — Refugio Gastronómico
+ * Extraídos de Elementor kit + Rey theme (refugiogastronomico.pe)
+ */
+:root {
+  /* Brand (Elementor post-6058 / post-24) */
+  --color-primary: #1a1210;
+  --color-accent: #a7623d;
+  --color-accent-hover: #8f5232;
+  --color-cta: #a4464c;
+  --color-cta-hover: #8c3a40;
+  --color-peach: #f9e7db;
+  --color-mint: #d4f4f4;
+  --color-bg-dark: rgba(0, 0, 0, 0.52);
+  --color-bg-darker: rgba(0, 0, 0, 0.72);
+  --color-text-light: #ffffff;
+  --color-text-muted: #7a7068;
+  --color-text-body: #3a322c;
+  --color-border: #eadfd4;
+  --color-surface: #ffffff;
+  --color-surface-alt: #faf6f2;
+
+  /* Typography — origen: Pridi + Raleway + Grenze */
+  --font-display: 'Pridi', Georgia, serif;
+  --font-body: 'Raleway', system-ui, sans-serif;
+  --font-accent: 'Grenze', Georgia, serif;
+  --font-primary: var(--font-body);
+
+  /* Layout */
+  --container-max: 1440px;
+  --header-height: 100px;
+  --section-gap: clamp(4rem, 8vw, 7rem);
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --transition-default: 400ms var(--ease-out-cubic);
+  --radius-card: 0px;
+  --radius-pill: 9999px;
+  --shadow-card: 0 14px 40px -20px rgba(0, 0, 0, 0.28);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--color-text-body);
+    background-color: var(--color-surface);
+  }
+
+  @media (min-width: 768px) {
+    body {
+      font-size: 16px;
+    }
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+  }
+}
+
+@layer components {
+  .container-refugio {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 1024px) {
+    .container-refugio {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  .btn-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem 2rem 0.8rem;
+    font-family: var(--font-accent);
+    font-size: 1.05rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    color: #fff;
+    background-color: var(--color-cta);
+    border-radius: 0;
+    transition: background-color var(--transition-default), transform var(--transition-default), box-shadow var(--transition-default);
+  }
+
+  .btn-cta:hover {
+    background-color: var(--color-cta-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(164, 70, 76, 0.28);
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1.75rem 0.75rem;
+    font-family: var(--font-accent);
+    font-size: 1.05rem;
+    color: var(--color-primary);
+    background: transparent;
+    border: 1px solid var(--color-primary);
+    transition: background-color var(--transition-default), color var(--transition-default);
+  }
+
+  .btn-outline:hover {
+    background: var(--color-primary);
+    color: #fff;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+
+  .section-title .accent {
+    color: var(--color-accent);
+  }
+
+  .reveal-line {
+    position: relative;
+    display: inline-block;
+  }
+
+  .reveal-line::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.35rem;
+    width: 100%;
+    height: 2px;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 700ms var(--ease-out-expo);
+  }
+
+  [data-aos='fade-up'].aos-animate .reveal-line::after,
+  .is-inview .reveal-line::after {
+    transform: scaleX(1);
+  }
+}

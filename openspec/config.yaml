@@ -1,0 +1,36 @@
+schema: spec-driven
+
+context: |
+  Tech stack: Laravel 11, Filament v3, PHP 8.2+, MySQL 8, Blade/Livewire, Tailwind CSS
+  Architecture: Monolito Laravel — frontend público + panel admin Filament
+  Testing: PHPUnit, Pest (feature + browser opcional)
+  Style: PSR-12, Laravel conventions, componentes Blade reutilizables
+  Origen: Clon funcional y visual de refugiogastronomico.pe (WordPress/Elementor)
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Identify affected modules/packages
+    - Document legal considerations for asset scraping
+  specs:
+    - Use Given/When/Then format for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+    - Separate public frontend specs from admin CMS specs
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+    - Match pixel-level design tokens from source site audit
+  tasks:
+    - Group tasks by phase (infrastructure, scraper, frontend, admin, testing)
+    - Use hierarchical numbering (1.1, 1.2, etc.)
+    - Keep tasks small enough to complete in one session
+  apply:
+    - Follow existing code patterns and conventions
+    tdd: false
+    test_command: "php artisan test"
+  verify:
+    test_command: "php artisan test"
+    build_command: "npm run build"
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas
