@@ -1,66 +1,226 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Refugio Gastronómico
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Plataforma web Laravel 11 + Filament 3 para [refugiogastronomico.pe](https://refugiogastronomico.pe).
 
-## About Laravel
+## Requisitos
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Modo | Requisitos |
+|------|------------|
+| Local | PHP 8.2+, Composer, Node 20+, MySQL 8 |
+| Docker | Docker + Docker Compose |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 1. Desarrollo local
 
-## Learning Laravel
+### 1.1 Clonar e instalar dependencias
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```bash
+git clone <repo-url> softapp-refugiogastronomico-complete-prod001
+cd softapp-refugiogastronomico-complete-prod001
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+composer install
+npm install
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 1.2 Configurar entorno
 
-## Laravel Sponsors
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Ajusta en `.env` al menos:
 
-### Premium Partners
+```env
+APP_URL=http://localhost:8000
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=refugio_gastronomico
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Crea la base de datos en MySQL:
 
-## Contributing
+```sql
+CREATE DATABASE refugio_gastronomico CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 1.3 Migrar, seed y storage
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan migrate --seed
+php artisan storage:link
+```
 
-## Security Vulnerabilities
+Usuario admin por defecto (seeder):
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- Email: `admin@refugio.pe`
+- Password: `RefugioAdmin2026!`
 
-## License
+### 1.4 (Opcional) Importar contenido del sitio fuente
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan refugio:import --all
+```
+
+### 1.5 Levantar el entorno
+
+**Opción A — todo junto (servidor + queue + logs + Vite):**
+
+```bash
+composer run dev
+```
+
+**Opción B — procesos separados:**
+
+```bash
+# Terminal 1
+php artisan serve
+
+# Terminal 2
+npm run dev
+
+# Terminal 3 (si usas colas)
+php artisan queue:listen --tries=1
+```
+
+### 1.6 URLs
+
+| Recurso | URL |
+|---------|-----|
+| Sitio | http://localhost:8000 |
+| Admin Filament | http://localhost:8000/admin |
+
+---
+
+## 2. Docker (stack completo)
+
+Incluye: PHP-FPM (`app`), Nginx (`web`), Caddy (`proxy`), MySQL (`db`), Redis (`redis`) y worker de colas (`queue`).
+
+### 2.1 Configurar `.env`
+
+```bash
+cp .env.docker.example .env
+```
+
+Completa al menos:
+
+```env
+APP_KEY=                 # generar abajo
+APP_URL=https://tu-dominio
+APP_DOMAIN=tu-dominio
+LETSENCRYPT_EMAIL=tu@email.com
+DB_DATABASE=refugio_gastronomico
+DB_PASSWORD=supersecreto
+DB_ROOT_PASSWORD=supersecreto
+```
+
+Genera la key (en local, con PHP instalado):
+
+```bash
+php artisan key:generate --show
+# Copia el valor en APP_KEY del .env
+```
+
+O dentro del contenedor después del primer build (ver 2.3).
+
+### 2.2 Build y arranque
+
+```bash
+docker compose build
+docker compose up -d
+```
+
+### 2.3 Post-arranque (primera vez)
+
+```bash
+docker compose exec app php artisan key:generate --force   # si APP_KEY está vacío
+docker compose exec app php artisan migrate --force --seed
+docker compose exec app php artisan storage:link
+docker compose exec app php artisan config:cache
+docker compose exec app php artisan route:cache
+docker compose exec app php artisan view:cache
+```
+
+Import opcional:
+
+```bash
+docker compose exec app php artisan refugio:import --all
+```
+
+### 2.4 Comandos útiles
+
+```bash
+docker compose ps
+docker compose logs -f app
+docker compose logs -f web
+docker compose down
+docker compose down -v   # también borra volúmenes (DB, storage, etc.)
+```
+
+Caddy escucha en los puertos **80** y **443** y usa `APP_DOMAIN` + `LETSENCRYPT_EMAIL` del entorno del host (variables del `.env` / shell) para TLS.
+
+---
+
+## 3. Docker en VPS
+
+Usa `docker-compose.vps.yml` (sin Caddy propio; Nginx se une a la red externa `app_shared_network` para el proxy del servidor).
+
+```bash
+# Crear la red compartida una vez (si no existe)
+docker network create app_shared_network
+
+cp .env.docker.example .env
+# Editar APP_KEY, DB_*, APP_URL, etc.
+
+docker compose -f docker-compose.vps.yml build
+docker compose -f docker-compose.vps.yml up -d
+
+docker compose -f docker-compose.vps.yml exec app php artisan migrate --force --seed
+docker compose -f docker-compose.vps.yml exec app php artisan storage:link
+docker compose -f docker-compose.vps.yml exec app php artisan config:cache
+docker compose -f docker-compose.vps.yml exec app php artisan route:cache
+docker compose -f docker-compose.vps.yml exec app php artisan view:cache
+```
+
+---
+
+## 4. Build de assets (producción / sin Vite)
+
+```bash
+npm ci
+npm run build
+```
+
+En Docker, el build de Vite ya ocurre dentro de los Dockerfiles de `app` y `web`.
+
+---
+
+## 5. Tests
+
+```bash
+php artisan test
+```
+
+---
+
+## Estructura Docker
+
+```
+docker/
+  php/Dockerfile          # PHP 8.3-FPM + Composer + assets
+  nginx/Dockerfile        # Nginx + assets (compose local)
+  nginx/Dockerfile.vps    # Nginx para VPS
+  nginx/default.conf
+  nginx/default.vps.conf
+  caddy/Caddyfile         # TLS + reverse proxy → web
+```
+
+| Compose | Uso |
+|---------|-----|
+| `docker-compose.yml` | Local / stack con Caddy |
+| `docker-compose.vps.yml` | VPS con red `app_shared_network` |

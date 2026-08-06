@@ -5,6 +5,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MirroredPageController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\RestaurantController;
 use Illuminate\Support\Facades\Route;
@@ -20,7 +21,16 @@ Route::get('/eventos/{event:slug}', [EventController::class, 'show'])->name('eve
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
 
-Route::get('/contacto', ContactController::class)->name('contact');
+Route::get('/contacto', [MirroredPageController::class, 'contacto'])->name('contact');
+Route::get('/convocatoria', [MirroredPageController::class, 'convocatoria'])->name('convocatoria');
+Route::get('/convocatorias', [MirroredPageController::class, 'convocatoria']);
+Route::get('/convoctaria', [MirroredPageController::class, 'convocatoria']);
+Route::get('/terminos-y-condiciones', [MirroredPageController::class, 'terms'])->name('legal.terms');
+Route::get('/politica-privacidad', [MirroredPageController::class, 'privacy'])->name('legal.privacy');
+Route::get('/politicas-de-privacidad', [MirroredPageController::class, 'privacy']);
+Route::get('/libro-de-reclamaciones', [MirroredPageController::class, 'complaintsBook'])->name('legal.complaints');
+Route::post('/libro-de-reclamaciones', [MirroredPageController::class, 'storeComplaint'])->name('legal.complaints.store');
+Route::post('/informacion', [MirroredPageController::class, 'storeInquiry'])->name('info.store');
 Route::get('/nosotros', AboutController::class)->name('about');
 
 Route::post('/newsletter', [NewsletterController::class, 'store'])->name('newsletter.store');

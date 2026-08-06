@@ -64,14 +64,14 @@
                     <div class="rg-footer-cols">
                         <ul class="rg-footer-nav">
                             <li><a href="{{ route('about') }}">Nosotros</a></li>
-                            <li><a href="{{ route('contact') }}">Convocatorias</a></li>
+                            <li><a href="{{ route('convocatoria') }}">Convocatorias</a></li>
                             <li><a href="{{ route('about') }}">Visítanos</a></li>
                         </ul>
                         <div class="rg-footer-legal-wrap">
                             <ul class="rg-footer-legal">
-                                <li><a href="https://refugiogastronomico.pe/terminos-y-condiciones/" target="_blank" rel="noopener">Términos y condiciones</a></li>
-                                <li><a href="https://refugiogastronomico.pe/politica-privacidad/" target="_blank" rel="noopener">Políticas de privacidad</a></li>
-                                <li><a href="https://refugiogastronomico.pe/libro-de-reclamaciones/" target="_blank" rel="noopener">Libro de reclamaciones</a></li>
+                                <li><a href="{{ route('legal.terms') }}">Términos y condiciones</a></li>
+                                <li><a href="{{ route('legal.privacy') }}">Políticas de privacidad</a></li>
+                                <li><a href="{{ route('legal.complaints') }}">Libro de reclamaciones</a></li>
                             </ul>
                             <div class="rg-footer-social">
                                 @if($settings->instagram_url)
