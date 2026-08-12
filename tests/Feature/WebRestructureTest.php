@@ -100,6 +100,7 @@ class WebRestructureTest extends TestCase
             'name' => 'Local Test Ficha',
             'slug' => 'local-test-ficha-'.uniqid(),
             'is_active' => true,
+            'corporate_discount_mode' => \App\Models\Restaurant::DISCOUNT_DETAILS,
             'instagram_url' => 'https://www.instagram.com/refugiogastronomico.pe/',
             'facebook_url' => null,
             'tiktok_url' => null,

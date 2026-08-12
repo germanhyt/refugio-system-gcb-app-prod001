@@ -63,6 +63,7 @@ class RestaurantCorporateDiscountsTest extends TestCase
     public function test_social_links_omit_empty_urls(): void
     {
         $restaurant = new Restaurant([
+            'website_url' => 'https://caveneciasteakhouse.com',
             'instagram_url' => 'https://instagram.com/marca',
             'facebook_url' => '  ',
             'tiktok_url' => null,
@@ -71,8 +72,29 @@ class RestaurantCorporateDiscountsTest extends TestCase
 
         $keys = array_column($restaurant->socialLinks(), 'key');
 
-        $this->assertSame(['instagram', 'whatsapp'], $keys);
+        $this->assertSame(['website', 'instagram', 'whatsapp'], $keys);
         $this->assertTrue($restaurant->hasSocialLinks());
+    }
+
+    public function test_facebook_link_is_ignored_when_it_is_not_facebook(): void
+    {
+        $restaurant = new Restaurant([
+            'facebook_url' => 'https://wa.link/ltbwxk',
+            'instagram_url' => 'https://www.instagram.com/ahu.mare/',
+        ]);
+
+        $this->assertSame(['instagram'], array_column($restaurant->socialLinks(), 'key'));
+    }
+
+    public function test_badge_discount_mode_does_not_require_details(): void
+    {
+        $restaurant = new Restaurant([
+            'corporate_discount_mode' => Restaurant::DISCOUNT_BADGE,
+            'corporate_discounts' => [],
+        ]);
+
+        $this->assertTrue($restaurant->showsCorporateDiscountBadge());
+        $this->assertFalse($restaurant->showsCorporateDiscountDetails());
     }
 
     public function test_detail_copy_hides_duplicate_short_and_paragraphs(): void

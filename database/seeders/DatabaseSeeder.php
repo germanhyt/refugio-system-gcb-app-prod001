@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             ContactBlockSeeder::class,
             HeroSlideSeeder::class,
             StaticPageSeeder::class,
+            RestaurantDirectorySeeder::class,
         ]);
     }
 }

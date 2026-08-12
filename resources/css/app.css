@@ -4606,6 +4606,32 @@ a.rg-delivery-circle {
   padding: 0.65rem;
 }
 
+.rg-rest-discount-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 1.5rem 0 0;
+}
+
+.rg-rest-discount-check {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: #fff;
+  background: #236869;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.rg-rest-discount-flag-label {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #236869;
+}
+
 .rg-rest-discounts {
   margin: 1.75rem 0 0;
 }

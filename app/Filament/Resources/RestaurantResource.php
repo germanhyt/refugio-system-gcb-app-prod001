@@ -6,6 +6,7 @@ use App\Filament\Resources\RestaurantResource\Pages;
 use App\Models\Restaurant;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -110,9 +111,25 @@ class RestaurantResource extends Resource
                         ->maxLength(500)
                         ->visible(fn (Forms\Get $get) => (bool) $get('delivery_peya_enabled')),
                 ])->columns(2),
-            Forms\Components\Section::make('Redes sociales')
+            Forms\Components\Section::make('Redes y reservas')
                 ->description('Enlaces de la ficha pública. Si un campo queda vacío, ese icono no se muestra.')
                 ->schema([
+                    Forms\Components\TextInput::make('website_url')
+                        ->label('Página web')
+                        ->url()
+                        ->maxLength(500),
+                    Forms\Components\TextInput::make('reservation_phone')
+                        ->label('Reservas (teléfono)')
+                        ->tel()
+                        ->maxLength(30)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(function (Set $set, ?string $state): void {
+                            $digits = preg_replace('/\D+/', '', (string) $state);
+                            if (strlen($digits) === 9) {
+                                $set('whatsapp_url', 'https://wa.me/51'.$digits);
+                            }
+                        })
+                        ->helperText('Se convierte en el WhatsApp de la ficha. Distinto del «¡Reserva aquí!» del header.'),
                     Forms\Components\TextInput::make('instagram_url')
                         ->label('Instagram')
                         ->url()
@@ -126,16 +143,27 @@ class RestaurantResource extends Resource
                         ->url()
                         ->maxLength(500),
                     Forms\Components\TextInput::make('whatsapp_url')
-                        ->label('WhatsApp')
-                        ->helperText('Enlace wa.me de este restaurante. Distinto del «¡Reserva aquí!» del header (Configuración → Sitio).')
+                        ->label('WhatsApp (enlace)')
+                        ->helperText('Si hay teléfono de reservas, se puede dejar este campo; el seeder/panel puede usar wa.me.')
                         ->url()
                         ->maxLength(500),
                 ])->columns(2),
             Forms\Components\Section::make('Descuentos corporativos')
-                ->description('Se muestran debajo de la descripción, a la izquierda de la ficha. Los vencidos no aparecen; si la fecha de inicio es futura, salen como «Próximamente». Sin fechas = vigente mientras esté activo.')
+                ->description('En la ficha: indicador con visto, o lista con detalle. Los vencidos no aparecen; fechas futuras salen como «Próximamente».')
                 ->schema([
+                    Forms\Components\Radio::make('corporate_discount_mode')
+                        ->label('Cómo se muestra')
+                        ->options([
+                            Restaurant::DISCOUNT_NONE => 'No mostrar',
+                            Restaurant::DISCOUNT_BADGE => 'Solo indicador (visto bueno)',
+                            Restaurant::DISCOUNT_DETAILS => 'Registrar detalles',
+                        ])
+                        ->default(Restaurant::DISCOUNT_NONE)
+                        ->live()
+                        ->columnSpanFull(),
                     Forms\Components\Repeater::make('corporate_discounts')
                         ->label('Descuentos')
+                        ->visible(fn (Get $get): bool => $get('corporate_discount_mode') === Restaurant::DISCOUNT_DETAILS)
                         ->schema([
                             Forms\Components\TextInput::make('title')
                                 ->label('Título')

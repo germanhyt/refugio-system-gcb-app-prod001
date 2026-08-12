@@ -28,11 +28,14 @@ class Restaurant extends Model implements HasMedia
         'instagram_url',
         'facebook_url',
         'tiktok_url',
+        'website_url',
+        'reservation_phone',
         'delivery_rappi_enabled',
         'delivery_rappi_url',
         'delivery_peya_enabled',
         'delivery_peya_url',
         'corporate_discounts',
+        'corporate_discount_mode',
         'google_maps_url',
         'is_active',
         'sort_order',
@@ -48,14 +51,22 @@ class Restaurant extends Model implements HasMedia
             'delivery_rappi_enabled' => 'boolean',
             'delivery_peya_enabled' => 'boolean',
             'corporate_discounts' => 'array',
+            'corporate_discount_mode' => 'string',
         ];
     }
+
+    public const DISCOUNT_NONE = 'none';
+
+    public const DISCOUNT_BADGE = 'badge';
+
+    public const DISCOUNT_DETAILS = 'details';
 
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
             ->generateSlugsFrom('name')
-            ->saveSlugsTo('slug');
+            ->saveSlugsTo('slug')
+            ->doNotGenerateSlugsOnUpdate();
     }
 
     public function getRouteKeyName(): string
@@ -123,21 +134,43 @@ class Restaurant extends Model implements HasMedia
     public function socialLinks(): array
     {
         $links = [
+            ['key' => 'website', 'label' => 'Página web', 'url' => $this->website_url],
             ['key' => 'instagram', 'label' => 'Instagram', 'url' => $this->instagram_url],
             ['key' => 'facebook', 'label' => 'Facebook', 'url' => $this->facebook_url],
             ['key' => 'tiktok', 'label' => 'TikTok', 'url' => $this->tiktok_url],
-            ['key' => 'whatsapp', 'label' => 'WhatsApp', 'url' => $this->whatsapp_url],
+            ['key' => 'whatsapp', 'label' => 'Reservas WhatsApp', 'url' => $this->whatsapp_url],
         ];
 
         return array_values(array_filter(
             $links,
-            fn (array $link): bool => filled($link['url'])
+            function (array $link): bool {
+                if (! filled($link['url'])) {
+                    return false;
+                }
+
+                if ($link['key'] === 'facebook' && ! str_contains((string) $link['url'], 'facebook.com')) {
+                    return false;
+                }
+
+                return true;
+            }
         ));
     }
 
     public function hasSocialLinks(): bool
     {
         return $this->socialLinks() !== [];
+    }
+
+    public function showsCorporateDiscountBadge(): bool
+    {
+        return $this->corporate_discount_mode === self::DISCOUNT_BADGE;
+    }
+
+    public function showsCorporateDiscountDetails(): bool
+    {
+        return $this->corporate_discount_mode === self::DISCOUNT_DETAILS
+            && $this->visibleCorporateDiscounts()->isNotEmpty();
     }
 
     public function hasDetailAside(): bool

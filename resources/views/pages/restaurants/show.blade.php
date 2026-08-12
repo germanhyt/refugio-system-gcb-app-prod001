@@ -18,7 +18,11 @@
     @if($heroImage) style="background-image: url('{{ $heroImage }}');" @endif
 >
     <div class="rg-rest-detail-hero-inner container-refugio">
-        <div class="rg-rest-detail-card" data-aos="fade-right">
+        <div
+            class="rg-rest-detail-card"
+            data-aos="fade-right"
+            style="background-image: url('{{ asset('images/refugio/bg-p-restaurante.png') }}');"
+        >
             <a href="{{ route('restaurants.index') }}" class="rg-rest-detail-back">
                 <svg width="8" height="12" viewBox="0 0 7 12" fill="currentColor" aria-hidden="true">
                     <path d="M6,12a1,1,0,0,1-.71-.29l-5-5a1,1,0,0,1,0-1.42l5-5A1,1,0,0,1,6.71,1.71L2.41,6l4.3,4.29a1,1,0,0,1,0,1.42A1,1,0,0,1,6,12Z"/>
