@@ -21,6 +21,10 @@ class SiteSetting extends Model implements HasMedia
         'seo_title',
         'seo_description',
         'show_blog_section',
+        'hero_title_about',
+        'hero_title_restaurants',
+        'hero_title_events',
+        'hero_title_services',
     ];
 
     protected function casts(): array
@@ -59,6 +63,10 @@ class SiteSetting extends Model implements HasMedia
                 'seo_title' => 'Refugio Gastronómico | Juntos todo sabe mejor',
                 'seo_description' => '¡Descubre Refugio! Disfruta de una gran variedad de opciones gastronómicas, bebidas, música en vivo, talleres y actividades en Surco.',
                 'show_blog_section' => true,
+                'hero_title_about' => "¿Quiénes\nSomos?",
+                'hero_title_restaurants' => '¿Qué te provoca hoy?',
+                'hero_title_events' => '¡Somos el refugio de tu diversión!',
+                'hero_title_services' => 'Nuestros servicios',
             ]
         );
     }

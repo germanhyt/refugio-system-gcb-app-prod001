@@ -3,63 +3,65 @@
 @section('title', 'Contacto | Refugio Gastronómico')
 
 @section('content')
-<section class="relative bg-[var(--color-primary)] pb-16 pt-32 text-white">
-    <div class="container-refugio text-center">
-        <h1 class="font-display text-4xl font-bold tablet:text-5xl">¡Hola! ¿En qué te podemos ayudar?</h1>
+<section class="rg-contact-hero rg-contact-hero--birds-dark">
+    <img
+        src="{{ asset('images/refugio/hojas-footer.png') }}"
+        alt=""
+        class="rg-visit-hero-deco rg-visit-hero-deco--right"
+        aria-hidden="true"
+    >
+    <img
+        src="{{ asset('images/refugio/hojas-footer.png') }}"
+        alt=""
+        class="rg-visit-hero-deco rg-visit-hero-deco--bottom-left"
+        aria-hidden="true"
+    >
+
+    <div class="rg-contact-hero-overlay" aria-hidden="true"></div>
+    <div class="container-refugio relative z-10 px-6 text-center">
+        <h1 class="rg-contact-hero-title">¡Hola! ¿En qué te podemos ayudar?</h1>
+        <p class="rg-contact-hero-subtitle">Encuentra el canal adecuado o escríbenos directamente.</p>
     </div>
+    <div
+        class="rg-contact-hero-divider"
+        style="background-image: url('{{ asset('images/refugio/divisor-hojas-home.svg') }}');"
+        aria-hidden="true"
+    ></div>
 </section>
 
-<section class="py-[var(--section-gap)]">
-    <div class="container-refugio grid gap-10 desktop:grid-cols-2">
-        <div>
-            <h2 class="font-display text-3xl font-bold">Ubícanos</h2>
-            <p class="mt-4 text-lg">{{ $visit->address }}</p>
+<x-contact-blocks :blocks="$contactBlocks" class="rg-contact-blocks--page" />
 
-            <h3 class="mt-8 font-semibold uppercase tracking-wide text-[var(--color-accent)]">Horario de atención</h3>
-            <ul class="mt-3 space-y-2 text-[var(--color-text-body)]">
-                @foreach($visit->schedule ?? [] as $row)
-                    <li>{{ $row['days'] ?? '' }} – {{ $row['hours'] ?? '' }}</li>
-                @endforeach
-            </ul>
-
-            <div class="mt-8 space-y-3 text-sm">
-                @if($visit->phone_reservations)
-                    <p><span class="font-semibold">Reservas:</span> {{ $visit->phone_reservations }}</p>
-                @endif
-                @if($visit->phone_events)
-                    <p><span class="font-semibold">Eventos:</span> {{ $visit->phone_events }}</p>
-                @endif
-                @if($visit->email)
-                    <p><span class="font-semibold">Email:</span> <a class="text-[var(--color-accent)]" href="mailto:{{ $visit->email }}">{{ $visit->email }}</a></p>
-                @endif
+<section class="rg-contact-form-section">
+    <div class="container-refugio">
+        <div class="rg-contact-form-layout" data-aos="fade-up">
+            <div class="rg-contact-form-intro">
+                <h2 class="rg-contact-form-heading">Envíanos un mensaje</h2>
+                <p class="rg-contact-form-lead">
+                    Si no encontraste lo que buscabas arriba, completa el formulario y nuestro equipo te responderá pronto.
+                </p>
+                <ul class="rg-contact-form-meta">
+                    @if($visit->address)
+                        <li><strong>Ubicación:</strong> {{ $visit->address }}</li>
+                    @endif
+                    @if($visit->email)
+                        <li>
+                            <strong>Email:</strong>
+                            <a href="mailto:{{ $visit->email }}">{{ $visit->email }}</a>
+                        </li>
+                    @endif
+                    @if($visit->phone_reservations)
+                        <li><strong>Reservas:</strong> {{ $visit->phone_reservations }}</li>
+                    @endif
+                    @if($visit->phone_events)
+                        <li><strong>Eventos:</strong> {{ $visit->phone_events }}</li>
+                    @endif
+                </ul>
             </div>
 
-            @if(!empty($visit->amenities))
-                <div class="mt-6 flex flex-wrap gap-2">
-                    @foreach($visit->amenities as $amenity)
-                        <span class="rounded-full bg-[var(--color-surface-alt)] px-3 py-1 text-xs font-semibold">{{ $amenity }}</span>
-                    @endforeach
-                </div>
-            @endif
-        </div>
-
-        <div class="overflow-hidden rounded-card bg-[var(--color-surface-alt)] min-h-[320px]">
-            @if($visit->map_embed_url)
-                <iframe src="{{ $visit->map_embed_url }}" class="h-full min-h-[320px] w-full border-0" loading="lazy" allowfullscreen title="Mapa Refugio"></iframe>
-            @else
-                <iframe
-                    src="https://maps.google.com/maps?q=Av.%20Javier%20Prado%20Este%204492%20Surco&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                    class="h-full min-h-[320px] w-full border-0"
-                    loading="lazy"
-                    allowfullscreen
-                    title="Mapa Refugio"
-                ></iframe>
-            @endif
+            <x-inquiry-form :title="null" :subtitle="null" />
         </div>
     </div>
 </section>
 
-@if($ctaBlocks->isNotEmpty())
-    <x-cta-triple :blocks="$ctaBlocks" />
-@endif
+<x-visit-us />
 @endsection

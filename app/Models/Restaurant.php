@@ -21,7 +21,12 @@ class Restaurant extends Model implements HasMedia
         'name',
         'slug',
         'description',
+        'short_description',
         'whatsapp_url',
+        'delivery_rappi_enabled',
+        'delivery_rappi_url',
+        'delivery_peya_enabled',
+        'delivery_peya_url',
         'google_maps_url',
         'is_active',
         'sort_order',
@@ -34,6 +39,8 @@ class Restaurant extends Model implements HasMedia
         return [
             'is_active' => 'boolean',
             'sort_order' => 'integer',
+            'delivery_rappi_enabled' => 'boolean',
+            'delivery_peya_enabled' => 'boolean',
         ];
     }
 
@@ -53,6 +60,7 @@ class Restaurant extends Model implements HasMedia
     {
         $this->addMediaCollection('logo')->singleFile();
         $this->addMediaCollection('featured_image')->singleFile();
+        $this->addMediaCollection('location_image')->singleFile();
         $this->addMediaCollection('menu_pdf')->singleFile()->acceptsMimeTypes(['application/pdf']);
     }
 
@@ -60,7 +68,7 @@ class Restaurant extends Model implements HasMedia
     {
         $this->addMediaConversion('webp')
             ->format('webp')
-            ->performOnCollections('logo', 'featured_image')
+            ->performOnCollections('logo', 'featured_image', 'location_image')
             ->nonQueued();
     }
 
@@ -82,5 +90,16 @@ class Restaurant extends Model implements HasMedia
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
+    }
+
+    public function hasDeliveryOptions(): bool
+    {
+        return ($this->delivery_rappi_enabled && filled($this->delivery_rappi_url))
+            || ($this->delivery_peya_enabled && filled($this->delivery_peya_url));
+    }
+
+    public function showsDeliveryLogos(): bool
+    {
+        return $this->delivery_rappi_enabled || $this->delivery_peya_enabled;
     }
 }

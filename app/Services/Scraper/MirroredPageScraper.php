@@ -3,6 +3,8 @@
 namespace App\Services\Scraper;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class MirroredPageScraper
@@ -28,26 +30,51 @@ class MirroredPageScraper
         'contacto' => 'Contacto',
     ];
 
+    private bool $originUnreachable = false;
+
     public function __construct(
-        private readonly HttpFetcher $fetcher,
         private readonly string $baseUrl = 'https://refugiogastronomico.pe',
     ) {}
 
     /**
-     * @return array{title: string, content: string, source_url: string, remote_slug: string, hero_image: ?string}|null
+     * @return array{title: string, content: string, source_url: string, remote_slug: string, hero_image: ?string, is_fallback?: bool}
      */
-    public function get(string $alias): ?array
+    public function get(string $alias): array
     {
         $alias = trim(Str::lower($alias), '/');
         $remoteSlug = self::PAGE_MAP[$alias] ?? null;
 
         if ($remoteSlug === null) {
-            return null;
+            return $this->fallback('pagina');
         }
 
         $cacheKey = "mirrored_page:{$remoteSlug}";
+        $cached = Cache::get($cacheKey);
 
-        return Cache::remember($cacheKey, now()->addHours(6), fn () => $this->fetch($remoteSlug));
+        if (is_array($cached) && ($cached['content'] ?? '') !== '') {
+            return $cached;
+        }
+
+        // Avoid slow remote calls during automated tests.
+        if (app()->runningUnitTests()) {
+            return $this->fallback($remoteSlug);
+        }
+
+        // Circuit breaker: if origin recently timed out, serve fallback immediately.
+        if (Cache::get('mirrored_page:origin_down')) {
+            return $this->fallback($remoteSlug);
+        }
+
+        $payload = $this->fetch($remoteSlug);
+
+        if ($payload !== null && trim(strip_tags($payload['content'] ?? '')) !== '') {
+            Cache::put($cacheKey, $payload, now()->addHours(6));
+
+            return $payload;
+        }
+
+        // Never cache failures: remote site may recover later.
+        return $this->fallback($remoteSlug);
     }
 
     /**
@@ -60,6 +87,11 @@ class MirroredPageScraper
             return $fromRest;
         }
 
+        // If the origin host is unreachable, skip the HTML attempt.
+        if ($this->originUnreachable) {
+            return null;
+        }
+
         return $this->fetchFromHtml($remoteSlug);
     }
 
@@ -70,9 +102,13 @@ class MirroredPageScraper
     {
         try {
             $url = "{$this->baseUrl}/wp-json/wp/v2/pages?slug=".rawurlencode($remoteSlug).'&status=publish&_embed=1';
-            $json = $this->fetcher->get($url);
-            $items = json_decode($json, true);
+            $response = $this->http()->get($url);
 
+            if (! $response->successful()) {
+                return null;
+            }
+
+            $items = $response->json();
             if (! is_array($items) || $items === []) {
                 return null;
             }
@@ -86,7 +122,7 @@ class MirroredPageScraper
             $content = $this->sanitizeHtml($rawContent);
             $heroImage = data_get($item, '_embedded.wp:featuredmedia.0.source_url');
             if (! is_string($heroImage) || $heroImage === '') {
-                $heroImage = $this->fetchOgImage("{$this->baseUrl}/{$remoteSlug}/");
+                $heroImage = null;
             }
 
             return [
@@ -94,9 +130,15 @@ class MirroredPageScraper
                 'content' => $content,
                 'source_url' => $sourceUrl,
                 'remote_slug' => $remoteSlug,
-                'hero_image' => is_string($heroImage) ? $heroImage : null,
+                'hero_image' => $heroImage,
             ];
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            $this->markOriginUnreachable($e);
+            Log::warning('Mirrored page REST fetch failed', [
+                'slug' => $remoteSlug,
+                'message' => $e->getMessage(),
+            ]);
+
             return null;
         }
     }
@@ -108,7 +150,13 @@ class MirroredPageScraper
     {
         try {
             $url = "{$this->baseUrl}/{$remoteSlug}/";
-            $html = $this->fetcher->get($url);
+            $response = $this->http()->get($url);
+
+            if (! $response->successful()) {
+                return null;
+            }
+
+            $html = $response->body();
 
             $title = self::TITLE_MAP[$remoteSlug] ?? Str::headline($remoteSlug);
             if (preg_match('/<h1[^>]*>(.*?)<\/h1>/is', $html, $m)) {
@@ -149,9 +197,63 @@ class MirroredPageScraper
                 'remote_slug' => $remoteSlug,
                 'hero_image' => $heroImage,
             ];
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            $this->markOriginUnreachable($e);
+            Log::warning('Mirrored page HTML fetch failed', [
+                'slug' => $remoteSlug,
+                'message' => $e->getMessage(),
+            ]);
+
             return null;
         }
+    }
+
+    private function markOriginUnreachable(\Throwable $e): void
+    {
+        $message = Str::lower($e->getMessage());
+        if (str_contains($message, 'timed out')
+            || str_contains($message, 'curl error 28')
+            || str_contains($message, 'could not resolve')
+            || str_contains($message, 'failed to connect')
+            || str_contains($message, 'connection refused')) {
+            $this->originUnreachable = true;
+            Cache::put('mirrored_page:origin_down', true, now()->addMinutes(10));
+        }
+    }
+
+    /**
+     * @return array{title: string, content: string, source_url: string, remote_slug: string, hero_image: ?string, is_fallback: bool}
+     */
+    private function fallback(string $remoteSlug): array
+    {
+        $title = self::TITLE_MAP[$remoteSlug] ?? Str::headline($remoteSlug);
+
+        $content = match ($remoteSlug) {
+            'contacto' => '<p>Estamos para ayudarte. Completa el formulario y te contactaremos pronto.</p>',
+            'convocatorias' => '<p>¿Quieres ser parte de Refugio Gastronómico? Cuéntanos sobre tu marca o propuesta.</p>',
+            'libro-de-reclamaciones' => '<p>Conforme a lo establecido por el Código de Protección y Defensa del Consumidor, ponemos a tu disposición el Libro de Reclamaciones.</p><p>Completa el formulario con tus datos y el detalle de tu queja o reclamo. Te responderemos en un plazo no mayor a 30 días calendario.</p>',
+            'terminos-y-condiciones' => '<p>Estos términos y condiciones regulan el uso del sitio web y los servicios de Refugio Gastronómico.</p><p>El contenido definitivo se sincronizará cuando el origen esté disponible. Si necesitas una copia formal, escríbenos a <a href="mailto:hola@refugiogastronomico.pe">hola@refugiogastronomico.pe</a>.</p>',
+            'politica-privacidad' => '<p>En Refugio Gastronómico protegemos tus datos personales conforme a la normativa vigente.</p><p>El texto completo de la política se sincronizará cuando el origen esté disponible. Para ejercer tus derechos ARCO, contáctanos a <a href="mailto:hola@refugiogastronomico.pe">hola@refugiogastronomico.pe</a>.</p>',
+            default => '<p>Contenido temporalmente no disponible. Intenta nuevamente en unos minutos.</p>',
+        };
+
+        return [
+            'title' => $title,
+            'content' => $content,
+            'source_url' => url('/'.$remoteSlug),
+            'remote_slug' => $remoteSlug,
+            'hero_image' => null,
+            'is_fallback' => true,
+        ];
+    }
+
+    private function http()
+    {
+        // Short timeout: these pages must not hang the public site when the source is down.
+        return Http::withHeaders([
+            'User-Agent' => 'RefugioSite/1.0 (+local mirror)',
+            'Accept' => 'text/html,application/json,*/*;q=0.8',
+        ])->timeout(4)->connectTimeout(2)->retry(0, 0);
     }
 
     private function sanitizeHtml(string $html): string
@@ -166,7 +268,6 @@ class MirroredPageScraper
         $html = preg_replace('/<!--.*?-->/s', '', $html) ?? $html;
         $html = preg_replace('/<form\b[^>]*>.*?<\/form>/is', '', $html) ?? $html;
         $html = preg_replace('/<(header|footer|nav|aside)\b[^>]*>.*?<\/\1>/is', '', $html) ?? $html;
-        // Title lives in the page hero; drop duplicated headings from WP content.
         $html = preg_replace('/<h1\b[^>]*>.*?<\/h1>/is', '', $html) ?? $html;
         $html = preg_replace('/<(div|span)[^>]*class="[^"]*elementor-widget-button[^"]*"[^>]*>.*?<\/\1>/is', '', $html) ?? $html;
         $html = preg_replace('/<iframe\b[^>]*>.*?<\/iframe>/is', '', $html) ?? $html;
@@ -185,20 +286,6 @@ class MirroredPageScraper
         return trim($html);
     }
 
-    private function fetchOgImage(string $url): ?string
-    {
-        try {
-            $html = $this->fetcher->get($url);
-            if (preg_match('/property=["\']og:image["\']\s+content=["\']([^"\']+)["\']/i', $html, $m)) {
-                return html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
-            }
-        } catch (\Throwable) {
-            // ignore
-        }
-
-        return null;
-    }
-
     private function rewriteUrl(string $url): string
     {
         $normalized = preg_replace('/^https?:\/\/(www\.)?refugiogastronomico\.pe/i', '', $url) ?? $url;
@@ -211,9 +298,9 @@ class MirroredPageScraper
 
         return match ($path) {
             'terminos-y-condiciones' => '/terminos-y-condiciones',
-            'politica-privacidad' => '/politica-privacidad',
+            'politica-privacidad', 'politicas-de-privacidad' => '/politica-privacidad',
             'libro-de-reclamaciones' => '/libro-de-reclamaciones',
-            'convocatorias' => '/convocatoria',
+            'convocatorias', 'convocatoria' => '/convocatoria',
             'contacto' => '/contacto',
             default => $normalized,
         };

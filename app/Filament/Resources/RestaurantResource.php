@@ -55,35 +55,71 @@ class RestaurantResource extends Resource
                             Forms\Components\TextInput::make('name')->required()->label('Nombre'),
                             Forms\Components\TextInput::make('slug')->required()->label('Slug'),
                         ]),
+                    Forms\Components\Textarea::make('short_description')
+                        ->label('Descripción corta')
+                        ->rows(3)
+                        ->helperText('Se muestra en el detalle. Puede quedar vacía.')
+                        ->columnSpanFull(),
                     Forms\Components\RichEditor::make('description')
-                        ->label('Descripción')
+                        ->label('Descripción completa')
                         ->columnSpanFull(),
                 ])->columns(2),
             Forms\Components\Section::make('Medios')
                 ->schema([
                     SpatieMediaLibraryFileUpload::make('logo')
-                        ->label('Logo')
+                        ->label('Logo de marca')
+                        ->helperText('Se muestra en la grilla de restaurantes (vista inicial).')
                         ->collection('logo')
                         ->image()
                         ->imageEditor(),
                     SpatieMediaLibraryFileUpload::make('featured_image')
-                        ->label('Imagen destacada')
+                        ->label('Imagen de comida')
+                        ->helperText('Se muestra al pasar el cursor en la grilla de restaurantes.')
                         ->collection('featured_image')
+                        ->image()
+                        ->imageEditor(),
+                    SpatieMediaLibraryFileUpload::make('location_image')
+                        ->label('Imagen de ubicación')
+                        ->helperText('Foto del local/ubicación (no mapa). Opcional.')
+                        ->collection('location_image')
                         ->image()
                         ->imageEditor(),
                     SpatieMediaLibraryFileUpload::make('menu_pdf')
                         ->label('Menú PDF')
                         ->collection('menu_pdf')
                         ->acceptedFileTypes(['application/pdf']),
-                ])->columns(3),
+                ])->columns(2),
+            Forms\Components\Section::make('Delivery')
+                ->schema([
+                    Forms\Components\Toggle::make('delivery_rappi_enabled')
+                        ->label('Rappi habilitado')
+                        ->default(true)
+                        ->live(),
+                    Forms\Components\TextInput::make('delivery_rappi_url')
+                        ->label('URL Rappi')
+                        ->url()
+                        ->maxLength(500)
+                        ->visible(fn (Forms\Get $get) => (bool) $get('delivery_rappi_enabled')),
+                    Forms\Components\Toggle::make('delivery_peya_enabled')
+                        ->label('PedidosYa habilitado')
+                        ->default(true)
+                        ->live(),
+                    Forms\Components\TextInput::make('delivery_peya_url')
+                        ->label('URL PedidosYa')
+                        ->url()
+                        ->maxLength(500)
+                        ->visible(fn (Forms\Get $get) => (bool) $get('delivery_peya_enabled')),
+                ])->columns(2),
             Forms\Components\Section::make('Contacto y SEO')
                 ->schema([
                     Forms\Components\TextInput::make('whatsapp_url')
                         ->label('WhatsApp / Pedir')
+                        ->helperText('Campo reservado: la ficha pública aún no muestra este enlace. El WhatsApp del header sale de Configuración → Sitio.')
                         ->url()
                         ->maxLength(500),
                     Forms\Components\TextInput::make('google_maps_url')
                         ->label('Google Maps')
+                        ->helperText('Campo reservado: la ficha pública usa la foto de ubicación, no este enlace. El mapa de «¿Nos visitas?» sale de Nosotros / Visítanos.')
                         ->url()
                         ->maxLength(500),
                     Forms\Components\TextInput::make('sort_order')

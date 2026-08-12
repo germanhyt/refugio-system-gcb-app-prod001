@@ -49,27 +49,48 @@ class ManageSiteSettings extends Page implements HasForms
                             ->maxLength(255),
                         Forms\Components\TextInput::make('slogan')
                             ->label('Slogan')
+                            ->helperText('No se muestra en la web actual: la sección de slogan/hotspots del home ya no está activa.')
                             ->maxLength(255),
                         SpatieMediaLibraryFileUpload::make('logo')
                             ->label('Logo')
+                            ->helperText('Logo del header sobre el banner (hero). Si está vacío, se usa logo-v1-base.')
                             ->collection('logo')
                             ->image(),
                         SpatieMediaLibraryFileUpload::make('favicon')
                             ->label('Favicon')
+                            ->helperText('Icono de pestaña del navegador y del panel admin.')
                             ->collection('favicon')
                             ->image(),
                         SpatieMediaLibraryFileUpload::make('og_image')
                             ->label('Imagen Open Graph')
+                            ->helperText('Imagen al compartir el sitio en redes (WhatsApp, Facebook, etc.). Si está vacía, se usa el logo.')
                             ->collection('og_image')
                             ->image()
                             ->columnSpanFull(),
                     ])->columns(2),
                 Forms\Components\Section::make('Redes y WhatsApp')
+                    ->description('Enlaces que alimentan el header, el menú hamburguesa y el footer. Si un campo queda vacío, ese icono no se muestra (WhatsApp, Instagram y Facebook tienen un fallback).')
                     ->schema([
-                        Forms\Components\TextInput::make('whatsapp_url')->label('WhatsApp')->url()->maxLength(500),
-                        Forms\Components\TextInput::make('instagram_url')->label('Instagram')->url()->maxLength(500),
-                        Forms\Components\TextInput::make('facebook_url')->label('Facebook')->url()->maxLength(500),
-                        Forms\Components\TextInput::make('tiktok_url')->label('TikTok')->url()->maxLength(500),
+                        Forms\Components\TextInput::make('whatsapp_url')
+                            ->label('WhatsApp')
+                            ->helperText('Botón «¡Reserva aquí!» del header (sobre el banner). También el botón Reservar en el detalle de un evento con fecha.')
+                            ->url()
+                            ->maxLength(500),
+                        Forms\Components\TextInput::make('instagram_url')
+                            ->label('Instagram')
+                            ->helperText('Icono en el menú overlay (hamburguesa) y en el footer, columna Legal.')
+                            ->url()
+                            ->maxLength(500),
+                        Forms\Components\TextInput::make('facebook_url')
+                            ->label('Facebook')
+                            ->helperText('Icono en el menú overlay (hamburguesa) y en el footer, columna Legal.')
+                            ->url()
+                            ->maxLength(500),
+                        Forms\Components\TextInput::make('tiktok_url')
+                            ->label('TikTok')
+                            ->helperText('Icono en el menú overlay y en el footer. Si está vacío, no se muestra.')
+                            ->url()
+                            ->maxLength(500),
                     ])->columns(2),
                 Forms\Components\Section::make('SEO')
                     ->schema([
@@ -81,12 +102,30 @@ class ManageSiteSettings extends Page implements HasForms
                             ->rows(3)
                             ->columnSpanFull(),
                     ]),
+                Forms\Components\Section::make('Títulos de hero')
+                    ->description('Textos principales de las páginas Nosotros, Restaurantes, Eventos y Servicios.')
+                    ->schema([
+                        Forms\Components\Textarea::make('hero_title_about')
+                            ->label('Nosotros')
+                            ->helperText('Usa Enter para partir el título en dos líneas (ej. ¿Quiénes / Somos?).')
+                            ->rows(2)
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('hero_title_restaurants')
+                            ->label('Restaurantes')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('hero_title_events')
+                            ->label('Eventos')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('hero_title_services')
+                            ->label('Servicios')
+                            ->maxLength(255),
+                    ])->columns(2),
                 Forms\Components\Section::make('Secciones del sitio')
                     ->description('Controla qué bloques aparecen en el frontend público.')
                     ->schema([
                         Forms\Components\Toggle::make('show_blog_section')
-                            ->label('Mostrar sección Blog (home y /blog)')
-                            ->helperText('Si está desactivado, se oculta el bloque de foodies en home y las rutas /blog responden 404.')
+                            ->label('Habilitar rutas /blog')
+                            ->helperText('El blog ya no aparece en home. Este toggle controla si /blog responde o devuelve 404. El enlace del footer sigue visible.')
                             ->default(true)
                             ->inline(false),
                     ]),

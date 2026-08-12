@@ -110,8 +110,6 @@ class MirroredPageController extends Controller
     {
         $payload = $scraper->get($page);
 
-        abort_if($payload === null, 404);
-
         $remoteSlug = $payload['remote_slug'];
         $payload['show_inquiry_form'] = in_array($remoteSlug, ['contacto', 'convocatorias'], true);
         $payload['show_complaint_form'] = $remoteSlug === 'libro-de-reclamaciones';

@@ -2,97 +2,94 @@
 
 @php
     $fallbackBg = asset('images/refugio/fondohome.jpg');
-    $firstSlide = $slides->first();
-    $slide1Bg = $firstSlide?->getFirstMediaUrl('background_image') ?: $fallbackBg;
-
-    $visit = $visitInfo ?? \App\Models\VisitInfo::current();
-    $rawAddress = (string) ($visit->address ?: 'Av. Javier Prado Este 4492 – Santiago de Surco');
-    $addressParts = preg_split('/\s*[–\-]\s*/u', $rawAddress, 2) ?: [$rawAddress];
-    $addressLine1 = trim($addressParts[0] ?? $rawAddress);
-    $addressLine2 = trim($addressParts[1] ?? 'Surco');
-    if ($addressLine2 === '' || strcasecmp($addressLine2, 'Santiago de Surco') === 0) {
-        $addressLine2 = 'Surco';
-    }
+    $slideCount = $slides->count();
+    $showNav = $slideCount > 1;
 @endphp
 
 <section class="rg-hero relative min-h-screen overflow-hidden bg-[#1a1210]" id="top">
-    <div class="swiper hero-swiper h-screen w-full" data-hero-swiper>
+    <div
+        class="swiper hero-swiper h-screen w-full"
+        data-hero-swiper
+        data-slide-count="{{ $slideCount }}"
+    >
         <div class="swiper-wrapper">
-            {{-- Slide 1: Propuestas gastronómicas --}}
-            <div class="swiper-slide relative overflow-hidden">
-                <div class="absolute inset-0">
-                    <img
-                        src="{{ $slide1Bg }}"
-                        alt="{{ $firstSlide?->title ?: 'Refugio Gastronómico' }}"
-                        class="hero-kenburns h-full w-full object-cover"
-                        fetchpriority="high"
-                    >
-                    <div class="rg-hero-overlay absolute inset-0"></div>
+            @forelse($slides as $slide)
+                @php
+                    $poster = $slide->getFirstMediaUrl('background_image') ?: $fallbackBg;
+                    $videoUrl = $slide->getFirstMediaUrl('background_video');
+                    $isVideo = $slide->isVideo() && filled($videoUrl);
+                    $hasCopy = filled($slide->title)
+                        || filled($slide->subtitle)
+                        || (filled($slide->cta_text) && filled($slide->cta_url));
+                @endphp
+                <div class="swiper-slide relative overflow-hidden">
+                    <div class="absolute inset-0">
+                        @if($isVideo)
+                            <video
+                                class="h-full w-full object-cover"
+                                autoplay
+                                muted
+                                loop
+                                playsinline
+                                poster="{{ $poster }}"
+                            >
+                                <source src="{{ $videoUrl }}" type="video/mp4">
+                            </video>
+                        @else
+                            <img
+                                src="{{ $poster }}"
+                                alt="{{ $slide->title ?: 'Refugio Gastronómico' }}"
+                                class="hero-kenburns h-full w-full object-cover"
+                                @if($loop->first) fetchpriority="high" @endif
+                            >
+                        @endif
+                        <div class="rg-hero-overlay absolute inset-0"></div>
+                    </div>
+                    @if($hasCopy)
+                        <div class="relative z-10 flex h-full items-center justify-center px-6 text-center">
+                            <div class="flex max-w-4xl flex-col items-center" data-hero-title>
+                                @if($slide->subtitle)
+                                    <p class="rg-hero-cms-subtitle" data-hero-subtitle>{{ $slide->subtitle }}</p>
+                                @endif
+                                @if($slide->title)
+                                    <h1 class="rg-hero-cms-title">{{ $slide->title }}</h1>
+                                @endif
+                                @if($slide->cta_text && $slide->cta_url)
+                                    <div class="rg-hero-ctas mt-8" data-hero-cta>
+                                        <a href="{{ $slide->cta_url }}" class="rg-btn-outline rg-btn-outline--light">
+                                            {{ $slide->cta_text }}
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
                 </div>
-                <div class="relative z-10 flex h-full items-center justify-center px-6 text-center">
-                    <div class="flex max-w-4xl flex-col items-center">
+            @empty
+                <div class="swiper-slide relative overflow-hidden">
+                    <div class="absolute inset-0">
                         <img
-                            src="{{ asset('images/refugio/hero-las-mejores.png') }}"
-                            alt="Las mejores"
-                            class="rg-hero-eyebrow"
-                            data-hero-subtitle
+                            src="{{ $fallbackBg }}"
+                            alt="Refugio Gastronómico"
+                            class="hero-kenburns h-full w-full object-cover"
+                            fetchpriority="high"
                         >
-                        <img
-                            src="{{ asset('images/refugio/hero-propuestas.png') }}"
-                            alt="Propuestas gastronómicas"
-                            class="rg-hero-title-img"
-                            data-hero-title
-                        >
-                        <div class="rg-hero-ctas" data-hero-cta>
-                            <a href="{{ route('restaurants.index') }}" class="rg-hero-btn">
-                                <img src="{{ asset('images/refugio/hero-btn-restaurantes.png') }}" alt="Restaurantes">
-                            </a>
-                            <a href="{{ route('events.index') }}" class="rg-hero-btn">
-                                <img src="{{ asset('images/refugio/hero-btn-eventos.png') }}" alt="Eventos">
-                            </a>
+                        <div class="rg-hero-overlay absolute inset-0"></div>
+                    </div>
+                    <div class="relative z-10 flex h-full items-center justify-center px-6 text-center">
+                        <div class="flex max-w-4xl flex-col items-center" data-hero-title>
+                            <h1 class="rg-hero-cms-title">Refugio Gastronómico</h1>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            {{-- Slide 2: Ubicación / estacionamientos --}}
-            <div class="swiper-slide rg-hero-location relative overflow-hidden">
-                <img
-                    src="{{ asset('images/refugio/hero-leaf-1.png') }}"
-                    alt=""
-                    class="absolute inset-0 h-full w-full object-cover"
-                    loading="lazy"
-                    aria-hidden="true"
-                >
-
-                <img src="{{ asset('images/refugio/hero-leaf-9.png') }}" alt="" class="rg-loc-deco rg-loc-deco-tr" aria-hidden="true">
-                <img src="{{ asset('images/refugio/hero-leaf-4.png') }}" alt="" class="rg-loc-deco rg-loc-deco-bl" aria-hidden="true">
-                <img src="{{ asset('images/refugio/hero-leaf-8.png') }}" alt="" class="rg-loc-deco rg-loc-deco-birds" aria-hidden="true">
-
-                <div class="rg-hero-loc-grid" data-hero-title>
-                    <div class="rg-loc-col rg-loc-col--parking">
-                        <img src="{{ asset('images/refugio/hero-leaf-2.png') }}" alt="" class="rg-loc-icon" aria-hidden="true">
-                        <p class="rg-loc-parking-text">¡Más de 500<br>estacionamientos<br>disponibles!</p>
-                    </div>
-
-                    <div class="rg-loc-col rg-loc-col--map">
-                        <div class="rg-loc-map-wrap">
-                            <img src="{{ asset('images/refugio/hero-leaf-5.png') }}" alt="Ubicación Refugio Gastronómico" class="rg-loc-map-img">
-                        </div>
-                    </div>
-
-                    <div class="rg-loc-col rg-loc-col--address">
-                        <img src="{{ asset('images/refugio/hero-leaf-6.png') }}" alt="" class="rg-loc-icon" aria-hidden="true">
-                        <p class="rg-loc-address-title">{{ $addressLine1 }}<br>{{ $addressLine2 }}</p>
-                        <p class="rg-loc-address-sub">Al costado del Jockey Plaza<br>Frente a la Universidad de Lima</p>
-                    </div>
-                </div>
-            </div>
+            @endforelse
         </div>
 
-        <div class="swiper-pagination !bottom-16"></div>
-        <div class="swiper-button-prev hero-nav-prev" aria-label="Anterior"></div>
-        <div class="swiper-button-next hero-nav-next" aria-label="Siguiente"></div>
+        @if($showNav)
+            <div class="swiper-pagination !bottom-16"></div>
+            <div class="swiper-button-prev hero-nav-prev" aria-label="Anterior"></div>
+            <div class="swiper-button-next hero-nav-next" aria-label="Siguiente"></div>
+        @endif
     </div>
 
     <div

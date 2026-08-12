@@ -16,6 +16,7 @@ class HeroSlide extends Model implements HasMedia
         'title',
         'subtitle',
         'description',
+        'media_type',
         'cta_text',
         'cta_url',
         'sort_order',
@@ -33,6 +34,7 @@ class HeroSlide extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('background_image')->singleFile();
+        $this->addMediaCollection('background_video')->singleFile();
     }
 
     public function registerMediaConversions(?Media $media = null): void
@@ -41,6 +43,11 @@ class HeroSlide extends Model implements HasMedia
             ->format('webp')
             ->performOnCollections('background_image')
             ->nonQueued();
+    }
+
+    public function isVideo(): bool
+    {
+        return ($this->media_type ?? 'image') === 'video';
     }
 
     public function scopeActive(Builder $query): Builder

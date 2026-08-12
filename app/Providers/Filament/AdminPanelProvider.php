@@ -39,7 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 'Contenido',
-                'Marketing',
+                'Operaciones',
                 'Configuración',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
@@ -92,6 +92,6 @@ class AdminPanelProvider extends PanelProvider
             // ignore
         }
 
-        return asset('images/refugio/logo-v2.svg');
+        return asset('images/refugio/favicon-150x150.png');
     }
 }

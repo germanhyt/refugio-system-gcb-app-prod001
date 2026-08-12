@@ -18,32 +18,36 @@ class HomeRestaurantFeatureResource extends Resource
 
     protected static ?string $navigationGroup = 'Contenido';
 
-    protected static ?string $navigationLabel = 'Grid home';
+    protected static ?string $navigationLabel = 'Logos home';
 
-    protected static ?string $modelLabel = 'Destacado home';
+    protected static ?string $modelLabel = 'Logo en carousel';
 
-    protected static ?string $pluralModelLabel = 'Grid restaurantes home';
+    protected static ?string $pluralModelLabel = 'Logos carousel home';
 
     protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Select::make('restaurant_id')
-                ->label('Restaurante')
-                ->relationship('restaurant', 'name')
-                ->searchable()
-                ->preload()
-                ->required()
-                ->unique(ignoreRecord: true),
-            Forms\Components\TextInput::make('sort_order')
-                ->label('Orden')
-                ->numeric()
-                ->default(0)
-                ->required(),
-            Forms\Components\Toggle::make('is_active')
-                ->label('Activo')
-                ->default(true),
+            Forms\Components\Section::make('Carousel home')
+                ->description('Logos de restaurantes que rotan en la sección «Nuestros restaurantes» del home.')
+                ->schema([
+                    Forms\Components\Select::make('restaurant_id')
+                        ->label('Restaurante')
+                        ->relationship('restaurant', 'name')
+                        ->searchable()
+                        ->preload()
+                        ->required()
+                        ->unique(ignoreRecord: true),
+                    Forms\Components\TextInput::make('sort_order')
+                        ->label('Orden')
+                        ->numeric()
+                        ->default(0)
+                        ->required(),
+                    Forms\Components\Toggle::make('is_active')
+                        ->label('Activo')
+                        ->default(true),
+                ])->columns(2),
         ]);
     }
 

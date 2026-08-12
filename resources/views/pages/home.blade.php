@@ -4,11 +4,9 @@
 
 @section('content')
     <x-hero-slider :slides="$slides" />
-    <x-hero-slogan />
-    <x-restaurant-grid :features="$featuredRestaurants" />
-    <x-event-carousel :events="$events" />
-    <x-instagram-feed :posts="$instagramPosts" />
-    @if(($siteSettings->show_blog_section ?? true) && $blogPosts->isNotEmpty())
-        <x-blog-foodies :posts="$blogPosts" />
-    @endif
+    <x-hola-section topRibbon class="rg-hola-section--birds-wire" />
+    <x-logo-carousel :features="$featuredRestaurants" />
+    <x-services-preview :services="$homeServices" />
+    <x-visit-us />
+    <x-contact-blocks :blocks="$contactBlocks" cornerDeco="bottom-right" />
 @endsection

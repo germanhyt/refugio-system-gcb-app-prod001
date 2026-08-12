@@ -1,19 +1,95 @@
 @props(['settings'])
 
 @php
-    $logo = $settings->getFirstMediaUrl('logo') ?: asset('images/refugio/logo-v2.svg');
+    $logoHero = $settings->getFirstMediaUrl('logo') ?: asset('images/refugio/logo-v1-base.svg');
+    $logoSticky = asset('images/refugio/logo-v2-white.svg');
     $whatsapp = $settings->whatsapp_url ?: 'https://wa.link/ltbwxk';
     $instagram = $settings->instagram_url ?: 'https://www.instagram.com/refugiogastronomico.pe/';
     $facebook = $settings->facebook_url ?: 'https://www.facebook.com/RefugioParqueGastronomico';
     $tiktok = $settings->tiktok_url;
-    $navItems = [
-        ['label' => 'Restaurantes', 'route' => 'restaurants.index'],
-        ['label' => 'Eventos', 'route' => 'events.index'],
-        ['label' => 'Visítanos', 'route' => 'about'],
-    ];
+    $navItems = config('navigation.primary', []);
 @endphp
 
-<header id="rg-header" class="rg-header absolute inset-x-0 top-0 z-50 transition-[background,box-shadow] duration-500">
+<style>
+    /* Sticky header — valores de Elementor 8786a8e / post-7811 */
+    .rg-header {
+        transition: none !important;
+    }
+    .rg-header.rg-header--sticky {
+        background: #3d332c !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        transition: background-color 0.35s ease, box-shadow 0.35s ease !important;
+    }
+    .rg-header-hero {
+        transition: none !important;
+    }
+    .rg-header--sticky .rg-header-hero {
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+    .rg-header-sticky {
+        transition: none !important;
+    }
+    .rg-header--sticky .rg-header-sticky {
+        transition: opacity 0.35s ease !important;
+    }
+    .rg-header--sticky .rg-header-inner,
+    .rg-header-sticky {
+        min-height: 60px !important;
+    }
+    .rg-header-sticky {
+        padding: 0 5% !important;
+    }
+    .rg-sticky-logo {
+        width: auto !important;
+        height: auto !important;
+        margin: 0 0 -29px !important;
+        padding: 10px 10px 15px !important;
+        background: #3d332c !important;
+        border-radius: 50% !important;
+    }
+    .rg-sticky-logo img {
+        width: 110px !important;
+        max-width: 110px !important;
+        height: auto !important;
+    }
+    .rg-sticky-right {
+        gap: 0 !important;
+        padding-block: 0 !important;
+        align-items: center !important;
+    }
+    .rg-sticky-nav {
+        gap: 0 !important;
+    }
+    .rg-sticky-nav-link {
+        font-family: var(--font-display) !important;
+        font-size: 18px !important;
+        font-weight: 400 !important;
+        letter-spacing: 0 !important;
+        padding: 0 20px !important;
+        color: #fff !important;
+        text-transform: uppercase !important;
+    }
+    .btn-provoc.btn-provoc--sticky {
+        padding: 10px 50px 12px !important;
+        font-size: 18px !important;
+        font-weight: 600 !important;
+        font-family: var(--font-accent) !important;
+        background: #a7623d !important;
+        border: 1px solid #a7623d !important;
+        border-radius: 0 !important;
+        height: auto !important;
+        align-self: center !important;
+    }
+    @media (max-width: 1024px) {
+        .rg-sticky-logo img { width: 72px !important; max-width: 72px !important; }
+        .btn-provoc.btn-provoc--sticky { display: none !important; }
+    }
+</style>
+
+<header id="rg-header" class="rg-header absolute inset-x-0 top-0 z-50">
     <div class="rg-header-inner bg-gradient-to-b from-black/55 via-black/25 to-transparent">
         {{-- Layout hero (Elementor 6058: cols 42% / 16% / 42%) --}}
         <div class="rg-header-hero">
@@ -31,7 +107,7 @@
 
                 <div class="rg-header-col rg-header-col--logo">
                     <a href="{{ route('home') }}" class="rg-header-logo">
-                        <img src="{{ $logo }}" alt="{{ $settings->site_name }}">
+                        <img src="{{ $logoHero }}" alt="{{ $settings->site_name }}">
                     </a>
                 </div>
 
@@ -49,7 +125,7 @@
         {{-- Layout sticky (Elementor 7811) --}}
         <div class="rg-header-sticky">
             <a href="{{ route('home') }}" class="rg-sticky-logo" aria-label="{{ $settings->site_name }}">
-                <img src="{{ $logo }}" alt="{{ $settings->site_name }}">
+                <img src="{{ $logoSticky }}" alt="{{ $settings->site_name }}">
             </a>
 
             <div class="rg-sticky-right">

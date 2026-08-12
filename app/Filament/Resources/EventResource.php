@@ -21,18 +21,24 @@ class EventResource extends Resource
 
     protected static ?string $navigationGroup = 'Contenido';
 
-    protected static ?string $navigationLabel = 'Eventos';
+    protected static ?string $navigationLabel = 'Eventos con fecha (legacy)';
 
-    protected static ?string $modelLabel = 'Evento';
+    protected static ?string $modelLabel = 'Evento con fecha';
 
-    protected static ?string $pluralModelLabel = 'Eventos';
+    protected static ?string $pluralModelLabel = 'Eventos con fecha';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 45;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
         return $form->schema([
             Forms\Components\Section::make()
+                ->description('Estos eventos ya no aparecen en /eventos. Solo se usan para páginas de detalle legacy (/eventos/{slug}). Para la grilla pública usa «Eventos» (ofertas).')
                 ->schema([
                     Forms\Components\TextInput::make('title')
                         ->label('Título')

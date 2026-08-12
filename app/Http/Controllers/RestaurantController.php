@@ -51,6 +51,25 @@ class RestaurantController extends Controller
 
         $restaurant->load(['media', 'categories']);
 
-        return view('pages.restaurants.show', compact('restaurant'));
+        $categoryIds = $restaurant->categories->pluck('id');
+
+        $similarRestaurants = Restaurant::query()
+            ->active()
+            ->whereKeyNot($restaurant->id)
+            ->when(
+                $categoryIds->isNotEmpty(),
+                fn ($query) => $query->whereHas(
+                    'categories',
+                    fn ($q) => $q->whereIn('restaurant_categories.id', $categoryIds)
+                ),
+                fn ($query) => $query->whereRaw('0 = 1')
+            )
+            ->with(['media', 'categories'])
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->take(8)
+            ->get();
+
+        return view('pages.restaurants.show', compact('restaurant', 'similarRestaurants'));
     }
 }

@@ -2,17 +2,17 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\BlogPost;
-use App\Models\Event;
-use App\Models\InstagramPost;
+use App\Models\EventOffer;
 use App\Models\Restaurant;
+use App\Models\ServiceItem;
+use App\Models\ContactBlock;
 use Filament\Widgets\ChartWidget;
 
 class ContentKpisChart extends ChartWidget
 {
     protected static ?string $heading = 'Contenido activo';
 
-    protected static ?string $description = 'Distribución de piezas visibles en el sitio';
+    protected static ?string $description = 'Piezas visibles en el sitio restructurado';
 
     protected static ?int $sort = 2;
 
@@ -31,29 +31,29 @@ class ContentKpisChart extends ChartWidget
     protected function getData(): array
     {
         $restaurants = Restaurant::query()->active()->count();
-        $events = Event::query()->active()->count();
-        $blog = BlogPost::query()->active()->count();
-        $instagram = InstagramPost::query()->active()->count();
+        $eventOffers = EventOffer::query()->active()->count();
+        $services = ServiceItem::query()->active()->count();
+        $contactBlocks = ContactBlock::query()->active()->count();
 
         return [
             'datasets' => [
                 [
                     'label' => 'Activos',
-                    'data' => [$restaurants, $events, $blog, $instagram],
+                    'data' => [$restaurants, $eventOffers, $services, $contactBlocks],
                     'backgroundColor' => [
                         '#A7623D',
                         '#C4895F',
-                        '#8B5E3C',
-                        '#D4A574',
+                        '#236869',
+                        '#729F9F',
                     ],
                     'borderWidth' => 0,
                 ],
             ],
             'labels' => [
                 'Restaurantes',
-                'Eventos',
-                'Blog',
-                'Instagram',
+                'Ofertas eventos',
+                'Servicios',
+                'Contacto home',
             ],
         ];
     }

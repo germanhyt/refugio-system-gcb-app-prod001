@@ -1,0 +1,17 @@
+change: web-restructure
+status: applied
+created: 2026-08-06
+phases:
+  explore: completed
+  propose: completed
+  spec: completed
+  design: completed
+  tasks: completed
+  apply: completed
+  verify: pending
+  archive: pending
+notes:
+  - Autopilot applied SDD.md restructure
+  - Defaults: no IG/blog on home; EventOffer cards; light CMS; footer stubs; Servicios off header
+  - Tests: WebRestructureTest 5/5 + suite green; npm build OK
+  - Supersedes conflicting refugio-platform frontend IA

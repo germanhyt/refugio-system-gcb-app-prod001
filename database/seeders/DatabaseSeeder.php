@@ -22,6 +22,12 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RestaurantCategorySeeder::class,
             CtaBlockSeeder::class,
+            VisitInfoSeeder::class,
+            ServiceItemSeeder::class,
+            EventOfferSeeder::class,
+            ContactBlockSeeder::class,
+            HeroSlideSeeder::class,
+            StaticPageSeeder::class,
         ]);
     }
 }

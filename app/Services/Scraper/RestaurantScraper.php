@@ -63,18 +63,45 @@ class RestaurantScraper
                     $whatsapp ??= $node->attr('href');
                 });
 
+                $rappiUrl = null;
+                $crawler->filter('a[href*="rappi."], a[href*="rappi.com"]')->each(function (Crawler $node) use (&$rappiUrl) {
+                    $rappiUrl ??= $node->attr('href');
+                });
+
+                $peyaUrl = null;
+                $crawler->filter('a[href*="pedidosya."], a[href*="peya."]')->each(function (Crawler $node) use (&$peyaUrl) {
+                    $peyaUrl ??= $node->attr('href');
+                });
+
+                $shortDescription = $description ? html_entity_decode(trim($description)) : null;
+
+                $payload = [
+                    'name' => html_entity_decode(trim($name)),
+                    'description' => $shortDescription,
+                    'google_maps_url' => $mapsUrl,
+                    'whatsapp_url' => $whatsapp,
+                    'is_active' => true,
+                    'sort_order' => $index + 1,
+                    'meta_title' => html_entity_decode(trim($name)).' | Refugio Gastronómico',
+                    'meta_description' => $shortDescription,
+                ];
+
+                $existing = Restaurant::query()->where('slug', $slug)->first();
+                if (! $existing || blank($existing->short_description)) {
+                    $payload['short_description'] = $shortDescription;
+                }
+                if ($rappiUrl) {
+                    $payload['delivery_rappi_enabled'] = true;
+                    $payload['delivery_rappi_url'] = $rappiUrl;
+                }
+                if ($peyaUrl) {
+                    $payload['delivery_peya_enabled'] = true;
+                    $payload['delivery_peya_url'] = $peyaUrl;
+                }
+
                 $restaurant = Restaurant::query()->updateOrCreate(
                     ['slug' => $slug],
-                    [
-                        'name' => html_entity_decode(trim($name)),
-                        'description' => $description ? html_entity_decode(trim($description)) : null,
-                        'google_maps_url' => $mapsUrl,
-                        'whatsapp_url' => $whatsapp,
-                        'is_active' => true,
-                        'sort_order' => $index + 1,
-                        'meta_title' => html_entity_decode(trim($name)).' | Refugio Gastronómico',
-                        'meta_description' => $description ? html_entity_decode(trim($description)) : null,
-                    ]
+                    $payload
                 );
 
                 foreach ([

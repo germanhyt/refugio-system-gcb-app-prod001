@@ -1,19 +1,15 @@
 @extends('layouts.app')
 
 @section('title', ($restaurant->meta_title ?: $restaurant->name).' | Refugio Gastronómico')
-@section('meta_description', $restaurant->meta_description ?: \Illuminate\Support\Str::limit(strip_tags($restaurant->description ?? ''), 160))
+@section('meta_description', $restaurant->meta_description ?: \Illuminate\Support\Str::limit(strip_tags($restaurant->short_description ?: $restaurant->description ?? ''), 160))
 
 @php
     $heroImage = $restaurant->getFirstMediaUrl('featured_image') ?: $restaurant->getFirstMediaUrl('logo');
-    $orderUrl = $restaurant->whatsapp_url
-        ?: ($siteSettings->whatsapp_url ?? null)
-        ?: $restaurant->google_maps_url
-        ?: route('restaurants.index');
-    $orderExternal = ! str_starts_with((string) $orderUrl, url('/'));
+    $locationImage = $restaurant->getFirstMediaUrl('location_image');
+    $shortDescription = trim((string) ($restaurant->short_description ?? ''));
 @endphp
 
 @section('content')
-{{-- Hero detalle restaurante --}}
 <section
     class="rg-rest-detail-hero"
     @if($heroImage) style="background-image: url('{{ $heroImage }}');" @endif
@@ -36,70 +32,67 @@
             >
                 <span class="rg-rest-detail-divider-spacer"></span>
             </div>
-
-            <a
-                href="{{ $orderUrl }}"
-                class="rg-rest-detail-order"
-                @if($orderExternal) target="_blank" rel="noopener noreferrer" @endif
-            >
-                <img
-                    src="{{ asset('images/refugio/img-boton-restaurante.png') }}"
-                    alt="Pide ahora"
-                    width="148"
-                    height="148"
-                >
-            </a>
         </div>
     </div>
 </section>
 
-{{-- Contenido --}}
 <section class="rg-rest-detail-body">
     <div class="container-refugio">
-        <div class="rg-rest-detail-content" data-aos="fade-up">
-            @if($restaurant->categories->isNotEmpty())
-                <p class="rg-rest-detail-cats">{{ $restaurant->categories->pluck('name')->join(' · ') }}</p>
-            @endif
+        <div @class([
+            'rg-rest-detail-layout',
+            'rg-rest-detail-layout--with-delivery' => $restaurant->showsDeliveryLogos(),
+            'rg-rest-detail-layout--with-location' => filled($locationImage),
+        ]) data-aos="fade-up">
+            <div class="rg-rest-detail-content">
+                @if($restaurant->categories->isNotEmpty())
+                    <p class="rg-rest-detail-cats">{{ $restaurant->categories->pluck('name')->join(' · ') }}</p>
+                @endif
 
-            @if($restaurant->description)
-                <div class="rg-rest-detail-copy">
-                    {!! $restaurant->description !!}
-                </div>
-            @else
-                <p class="rg-rest-detail-copy">
-                    Descubre la propuesta de {{ $restaurant->name }} en Refugio Gastronómico.
-                </p>
-            @endif
+                @if($shortDescription !== '')
+                    <p class="rg-rest-detail-short">{{ $shortDescription }}</p>
+                @endif
 
-            <div class="rg-rest-detail-actions">
-                @if($restaurant->whatsapp_url || ($siteSettings->whatsapp_url ?? false))
-                    <a
-                        href="{{ $restaurant->whatsapp_url ?: $siteSettings->whatsapp_url }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="btn-cta"
-                    >Pide ahora</a>
+                @if($restaurant->description)
+                    <div class="rg-rest-detail-copy">
+                        {!! $restaurant->description !!}
+                    </div>
                 @endif
 
                 @if($restaurant->getFirstMediaUrl('menu_pdf'))
-                    <a
-                        href="{{ $restaurant->getFirstMediaUrl('menu_pdf') }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="btn-outline"
-                    >Ver menú PDF</a>
-                @endif
-
-                @if($restaurant->google_maps_url)
-                    <a
-                        href="{{ $restaurant->google_maps_url }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="rg-rest-detail-maps"
-                    >Ver en Google Maps</a>
+                    <div class="rg-rest-detail-actions">
+                        <a
+                            href="{{ $restaurant->getFirstMediaUrl('menu_pdf') }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn-outline"
+                        >Ver menú PDF</a>
+                    </div>
                 @endif
             </div>
+
+            <x-delivery-logos :restaurant="$restaurant" />
+
+            @if($locationImage)
+                <aside class="rg-rest-detail-location">
+                    <img
+                        src="{{ $locationImage }}"
+                        alt="Ubicación de {{ $restaurant->name }}"
+                        loading="lazy"
+                    >
+                </aside>
+            @endif
         </div>
     </div>
 </section>
+
+@if($similarRestaurants->isNotEmpty())
+    <section class="rg-rest-similar">
+        <div class="container-refugio">
+            <h2 class="rg-rest-similar-title" data-aos="fade-up">Ofertas similares</h2>
+            <div data-aos="fade-up">
+                <x-similar-restaurants-carousel :restaurants="$similarRestaurants" />
+            </div>
+        </div>
+    </section>
+@endif
 @endsection

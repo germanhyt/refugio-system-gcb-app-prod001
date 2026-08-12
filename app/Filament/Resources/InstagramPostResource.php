@@ -19,13 +19,18 @@ class InstagramPostResource extends Resource
 
     protected static ?string $navigationGroup = 'Contenido';
 
-    protected static ?string $navigationLabel = 'Instagram';
+    protected static ?string $navigationLabel = 'Instagram (archivo)';
 
     protected static ?string $modelLabel = 'Post IG';
 
     protected static ?string $pluralModelLabel = 'Posts IG';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 47;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {

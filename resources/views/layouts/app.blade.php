@@ -13,8 +13,11 @@
     @if($ogImage)
         <meta property="og:image" content="{{ $ogImage }}">
     @endif
-    @php($faviconUrl = $siteSettings->getFirstMediaUrl('favicon') ?: asset('images/refugio/logo-v2.svg'))
-    <link rel="icon" type="image/svg+xml" href="{{ $faviconUrl }}">
+    @php($faviconUrl = $siteSettings->getFirstMediaUrl('favicon') ?: asset('images/refugio/favicon-150x150.png'))
+    @php($faviconLargeUrl = asset('images/refugio/favicon-300x300.png'))
+    <link rel="icon" href="{{ $faviconUrl }}" sizes="32x32">
+    <link rel="icon" href="{{ $faviconLargeUrl }}" sizes="192x192">
+    <link rel="apple-touch-icon" href="{{ $faviconLargeUrl }}">
     <link rel="shortcut icon" href="{{ $faviconUrl }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')

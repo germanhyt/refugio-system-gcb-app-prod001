@@ -3,19 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\EventOffer;
 use Illuminate\View\View;
 
 class EventController extends Controller
 {
     public function index(): View
     {
-        $events = Event::query()
+        $offers = EventOffer::query()
             ->active()
-            ->orderByDesc('event_date')
+            ->ordered()
             ->with('media')
-            ->paginate(12);
+            ->get();
 
-        return view('pages.events.index', compact('events'));
+        return view('pages.events.index', compact('offers'));
     }
 
     public function show(Event $event): View

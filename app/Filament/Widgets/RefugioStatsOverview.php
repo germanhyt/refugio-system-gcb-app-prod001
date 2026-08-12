@@ -3,10 +3,10 @@
 namespace App\Filament\Widgets;
 
 use App\Models\BlogPost;
-use App\Models\Event;
-use App\Models\InstagramPost;
-use App\Models\NewsletterSubscriber;
+use App\Models\EventOffer;
+use App\Models\PageInquiry;
 use App\Models\Restaurant;
+use App\Models\ServiceItem;
 use App\Models\SiteSetting;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -24,26 +24,26 @@ class RefugioStatsOverview extends StatsOverviewWidget
                 ->description('Visibles en /restaurantes')
                 ->descriptionIcon('heroicon-m-building-storefront')
                 ->color('success'),
-            Stat::make('Eventos activos', Event::query()->active()->count())
-                ->description('Visibles en /eventos')
-                ->descriptionIcon('heroicon-m-calendar-days')
+            Stat::make('Ofertas de eventos', EventOffer::query()->active()->count())
+                ->description('Tarjetas en /eventos')
+                ->descriptionIcon('heroicon-m-ticket')
                 ->color('warning'),
+            Stat::make('Servicios activos', ServiceItem::query()->active()->count())
+                ->description(ServiceItem::query()->active()->showOnHome()->count().' en preview home')
+                ->descriptionIcon('heroicon-m-sparkles')
+                ->color('primary'),
             Stat::make(
                 'Blog',
                 BlogPost::query()->active()->count()
             )
                 ->description(
-                    ($settings->show_blog_section ? 'Sección ON' : 'Sección OFF')
-                    .' · '.BlogPost::query()->active()->featured()->count().' en home'
+                    ($settings->show_blog_section ? 'Rutas /blog ON' : 'Rutas /blog OFF')
+                    .' · solo footer (no home)'
                 )
                 ->descriptionIcon('heroicon-m-newspaper')
-                ->color($settings->show_blog_section ? 'primary' : 'gray'),
-            Stat::make('Instagram activos', InstagramPost::query()->active()->count())
-                ->description('Feed home (máx. 12)')
-                ->descriptionIcon('heroicon-m-camera')
-                ->color('info'),
-            Stat::make('Newsletter', NewsletterSubscriber::query()->count())
-                ->description('Suscriptores registrados')
+                ->color($settings->show_blog_section ? 'gray' : 'gray'),
+            Stat::make('Mensajes de contacto', PageInquiry::query()->count())
+                ->description('Formulario de /contacto y convocatorias')
                 ->descriptionIcon('heroicon-m-envelope')
                 ->color('success'),
         ];

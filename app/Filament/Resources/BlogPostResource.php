@@ -21,13 +21,13 @@ class BlogPostResource extends Resource
 
     protected static ?string $navigationGroup = 'Contenido';
 
-    protected static ?string $navigationLabel = 'Blog foodies';
+    protected static ?string $navigationLabel = 'Blog';
 
     protected static ?string $modelLabel = 'Post';
 
     protected static ?string $pluralModelLabel = 'Posts';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 46;
 
     public static function form(Form $form): Form
     {

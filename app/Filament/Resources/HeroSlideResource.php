@@ -5,11 +5,12 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\HeroSlideResource\Pages;
 use App\Models\HeroSlide;
 use Filament\Forms;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class HeroSlideResource extends Resource
 {
@@ -32,26 +33,41 @@ class HeroSlideResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Contenido')
-                    ->description('El slide 1 del home usa la imagen de fondo CMS. Tipografía/CTAs visuales del hero original son assets de diseño fijos; el slide 2 toma la dirección de Visítanos.')
+                    ->description('Soporta imagen o video. La imagen actúa como poster/fallback cuando el tipo es video. Controles del carousel solo aparecen con más de un slide activo.')
                     ->schema([
                         Forms\Components\TextInput::make('title')
-                            ->label('Título interno')
+                            ->label('Título')
                             ->required()
-                            ->maxLength(255)
-                            ->helperText('Referencia en admin; el arte del hero usa tipografía gráfica fija.'),
+                            ->maxLength(255),
                         Forms\Components\TextInput::make('subtitle')
-                            ->label('Subtítulo interno')
+                            ->label('Subtítulo')
                             ->maxLength(500),
+                        Forms\Components\Select::make('media_type')
+                            ->label('Tipo de media')
+                            ->options([
+                                'image' => 'Imagen',
+                                'video' => 'Video',
+                            ])
+                            ->default('image')
+                            ->required()
+                            ->live(),
                         Forms\Components\Textarea::make('description')
                             ->label('Notas / descripción')
                             ->rows(3)
                             ->columnSpanFull(),
                         SpatieMediaLibraryFileUpload::make('background_image')
-                            ->label('Imagen de fondo (slide 1)')
+                            ->label(fn (Get $get) => $get('media_type') === 'video' ? 'Poster / fallback' : 'Imagen de fondo')
                             ->collection('background_image')
                             ->image()
                             ->imageEditor()
-                            ->required()
+                            ->required(fn (Get $get) => $get('media_type') !== 'video')
+                            ->columnSpanFull(),
+                        SpatieMediaLibraryFileUpload::make('background_video')
+                            ->label('Video de fondo')
+                            ->collection('background_video')
+                            ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])
+                            ->visible(fn (Get $get) => $get('media_type') === 'video')
+                            ->required(fn (Get $get) => $get('media_type') === 'video')
                             ->columnSpanFull(),
                     ])->columns(2),
                 Forms\Components\Section::make('CTA y visibilidad')
@@ -86,6 +102,10 @@ class HeroSlideResource extends Resource
                     ->label('Título')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('media_type')
+                    ->label('Tipo')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state) => $state === 'video' ? 'Video' : 'Imagen'),
                 Tables\Columns\TextColumn::make('subtitle')
                     ->label('Subtítulo')
                     ->limit(40)

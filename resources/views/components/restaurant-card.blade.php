@@ -1,30 +1,31 @@
 @props(['restaurant'])
 
 @php
-    $featured = $restaurant->getFirstMediaUrl('featured_image');
     $logo = $restaurant->getFirstMediaUrl('logo');
-    $image = $featured ?: $logo;
+    $food = $restaurant->getFirstMediaUrl('featured_image');
+    $hasHover = filled($logo) && filled($food);
 @endphp
 
-<a href="{{ route('restaurants.show', $restaurant) }}" class="rg-rest-card group">
+<a
+    href="{{ route('restaurants.show', $restaurant) }}"
+    class="rg-rest-card group {{ $hasHover ? '' : 'rg-rest-card--static' }}"
+>
     <div class="rg-rest-card-media">
-        @if($image)
+        @if($food)
             <img
-                src="{{ $image }}"
+                src="{{ $food }}"
                 alt="{{ $restaurant->name }}"
-                class="rg-rest-card-image"
+                class="rg-rest-card-image rg-rest-card-food"
                 loading="lazy"
             >
-        @else
-            <div class="rg-rest-card-placeholder" aria-hidden="true"></div>
         @endif
 
         @if($logo)
-            <span
-                class="rg-rest-card-logo"
-                style="background-image: url('{{ $logo }}');"
-                aria-hidden="true"
-            ></span>
+            <div class="rg-rest-card-logo-view" aria-hidden="true">
+                <img src="{{ $logo }}" alt="">
+            </div>
+        @elseif(! $food)
+            <div class="rg-rest-card-placeholder" aria-hidden="true"></div>
         @endif
     </div>
 
