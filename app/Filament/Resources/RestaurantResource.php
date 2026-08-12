@@ -79,8 +79,8 @@ class RestaurantResource extends Resource
                         ->image()
                         ->imageEditor(),
                     SpatieMediaLibraryFileUpload::make('location_image')
-                        ->label('Imagen de ubicación')
-                        ->helperText('Foto del local/ubicación (no mapa). Opcional.')
+                        ->label('Posición en el parque')
+                        ->helperText('Imagen (plano o foto) que indica dónde está el restaurante dentro del Refugio. Opcional: si no se carga, no se muestra en la ficha.')
                         ->collection('location_image')
                         ->image()
                         ->imageEditor(),
@@ -110,16 +110,69 @@ class RestaurantResource extends Resource
                         ->maxLength(500)
                         ->visible(fn (Forms\Get $get) => (bool) $get('delivery_peya_enabled')),
                 ])->columns(2),
-            Forms\Components\Section::make('Contacto y SEO')
+            Forms\Components\Section::make('Redes sociales')
+                ->description('Enlaces de la ficha pública. Si un campo queda vacío, ese icono no se muestra.')
                 ->schema([
-                    Forms\Components\TextInput::make('whatsapp_url')
-                        ->label('WhatsApp / Pedir')
-                        ->helperText('Campo reservado: la ficha pública aún no muestra este enlace. El WhatsApp del header sale de Configuración → Sitio.')
+                    Forms\Components\TextInput::make('instagram_url')
+                        ->label('Instagram')
                         ->url()
                         ->maxLength(500),
+                    Forms\Components\TextInput::make('facebook_url')
+                        ->label('Facebook')
+                        ->url()
+                        ->maxLength(500),
+                    Forms\Components\TextInput::make('tiktok_url')
+                        ->label('TikTok')
+                        ->url()
+                        ->maxLength(500),
+                    Forms\Components\TextInput::make('whatsapp_url')
+                        ->label('WhatsApp')
+                        ->helperText('Enlace wa.me de este restaurante. Distinto del «¡Reserva aquí!» del header (Configuración → Sitio).')
+                        ->url()
+                        ->maxLength(500),
+                ])->columns(2),
+            Forms\Components\Section::make('Descuentos corporativos')
+                ->description('Se muestran debajo de la descripción, a la izquierda de la ficha. Los vencidos no aparecen; si la fecha de inicio es futura, salen como «Próximamente». Sin fechas = vigente mientras esté activo.')
+                ->schema([
+                    Forms\Components\Repeater::make('corporate_discounts')
+                        ->label('Descuentos')
+                        ->schema([
+                            Forms\Components\TextInput::make('title')
+                                ->label('Título')
+                                ->placeholder('Ej. Club El Comercio')
+                                ->required()
+                                ->maxLength(255),
+                            Forms\Components\Toggle::make('is_active')
+                                ->label('Activo')
+                                ->default(true),
+                            Forms\Components\Textarea::make('description')
+                                ->label('Detalle')
+                                ->placeholder('Ej. 15% en toda la carta, comida y bebida.')
+                                ->rows(2)
+                                ->columnSpanFull(),
+                            Forms\Components\DatePicker::make('starts_at')
+                                ->label('Vigente desde')
+                                ->native(false)
+                                ->displayFormat('d/m/Y'),
+                            Forms\Components\DatePicker::make('ends_at')
+                                ->label('Vigente hasta')
+                                ->native(false)
+                                ->displayFormat('d/m/Y'),
+                        ])
+                        ->columns(2)
+                        ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Descuento')
+                        ->collapsed()
+                        ->collapsible()
+                        ->reorderable()
+                        ->defaultItems(0)
+                        ->addActionLabel('Agregar descuento')
+                        ->columnSpanFull(),
+                ]),
+            Forms\Components\Section::make('Contacto y SEO')
+                ->schema([
                     Forms\Components\TextInput::make('google_maps_url')
                         ->label('Google Maps')
-                        ->helperText('Campo reservado: la ficha pública usa la foto de ubicación, no este enlace. El mapa de «¿Nos visitas?» sale de Nosotros / Visítanos.')
+                        ->helperText('Campo reservado: la ficha pública usa la imagen de posición en el parque, no este enlace. El mapa de «¿Nos visitas?» sale de Nosotros / Visítanos.')
                         ->url()
                         ->maxLength(500),
                     Forms\Components\TextInput::make('sort_order')

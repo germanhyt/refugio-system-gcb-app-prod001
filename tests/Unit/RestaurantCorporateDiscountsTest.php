@@ -1,0 +1,90 @@
+<?php
+
+namespace Tests\Unit;
+
+use App\Models\Restaurant;
+use Illuminate\Support\Carbon;
+use Tests\TestCase;
+
+class RestaurantCorporateDiscountsTest extends TestCase
+{
+    public function test_only_current_active_discounts_are_returned(): void
+    {
+        $today = Carbon::parse('2026-08-12', 'America/Lima')->startOfDay();
+
+        $restaurant = new Restaurant([
+            'corporate_discounts' => [
+                [
+                    'title' => 'Vigente sin fechas',
+                    'is_active' => true,
+                ],
+                [
+                    'title' => 'Vigente con rango',
+                    'is_active' => true,
+                    'starts_at' => '2026-08-01',
+                    'ends_at' => '2026-12-31',
+                ],
+                [
+                    'title' => 'Aún no empieza',
+                    'is_active' => true,
+                    'starts_at' => '2026-08-13',
+                ],
+                [
+                    'title' => 'Ya venció',
+                    'is_active' => true,
+                    'ends_at' => '2026-08-11',
+                ],
+                [
+                    'title' => 'Apagado',
+                    'is_active' => false,
+                    'starts_at' => '2026-01-01',
+                    'ends_at' => '2026-12-31',
+                ],
+                [
+                    'title' => '',
+                    'is_active' => true,
+                ],
+            ],
+        ]);
+
+        $titles = $restaurant->activeCorporateDiscounts($today)->pluck('title')->all();
+
+        $this->assertSame(['Vigente sin fechas', 'Vigente con rango'], $titles);
+        $this->assertSame(
+            ['Vigente sin fechas', 'Vigente con rango', 'Aún no empieza'],
+            $restaurant->visibleCorporateDiscounts($today)->pluck('title')->all()
+        );
+        $this->assertSame(
+            'upcoming',
+            $restaurant->visibleCorporateDiscounts($today)->firstWhere('title', 'Aún no empieza')['status']
+        );
+    }
+
+    public function test_social_links_omit_empty_urls(): void
+    {
+        $restaurant = new Restaurant([
+            'instagram_url' => 'https://instagram.com/marca',
+            'facebook_url' => '  ',
+            'tiktok_url' => null,
+            'whatsapp_url' => 'https://wa.me/51900000000',
+        ]);
+
+        $keys = array_column($restaurant->socialLinks(), 'key');
+
+        $this->assertSame(['instagram', 'whatsapp'], $keys);
+        $this->assertTrue($restaurant->hasSocialLinks());
+    }
+
+    public function test_detail_copy_hides_duplicate_short_and_paragraphs(): void
+    {
+        $copy = 'Nos encanta la comida hecha con cariño.';
+
+        $restaurant = new Restaurant([
+            'short_description' => $copy,
+            'description' => '<p>'.$copy.'</p><p>'.$copy.'</p>',
+        ]);
+
+        $this->assertNull($restaurant->detailLeadText());
+        $this->assertSame('<p>'.$copy.'</p>', $restaurant->detailBodyHtml());
+    }
+}

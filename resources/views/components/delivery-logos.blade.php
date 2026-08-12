@@ -1,15 +1,15 @@
 @props(['restaurant'])
 
 @if($restaurant->showsDeliveryLogos())
-    <aside class="rg-rest-detail-delivery-col" aria-label="Delivery disponible">
-        <div class="rg-delivery-callout-head">
-            <p class="rg-delivery-callout-title">Pide ahora</p>
+    <div class="rg-rest-panel rg-rest-detail-delivery-col" aria-label="Delivery disponible">
+        <h2 class="rg-rest-panel-title rg-rest-panel-title--center">
+            Pide ahora
             <span class="rg-delivery-callout-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                     <path d="M3 7h11v8H3V7Zm11 2h3l3 3v3h-2.1a2.5 2.5 0 0 1-4.8 0H11V9h3Zm5.5 8.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM7.5 18.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/>
                 </svg>
             </span>
-        </div>
+        </h2>
 
         <div class="rg-delivery-logos">
             @if($restaurant->delivery_rappi_enabled)
@@ -48,5 +48,5 @@
                 @endif
             @endif
         </div>
-    </aside>
+    </div>
 @endif

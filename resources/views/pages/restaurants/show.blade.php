@@ -5,8 +5,11 @@
 
 @php
     $heroImage = $restaurant->getFirstMediaUrl('featured_image') ?: $restaurant->getFirstMediaUrl('logo');
-    $locationImage = $restaurant->getFirstMediaUrl('location_image');
-    $shortDescription = trim((string) ($restaurant->short_description ?? ''));
+    $locationImage = $restaurant->parkPositionImageUrl();
+    $leadText = $restaurant->detailLeadText();
+    $bodyHtml = $restaurant->detailBodyHtml();
+    $menuPdf = $restaurant->getFirstMediaUrl('menu_pdf');
+    $hasMeta = $restaurant->hasSocialLinks() || filled($menuPdf);
 @endphp
 
 @section('content')
@@ -40,45 +43,57 @@
     <div class="container-refugio">
         <div @class([
             'rg-rest-detail-layout',
-            'rg-rest-detail-layout--with-delivery' => $restaurant->showsDeliveryLogos(),
-            'rg-rest-detail-layout--with-location' => filled($locationImage),
+            'rg-rest-detail-layout--with-aside' => $restaurant->hasDetailAside(),
         ]) data-aos="fade-up">
-            <div class="rg-rest-detail-content">
+            <div class="rg-rest-detail-main">
                 @if($restaurant->categories->isNotEmpty())
                     <p class="rg-rest-detail-cats">{{ $restaurant->categories->pluck('name')->join(' · ') }}</p>
                 @endif
 
-                @if($shortDescription !== '')
-                    <p class="rg-rest-detail-short">{{ $shortDescription }}</p>
+                @if(filled($leadText))
+                    <p class="rg-rest-detail-short">{{ $leadText }}</p>
                 @endif
 
-                @if($restaurant->description)
+                @if(filled($bodyHtml))
                     <div class="rg-rest-detail-copy">
-                        {!! $restaurant->description !!}
+                        {!! $bodyHtml !!}
                     </div>
                 @endif
 
-                @if($restaurant->getFirstMediaUrl('menu_pdf'))
-                    <div class="rg-rest-detail-actions">
-                        <a
-                            href="{{ $restaurant->getFirstMediaUrl('menu_pdf') }}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="btn-outline"
-                        >Ver menú PDF</a>
+                <x-restaurant-corporate-discounts :restaurant="$restaurant" />
+
+                @if($hasMeta)
+                    <div class="rg-rest-detail-meta">
+                        <x-restaurant-social-links :restaurant="$restaurant" />
+
+                        @if(filled($menuPdf))
+                            <a
+                                href="{{ $menuPdf }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="rg-btn-outline"
+                            >Ver menú PDF</a>
+                        @endif
                     </div>
                 @endif
             </div>
 
-            <x-delivery-logos :restaurant="$restaurant" />
+            @if($restaurant->hasDetailAside())
+                <aside class="rg-rest-detail-aside">
+                    @if($locationImage)
+                        <div class="rg-rest-panel rg-rest-detail-location">
+                            <h2 class="rg-rest-panel-title">Posición en el parque</h2>
+                            <figure class="rg-rest-detail-location-figure">
+                                <img
+                                    src="{{ $locationImage }}"
+                                    alt="Posición de {{ $restaurant->name }} dentro del Refugio"
+                                    loading="lazy"
+                                >
+                            </figure>
+                        </div>
+                    @endif
 
-            @if($locationImage)
-                <aside class="rg-rest-detail-location">
-                    <img
-                        src="{{ $locationImage }}"
-                        alt="Ubicación de {{ $restaurant->name }}"
-                        loading="lazy"
-                    >
+                    <x-delivery-logos :restaurant="$restaurant" />
                 </aside>
             @endif
         </div>

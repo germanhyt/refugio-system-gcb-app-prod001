@@ -210,6 +210,10 @@ Del panel
 
 
 
+(x) primero el local, Ahora en el detalle de cada restaurante, también consideramos si tiene descuentos corporativos vigentes, y también sus opciones de redes sociales, también la opción de cargar un imagen respecto a la posición que está dentro del parque (que es opcional); considera que sea configurable
+
+
+
 - imgs
 https://www.dropbox.com/scl/fo/k8y7gy08h01agnd88bfea/ALYBxlV1cYIOAmY6wurWFv8?rlkey=95w9y72nmxjykoeqee65cg7iv&st=3pnw98em&e=1&dl=0
 - tabla de info
