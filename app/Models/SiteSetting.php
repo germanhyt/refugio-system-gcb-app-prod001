@@ -50,6 +50,10 @@ class SiteSetting extends Model implements HasMedia
 
     public function registerMediaConversions(?Media $media = null): void
     {
+        if (! function_exists('imagewebp')) {
+            return;
+        }
+
         $this->addMediaConversion('webp')
             ->format('webp')
             ->performOnCollections('logo', 'og_image', 'hero_restaurants', 'hero_services', 'hero_events')

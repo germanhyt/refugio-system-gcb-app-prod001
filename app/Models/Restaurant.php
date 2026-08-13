@@ -85,6 +85,10 @@ class Restaurant extends Model implements HasMedia
 
     public function registerMediaConversions(?Media $media = null): void
     {
+        if (! function_exists('imagewebp')) {
+            return;
+        }
+
         $this->addMediaConversion('webp')
             ->format('webp')
             ->performOnCollections('featured_image', 'location_image')
