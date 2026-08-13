@@ -6,7 +6,7 @@ return [
         'anticuchos-anticuching' => 'images/nuevo/MAPAS/MAPA WEB ANTICUCHING.png',
         'barrio-mancora' => 'images/nuevo/MAPAS/MAPA WEB BARRIO MANCORA.png',
         'barrio-wok' => 'images/nuevo/MAPAS/MAPA WEB BARRIO WOK.png',
-        'broaster-bros' => 'images/nuevo/MAPAS/MAPA WEB BNROS.png',
+        'broaster-bros' => 'images/nuevo/MAPAS/MAPA WEB BROS.png',
         'caldos-doris' => 'images/nuevo/MAPAS/MAPA WEB CALDOS DORIS.png',
         'cavenecia' => 'images/nuevo/MAPAS/MAPA WEB CAVENECIA.png',
         'cremoladas-curich' => 'images/nuevo/MAPAS/MAPA WEB CURICH.png',
