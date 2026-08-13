@@ -58,6 +58,23 @@ class ServiceItem extends Model implements HasMedia
         return $query->orderBy('sort_order');
     }
 
+    public function descriptionWithWhatsappLinks(): string
+    {
+        $safe = e((string) $this->description);
+
+        return (string) preg_replace_callback(
+            '/\b(\d{3}(?:\s\d{3}){2}|\d{9})\b/',
+            function (array $match): string {
+                $digits = preg_replace('/\D+/', '', $match[1]);
+                $phone = str_starts_with((string) $digits, '51') ? $digits : '51'.$digits;
+                $message = rawurlencode('Hola Refugio Gastronómico, quiero información sobre '.$this->title.'.');
+
+                return '<a class="rg-service-whatsapp" href="https://wa.me/'.$phone.'?text='.$message.'" target="_blank" rel="noopener noreferrer">'.$match[1].'</a>';
+            },
+            $safe
+        );
+    }
+
     public static function iconKeyOptions(): array
     {
         return [
@@ -77,7 +94,7 @@ class ServiceItem extends Model implements HasMedia
             'zones' => 'Zonas / layout',
             'catering' => 'Catering',
             'nursing' => 'Lactancia',
-            'emergency' => 'Emergencia / botiquín',
+            'emergency' => 'Tópico / primeros auxilios',
         ];
     }
 }

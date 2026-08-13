@@ -72,8 +72,21 @@ class RestaurantCorporateDiscountsTest extends TestCase
 
         $keys = array_column($restaurant->socialLinks(), 'key');
 
-        $this->assertSame(['website', 'instagram', 'whatsapp'], $keys);
+        $this->assertSame(['website', 'instagram'], $keys);
         $this->assertTrue($restaurant->hasSocialLinks());
+        $this->assertTrue($restaurant->hasReservationWhatsapp());
+        $this->assertSame('https://wa.me/51900000000', $restaurant->reservationWhatsappUrl());
+    }
+
+    public function test_reservation_whatsapp_is_built_from_phone_when_url_is_empty(): void
+    {
+        $restaurant = new Restaurant([
+            'reservation_phone' => '939010993',
+            'whatsapp_url' => null,
+        ]);
+
+        $this->assertSame('https://wa.me/51939010993', $restaurant->reservationWhatsappUrl());
+        $this->assertFalse($restaurant->hasSocialLinks());
     }
 
     public function test_facebook_link_is_ignored_when_it_is_not_facebook(): void
@@ -95,6 +108,20 @@ class RestaurantCorporateDiscountsTest extends TestCase
 
         $this->assertTrue($restaurant->showsCorporateDiscountBadge());
         $this->assertFalse($restaurant->showsCorporateDiscountDetails());
+    }
+
+    public function test_exclusive_discount_image_falls_back_to_public_asset(): void
+    {
+        $restaurant = new Restaurant([
+            'slug' => 'ahumare',
+            'corporate_discount_mode' => Restaurant::DISCOUNT_BADGE,
+        ]);
+
+        $this->assertTrue($restaurant->showsExclusiveDiscount());
+        $this->assertStringContainsString('AHUMARE', (string) $restaurant->exclusiveDiscountImageUrl());
+        $this->assertStringContainsString('MAPA WEB AHUMARE', (string) $restaurant->parkPositionImageUrl());
+        $this->assertStringContainsString('ahumare.png', (string) $restaurant->logoUrl());
+        $this->assertStringContainsString('plato-1-ahumare.jpg', (string) $restaurant->featuredImageUrl());
     }
 
     public function test_detail_copy_hides_duplicate_short_and_paragraphs(): void

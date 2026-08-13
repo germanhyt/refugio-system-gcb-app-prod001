@@ -69,13 +69,13 @@ class RestaurantResource extends Resource
                 ->schema([
                     SpatieMediaLibraryFileUpload::make('logo')
                         ->label('Logo de marca')
-                        ->helperText('Se muestra en la grilla de restaurantes (vista inicial).')
+                        ->helperText('Se muestra en la grilla (vista inicial), la cinta de logos y el panel.')
                         ->collection('logo')
                         ->image()
                         ->imageEditor(),
                     SpatieMediaLibraryFileUpload::make('featured_image')
                         ->label('Imagen de comida')
-                        ->helperText('Se muestra al pasar el cursor en la grilla de restaurantes.')
+                        ->helperText('Plato para el hover de la grilla y el banner del detalle.')
                         ->collection('featured_image')
                         ->image()
                         ->imageEditor(),
@@ -83,6 +83,12 @@ class RestaurantResource extends Resource
                         ->label('Posición en el parque')
                         ->helperText('Imagen (plano o foto) que indica dónde está el restaurante dentro del Refugio. Opcional: si no se carga, no se muestra en la ficha.')
                         ->collection('location_image')
+                        ->image()
+                        ->imageEditor(),
+                    SpatieMediaLibraryFileUpload::make('exclusive_discount_image')
+                        ->label('Imagen de descuentos exclusivos')
+                        ->helperText('Se abre en un popup al pulsar «Descuentos exclusivos» en la ficha. Si está vacía, el indicador no es clicable.')
+                        ->collection('exclusive_discount_image')
                         ->image()
                         ->imageEditor(),
                     SpatieMediaLibraryFileUpload::make('menu_pdf')
@@ -148,8 +154,8 @@ class RestaurantResource extends Resource
                         ->url()
                         ->maxLength(500),
                 ])->columns(2),
-            Forms\Components\Section::make('Descuentos corporativos')
-                ->description('En la ficha: indicador con visto, o lista con detalle. Los vencidos no aparecen; fechas futuras salen como «Próximamente».')
+            Forms\Components\Section::make('Descuentos exclusivos')
+                ->description('En la ficha: indicador con visto. Si hay imagen, el indicador abre un popup. Los vencidos no aparecen; fechas futuras salen como «Próximamente».')
                 ->schema([
                     Forms\Components\Radio::make('corporate_discount_mode')
                         ->label('Cómo se muestra')

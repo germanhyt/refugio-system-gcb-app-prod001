@@ -79,6 +79,7 @@ class Restaurant extends Model implements HasMedia
         $this->addMediaCollection('logo')->singleFile();
         $this->addMediaCollection('featured_image')->singleFile();
         $this->addMediaCollection('location_image')->singleFile();
+        $this->addMediaCollection('exclusive_discount_image')->singleFile();
         $this->addMediaCollection('menu_pdf')->singleFile()->acceptsMimeTypes(['application/pdf']);
     }
 
@@ -86,8 +87,30 @@ class Restaurant extends Model implements HasMedia
     {
         $this->addMediaConversion('webp')
             ->format('webp')
-            ->performOnCollections('logo', 'featured_image', 'location_image')
+            ->performOnCollections('featured_image', 'location_image')
             ->nonQueued();
+    }
+
+    public function logoUrl(): ?string
+    {
+        $url = $this->getFirstMediaUrl('logo');
+
+        if (filled($url)) {
+            return $url;
+        }
+
+        return $this->publicAssetUrl(config('restaurant-assets.logos.'.$this->slug));
+    }
+
+    public function featuredImageUrl(): ?string
+    {
+        $url = $this->getFirstMediaUrl('featured_image');
+
+        if (filled($url)) {
+            return $url;
+        }
+
+        return $this->publicAssetUrl(config('restaurant-assets.dishes.'.$this->slug));
     }
 
     public function categories(): BelongsToMany
@@ -110,6 +133,16 @@ class Restaurant extends Model implements HasMedia
         return $query->where('is_active', true);
     }
 
+    public function scopeOrderedByCategory(Builder $query): Builder
+    {
+        return $query->orderBy(
+            RestaurantCategory::query()
+                ->selectRaw('coalesce(min(restaurant_categories.sort_order), 99)')
+                ->join('restaurant_category', 'restaurant_categories.id', '=', 'restaurant_category.restaurant_category_id')
+                ->whereColumn('restaurant_category.restaurant_id', 'restaurants.id')
+        )->orderBy('sort_order')->orderBy('name');
+    }
+
     public function hasDeliveryOptions(): bool
     {
         return ($this->delivery_rappi_enabled && filled($this->delivery_rappi_url))
@@ -125,7 +158,27 @@ class Restaurant extends Model implements HasMedia
     {
         $url = $this->getFirstMediaUrl('location_image');
 
-        return filled($url) ? $url : null;
+        if (filled($url)) {
+            return $url;
+        }
+
+        return $this->publicAssetUrl(config('restaurant-assets.park_maps.'.$this->slug));
+    }
+
+    public function exclusiveDiscountImageUrl(): ?string
+    {
+        $url = $this->getFirstMediaUrl('exclusive_discount_image');
+
+        if (filled($url)) {
+            return $url;
+        }
+
+        return $this->publicAssetUrl(config('restaurant-assets.exclusive_discounts.'.$this->slug));
+    }
+
+    public function showsExclusiveDiscount(): bool
+    {
+        return $this->showsCorporateDiscountBadge() || filled($this->exclusiveDiscountImageUrl());
     }
 
     /**
@@ -138,7 +191,6 @@ class Restaurant extends Model implements HasMedia
             ['key' => 'instagram', 'label' => 'Instagram', 'url' => $this->instagram_url],
             ['key' => 'facebook', 'label' => 'Facebook', 'url' => $this->facebook_url],
             ['key' => 'tiktok', 'label' => 'TikTok', 'url' => $this->tiktok_url],
-            ['key' => 'whatsapp', 'label' => 'Reservas WhatsApp', 'url' => $this->whatsapp_url],
         ];
 
         return array_values(array_filter(
@@ -160,6 +212,26 @@ class Restaurant extends Model implements HasMedia
     public function hasSocialLinks(): bool
     {
         return $this->socialLinks() !== [];
+    }
+
+    public function reservationWhatsappUrl(): ?string
+    {
+        if (filled($this->whatsapp_url)) {
+            return $this->whatsapp_url;
+        }
+
+        $digits = preg_replace('/\D+/', '', (string) $this->reservation_phone);
+
+        if (strlen((string) $digits) === 9) {
+            return 'https://wa.me/51'.$digits;
+        }
+
+        return null;
+    }
+
+    public function hasReservationWhatsapp(): bool
+    {
+        return filled($this->reservationWhatsappUrl());
     }
 
     public function showsCorporateDiscountBadge(): bool
@@ -271,6 +343,19 @@ class Restaurant extends Model implements HasMedia
         return $this->visibleCorporateDiscounts($on)
             ->filter(fn (array $item): bool => ($item['status'] ?? 'current') === 'current')
             ->values();
+    }
+
+    private function publicAssetUrl(mixed $relativePath): ?string
+    {
+        if (! is_string($relativePath) || $relativePath === '') {
+            return null;
+        }
+
+        if (! is_file(public_path($relativePath))) {
+            return null;
+        }
+
+        return asset($relativePath);
     }
 
     private function normalizedPlain(string $value): string

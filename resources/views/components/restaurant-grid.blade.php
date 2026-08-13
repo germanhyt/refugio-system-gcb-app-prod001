@@ -80,7 +80,7 @@
                     @foreach($features as $feature)
                         @php($restaurant = $feature->restaurant)
                         @continue(! $restaurant)
-                        @php($logo = $restaurant->getFirstMediaUrl('logo') ?: $restaurant->getFirstMediaUrl('featured_image'))
+                        @php($logo = $restaurant->logoUrl() ?: $restaurant->featuredImageUrl())
                         @continue(! $logo)
                         <div class="swiper-slide">
                             <a href="{{ route('restaurants.show', $restaurant) }}" class="rg-logo-slide">

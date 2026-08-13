@@ -9,8 +9,9 @@
 
 <h1 {{ $attributes->merge(['class' => 'rg-visit-hero-title']) }}>
     @if (count($parts) > 1)
-        <span>{{ $parts[0] }}</span><br>{{ $parts[1] }}
+        <span class="rg-visit-hero-title-lead">{{ $parts[0] }}</span>
+        <span class="rg-visit-hero-title-main">{{ $parts[1] }}</span>
     @else
-        {{ $raw }}
+        <span class="rg-visit-hero-title-main">{{ $raw }}</span>
     @endif
 </h1>

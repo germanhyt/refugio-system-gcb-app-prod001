@@ -29,6 +29,9 @@ class DatabaseSeeder extends Seeder
             HeroSlideSeeder::class,
             StaticPageSeeder::class,
             RestaurantDirectorySeeder::class,
+            RestaurantCategoryAssignmentSeeder::class,
+            RestaurantParkAssetsSeeder::class,
+            SiteDocumentSeeder::class,
         ]);
     }
 }

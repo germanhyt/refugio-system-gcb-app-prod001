@@ -26,7 +26,7 @@
                 .rg-hola-section--top-ribbon { padding-top: 0 !important; }
                 .rg-hola-leaf-ribbon {
                     height: 48px !important;
-                    margin-bottom: 2.75rem !important;
+                    margin-bottom: 1.5rem !important;
                     background-repeat: repeat-x !important;
                     background-position: center top !important;
                     background-size: auto 100% !important;
@@ -37,7 +37,7 @@
         @endonce
         <div
             class="rg-hola-leaf-ribbon"
-            style="height:48px;margin-bottom:2.75rem;background-repeat:repeat-x;background-position:center top;background-size:auto 100%;transform:scaleY(-1);background-image:url('{{ asset('images/refugio/divisor-hojas-home.svg') }}');"
+            style="height:48px;margin-bottom:1.5rem;background-repeat:repeat-x;background-position:center top;background-size:auto 100%;transform:scaleY(-1);background-image:url('{{ asset('images/refugio/divisor-hojas-home.svg') }}');"
             aria-hidden="true"
         ></div>
     @endif

@@ -5,7 +5,7 @@
 @section('content')
 <section
     class="rg-rest-hero"
-    style="background-image: url('{{ asset('images/refugio/restaurantes-hero.jpg') }}');"
+    style="background-image: url('{{ $siteSettings->pageHeroBannerUrl('services') }}');"
 >
     <div class="rg-rest-hero-overlay" aria-hidden="true"></div>
     <div class="container-refugio relative z-10 px-6 text-center">

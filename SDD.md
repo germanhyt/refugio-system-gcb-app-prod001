@@ -207,10 +207,88 @@ Del panel
 (x) Dónde está configurable el carousel de imágenes de la página de "Nosotros"? está o no funcional?
 (x) los icons por defecto de de la grilla mejorar, ejemplo el icon de whattssap que no se veo bien
 
-
-
-
 (x) primero el local, Ahora en el detalle de cada restaurante, también consideramos si tiene descuentos corporativos vigentes, y también sus opciones de redes sociales, también la opción de cargar un imagen respecto a la posición que está dentro del parque (que es opcional); considera que sea configurable
+
+
+
+
+
+() En la página principal disminuimos los paddings entre secciones desde "¡Hola! Somos Refugio Gastronómico." hasta "¿Dudas? ¡Contáctanos!"
+
+() Actualizamos los servicios con la siguiente tabla "Servicio	Descripción
+WhatsApp Refugio	¡Conversemos: 991 318 720!
+Estacionamiento gratis	3 horas, por consumos mayores a 50 soles
+Pet friendly	Tu mascota es bienvenida
+Espacios para eventos	Organiza tu evento social o corporativo: 994 848 723
+Catering	Llevamos el sabor a tu evento: 994 848 723
+Bosque Mágico	Zona infantil 
+Espacios publicitarios	¡Muestra tu marca en Refugio! 994 848 723
+Delivery	¡Llegamos hasta donde estés!
+Shows en vivo	Revisa nuestro cronograma mensual
+Shows infantiles	Revisa nuestro cronograma mensual
+Objetos perdidos	Tu objeto puede estar aquí: 997 960 902
+Baños para niños 	Baños exclusivos para niños.
+Servicios Higiénicos	Libre para todos nuestros visitantes
+Tópico	Atención de primeros auxilios"
+
+() Te comparto el set de imagenes (/images/nuevo/mapas) del mapa de cada "Posición en el parque" de los diferentes restaurante, lo actualizamos en el panel administrable para todos los resturantes que haya, 
+
+() En el detalle de cada resturante actualizamos de "Descuentos corporativos" a "Descuentos exclusivos", además que al hacer hover indicar con el cursor que es presionable (y además title que dice ver) donde al presionar aperture un modal o popup donde se vena una la imagen del descuento acorde al resturante si lo tiene, la tura de imagenes está en "/images/nuevo/descuentos exclusivos"
+
+
+() En Eventos, para "show musicales" redireccionamos al link "https://www.instagram.com/p/DbecrIhgVxo/?img_index=1", de show para niños "https://www.instagram.com/p/DbecrIhgVxo/?img_index=1", para organiza tu evento a "wa.link/nxbse6" , para organiza tu fiesta infantil a "/#"
+
+() En el footer agregamos la redes de youtube e instagram
+
+
+
+Eres xperto en diseño web UX/UI
+() EL modal de descuentos exclusivos que aparezca en base a toda la página no solo en base a la sección dado que se ve mal
+() Simplificar en "¿Dudas? ¡Contáctanos!" las dos primeras columnas llamarla "Espacios publicatarios y comerciales"
+() En la cinta de logos,  agrandamos poco más los logos y que al hacer hover este scale su tamaño poco pero también se detecta la transición automática 
+() En Servicios el texto que va debajo de título, si es número que sea lineable hacia la api link de whatssap con mesaje predeterminado, además mejorar el logo de "pet friendly"
+() En la página principal en base al "container-refugio relative z-10 rg-hola-grid"  le damos un poco más de paddint top para que cuadre mejor
+() Por defecto ningún restaurante tiene aún el pdf de menu
+() Del footer la oçión de "Descuentos U. Lima" aperturar el pdf de ULIMA-DESCUENTOS en un nueva ventana, configurable este documento, está en /images/ULIMA-DESCUENTOS cargarlo al panel
+
+
+
+
+() En el detalle de resturante, de la siguiente tabla respecto al campo de reserva los sí tiene lo colocamos en la parte derecha de síguenos como "Reserva y el icon del whatssap" en caso si aplique reserva de "	Descripcion corta	Pagina web	Reservas
+Cavenecia Steakhouse 	Carnes y parrillas con cortes Angus importados de USA	https://caveneciasteakhouse.com	939010993
+Barrio Mancora	Ceviches, pescados y sabores de nuestra cocina criolla	NO TIENE	961788255
+Sisa	Café, desayunos y sabores para cualquier momento del día.	https://www.tiktok.com/@barrio.mancora	994848999
+Refugio Bar	El bar perfecto para brindar, compartir y disfrutar.	NO TIENE	980541946
+Don Melchor	Tradición, innovación y sabor en cada Pollo a la Brasa y Parrilla.	https://donmelchorpollos.com	923264129
+Ahumare	Ahumados y salteados con ese toque de humo que lo cambia todo.	NO TIENE	NO TIENE
+Anticuching	Para nosotros todo es anticuchable, somos las brochetas más largas del Perú.	NO TIENE	NO TIENE
+Madre Amazónica	Sabores de la selva, la cocina criolla y el mar, reunidos en un solo lugar.	NO TIENE	NO TIENE
+La 22	Hamburguesas, salchipapas & más	NO TIENE	NO TIENE
+La Victoria	Sanguches criollos con sabor peruano en cada bocado.	NO TIENE	NO TIENE
+Tortas Gaby	Tortas y dulces hechos para celebrar cada momento.	www.tortasgaby.com.pe	NO TIENE
+Barrio Wok	Chifa de barrio, wok al fuego y ese olor a chifa que no se olvida.	NO TIENE	NO TIENE
+Lili Blue	Comida saludable	NO TIENE	NO TIENE
+Saltao	Saltados criollos con todo el sabor y tradición peruana.	NO TIENE	NO TIENE
+Bros	El verdadero pollo crunch, crujiente, sabroso y adictivo.	NO TIENE	NO TIENE
+Ramen Ya!	Ramen al estilo Hanzo, con sabores japoneses que conquistan en cada bowl.	NO TIENE	NO TIENE
+Hanzo	Street food nikkei, rápido y delicioso, con tus platos favoritos fríos y calientes.	NO TIENE	NO TIENE
+Mr. Smash	La verdadera smash burger: jugosa, crujiente y llena de sabor.	NO TIENE	NO TIENE
+Caldos Doris	El auténtico caldo de gallina, preparado con tradición, calidad y ese sabor casero que siempre provoca volver.	NO TIENE	NO TIENE
+Limanesas	Milanesas crujientes, hechas al momento y llenas de sabor.	https://www.limanesas.com	NO TIENE
+Nashmys	Comida Árabe Rápida	NO TIENE	NO TIENE
+Curich	Cremoladas con calidad, sabor y tradición desde 1942.	https://www.cremoladascurich.com	NO TIENE"
+
+
+
+(x) En /nosotros y  /contacto se observa que los textos del banner no están centrados, revisamos
+() En la cinta de logos "Nuestros restaurantes" mencioné que al posar el hover que se detanga la cinta también
+
+
+
+(x) actualizamos estas imágenes incluso en el panel, los logos (/images/nuevo/logos), para los banners de páginas hay para realiza en 3 partes según al descripción de cada fondo de banner /images/nuevo/banners, e imágenes de platos de restaraunte para la grilla y detalle (/images/nuevo/platos)
+
+
+(x) Disminuir el height del banner de Nosotros y contacto, además centrar también el titulo, será eso o tiene que el panel administrable al respecto?, revisamos referencias de los otros
 
 
 
@@ -218,4 +296,8 @@ Del panel
 https://www.dropbox.com/scl/fo/k8y7gy08h01agnd88bfea/ALYBxlV1cYIOAmY6wurWFv8?rlkey=95w9y72nmxjykoeqee65cg7iv&st=3pnw98em&e=1&dl=0
 - tabla de info
 https://docs.google.com/spreadsheets/d/1-J-MTxzpSYrmb9nn6rju2ySrTpdB5ac7rGAy-8D89mM/edit?gid=0#gid=0
+
+
+
+
 

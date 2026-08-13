@@ -22,6 +22,7 @@ class HomeController extends Controller
                 ->get(),
             'homeServices' => ServiceItem::query()
                 ->active()
+                ->showOnHome()
                 ->ordered()
                 ->with('media')
                 ->limit(8)

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\HomeRestaurantFeature;
 use App\Models\Restaurant;
 use Illuminate\Database\Seeder;
 
@@ -9,6 +10,8 @@ class RestaurantDirectorySeeder extends Seeder
 {
     public function run(): void
     {
+        $officialSlugs = [];
+
         foreach ($this->rows() as $row) {
             $restaurant = Restaurant::query()->where('slug', $row['slug'])->first()
                 ?? Restaurant::query()
@@ -37,12 +40,22 @@ class RestaurantDirectorySeeder extends Seeder
             if ($restaurant) {
                 $restaurant->update($payload);
             } else {
-                Restaurant::query()->create([
+                $restaurant = Restaurant::query()->create([
                     ...$payload,
                     'slug' => $row['slug'],
                 ]);
             }
+
+            $officialSlugs[] = $restaurant->slug;
         }
+
+        Restaurant::query()
+            ->whereNotIn('slug', $officialSlugs)
+            ->update(['is_active' => false]);
+
+        HomeRestaurantFeature::query()
+            ->whereHas('restaurant', fn ($query) => $query->where('is_active', false))
+            ->update(['is_active' => false]);
     }
 
     /**

@@ -15,7 +15,7 @@
             </div>
             <h3 class="rg-service-title">{{ $service->title }}</h3>
             @if($service->description)
-                <p class="rg-service-desc">{{ $service->description }}</p>
+                <p class="rg-service-desc">{!! $service->descriptionWithWhatsappLinks() !!}</p>
             @endif
         </article>
     @empty

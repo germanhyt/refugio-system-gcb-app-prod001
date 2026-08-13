@@ -35,10 +35,8 @@ class RestaurantController extends Controller
                 $query->whereHas(
                     'categories',
                     fn ($q) => $q->where('restaurant_categories.id', $activeCategory->id)
-                );
-            })
-            ->orderBy('sort_order')
-            ->orderBy('name')
+                )->orderBy('sort_order')->orderBy('name');
+            }, fn ($query) => $query->orderedByCategory())
             ->paginate(24)
             ->withQueryString();
 

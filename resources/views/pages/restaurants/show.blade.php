@@ -4,12 +4,12 @@
 @section('meta_description', $restaurant->meta_description ?: \Illuminate\Support\Str::limit(strip_tags($restaurant->short_description ?: $restaurant->description ?? ''), 160))
 
 @php
-    $heroImage = $restaurant->getFirstMediaUrl('featured_image') ?: $restaurant->getFirstMediaUrl('logo');
+    $heroImage = $restaurant->featuredImageUrl() ?: $restaurant->logoUrl();
     $locationImage = $restaurant->parkPositionImageUrl();
     $leadText = $restaurant->detailLeadText();
     $bodyHtml = $restaurant->detailBodyHtml();
     $menuPdf = $restaurant->getFirstMediaUrl('menu_pdf');
-    $hasMeta = $restaurant->hasSocialLinks() || filled($menuPdf);
+    $hasMeta = $restaurant->hasSocialLinks() || $restaurant->hasReservationWhatsapp() || filled($menuPdf);
 @endphp
 
 @section('content')

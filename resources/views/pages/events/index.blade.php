@@ -5,7 +5,7 @@
 @section('content')
 <section class="rg-events-hero relative flex min-h-[420px] items-center justify-center overflow-hidden tablet:min-h-[500px]">
     <img
-        src="{{ asset('images/refugio/eventos-hero.jpg') }}"
+        src="{{ $siteSettings->pageHeroBannerUrl('events') }}"
         alt=""
         class="absolute inset-0 h-full w-full object-cover object-bottom"
         fetchpriority="high"
@@ -29,6 +29,7 @@
                 @php
                     $cover = $offer->getFirstMediaUrl('cover') ?: asset('images/refugio/eventos-hero.jpg');
                     $href = $offer->cta_url ?: route('contact');
+                    $isExternal = str_starts_with($href, 'http://') || str_starts_with($href, 'https://');
                 @endphp
                 <article class="rg-event-offer-card group">
                     <div class="rg-event-offer-media">
@@ -40,7 +41,11 @@
                             <p class="rg-event-offer-summary">{{ $offer->summary }}</p>
                         @endif
                         @if($offer->cta_text)
-                            <a href="{{ $href }}" class="rg-event-offer-cta">{{ $offer->cta_text }}</a>
+                            <a
+                                href="{{ $href }}"
+                                class="rg-event-offer-cta"
+                                @if($isExternal) target="_blank" rel="noopener noreferrer" @endif
+                            >{{ $offer->cta_text }}</a>
                         @else
                             <span class="rg-event-offer-cta-spacer" aria-hidden="true"></span>
                         @endif

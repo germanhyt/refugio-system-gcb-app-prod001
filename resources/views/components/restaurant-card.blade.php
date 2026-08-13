@@ -1,8 +1,8 @@
 @props(['restaurant'])
 
 @php
-    $logo = $restaurant->getFirstMediaUrl('logo');
-    $food = $restaurant->getFirstMediaUrl('featured_image');
+    $logo = $restaurant->logoUrl();
+    $food = $restaurant->featuredImageUrl();
     $hasHover = filled($logo) && filled($food);
 @endphp
 

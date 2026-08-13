@@ -15,8 +15,7 @@
                     @foreach($features as $feature)
                         @php
                             $restaurant = $feature->restaurant;
-                            $logo = $restaurant?->getFirstMediaUrl('logo')
-                                ?: $restaurant?->getFirstMediaUrl('cover')
+                            $logo = $restaurant?->logoUrl()
                                 ?: asset('images/refugio/logo-v2.svg');
                         @endphp
                         @if($restaurant)

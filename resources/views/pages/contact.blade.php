@@ -2,6 +2,11 @@
 
 @section('title', 'Contacto | Refugio Gastronómico')
 
+@push('head')
+    <x-page-hero-birds-dark-styles />
+    <x-page-hero-critical-styles />
+@endpush
+
 @section('content')
 <section class="rg-contact-hero rg-contact-hero--birds-dark">
     <img
@@ -18,7 +23,7 @@
     >
 
     <div class="rg-contact-hero-overlay" aria-hidden="true"></div>
-    <div class="container-refugio relative z-10 px-6 text-center">
+    <div class="container-refugio relative z-10 text-center">
         <h1 class="rg-contact-hero-title">¡Hola! ¿En qué te podemos ayudar?</h1>
         <p class="rg-contact-hero-subtitle">Encuentra el canal adecuado o escríbenos directamente.</p>
     </div>

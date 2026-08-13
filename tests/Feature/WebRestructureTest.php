@@ -21,6 +21,10 @@ class WebRestructureTest extends TestCase
         $response->assertSee('rg-services-deco--plants-left', false);
         $response->assertSee('¿Nos visitas?', false);
         $response->assertSee('¿Dudas? ¡Contáctanos!', false);
+        $response->assertSee('Espacios publicitarios y comerciales', false);
+        $response->assertSee('¡Conversemos:', false);
+        $response->assertSee('991 318 720', false);
+        $response->assertSee('wa.me/51991318720', false);
         $response->assertDontSee('instagram-feed', false);
         $response->assertDontSee('blog-foodies', false);
     }
@@ -34,7 +38,6 @@ class WebRestructureTest extends TestCase
         $response->assertSee('Restaurantes', false);
         $response->assertSee('Eventos', false);
         $response->assertSee('¡Reserva aquí!', false);
-        $response->assertSee('logo-v1-base.svg', false);
         $response->assertSee('logo-v2-white.svg', false);
         $response->assertDontSee('>Visítanos<', false);
     }
@@ -51,6 +54,8 @@ class WebRestructureTest extends TestCase
         $response->assertSee('Show para niños', false);
         $response->assertSee('Organiza tu evento con nosotros', false);
         $response->assertSee('Organiza tu fiesta infantil', false);
+        $response->assertSee('https://www.instagram.com/p/DbecrIhgVxo/?img_index=1', false);
+        $response->assertSee('https://wa.link/nxbse6', false);
         $response->assertSee('¿Nos visitas?', false);
     }
 
@@ -73,6 +78,8 @@ class WebRestructureTest extends TestCase
         $this->get('/servicios')
             ->assertOk()
             ->assertSee('Nuestros servicios', false)
+            ->assertSee('Tópico', false)
+            ->assertSee('Atención de primeros auxilios', false)
             ->assertSee('decorator-platana-inferior-izquierda.png', false)
             ->assertSee('decorator-pajaros-rojos.png', false)
             ->assertSee('rg-services-deco--plants-left', false);
@@ -80,6 +87,7 @@ class WebRestructureTest extends TestCase
         $this->get('/reglamento-pet-friendly')->assertOk()->assertSee('Zona pet friendly', false);
         $this->get('/politica-de-estacionamiento')->assertOk()->assertSee('3 horas gratis', false);
         $this->get('/descuentos-u-lima')->assertOk()->assertSee('10% de descuento', false);
+        $this->get('/')->assertSee('ULIMA-DESCUENTOS', false);
         $this->get('/blog')->assertOk();
     }
 
@@ -131,18 +139,29 @@ class WebRestructureTest extends TestCase
             $response = $this->get('/restaurantes/'.$restaurant->slug);
 
             $response->assertOk();
-            $response->assertSee('Descuentos corporativos', false);
+            $response->assertSee('Descuentos exclusivos', false);
             $response->assertSee('Vigente', false);
             $response->assertSee('Club El Comercio', false);
             $response->assertSee('15% en toda la carta', false);
             $response->assertDontSee('Convenio vencido', false);
             $response->assertDontSee('Convenio inactivo', false);
             $response->assertSee('https://www.instagram.com/refugiogastronomico.pe/', false);
+            $response->assertSee('Reserva', false);
             $response->assertSee('https://wa.me/51991318720', false);
             $response->assertDontSee('Posición en el parque', false);
         } finally {
             $restaurant->delete();
         }
+    }
+
+    public function test_restaurant_detail_exclusive_discount_opens_with_ver_title(): void
+    {
+        $response = $this->get('/restaurantes/ahumare');
+
+        $response->assertOk();
+        $response->assertSee('Descuentos exclusivos', false);
+        $response->assertSee('title="Ver"', false);
+        $response->assertSee('Posición en el parque', false);
     }
 
     public function test_legal_and_mirrored_pages_return_ok_with_fallback(): void
@@ -153,5 +172,91 @@ class WebRestructureTest extends TestCase
         $this->get('/libro-de-reclamaciones')->assertOk()->assertSee('Libro de reclamaciones', false);
         $this->get('/contacto')->assertOk()->assertSee('¿Dudas? ¡Contáctanos!', false)->assertSee('Envíanos un mensaje', false);
         $this->get('/convocatoria')->assertOk();
+    }
+
+    public function test_page_banners_follow_hero_titles(): void
+    {
+        $settings = \App\Models\SiteSetting::current();
+
+        $this->get('/restaurantes')
+            ->assertOk()
+            ->assertSee($settings->pageHeroBannerUrl('restaurants'), false)
+            ->assertSee('¿Qué te provoca hoy?', false);
+
+        $this->get('/servicios')
+            ->assertOk()
+            ->assertSee($settings->pageHeroBannerUrl('services'), false);
+
+        $this->get('/eventos')
+            ->assertOk()
+            ->assertSee($settings->pageHeroBannerUrl('events'), false);
+    }
+
+    public function test_restaurant_listing_uses_logo_and_dish_assets(): void
+    {
+        $restaurant = \App\Models\Restaurant::query()->where('slug', 'ahumare')->first();
+        $this->assertNotNull($restaurant);
+        $this->assertNotEmpty($restaurant->logoUrl());
+        $this->assertNotEmpty($restaurant->featuredImageUrl());
+
+        $this->get('/restaurantes')
+            ->assertOk()
+            ->assertSee($restaurant->logoUrl(), false);
+
+        $this->get('/restaurantes/ahumare')
+            ->assertOk()
+            ->assertSee($restaurant->featuredImageUrl(), false);
+    }
+
+    public function test_retired_restaurants_are_not_public(): void
+    {
+        $this->get('/restaurantes')
+            ->assertOk()
+            ->assertDontSee('La Choza de la Anaconda', false)
+            ->assertDontSee('Caja China', false);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertDontSee('La Choza de la Anaconda', false)
+            ->assertDontSee('Caja China Criolla', false);
+
+        $this->get('/restaurantes/la-choza-de-la-anaconda')->assertNotFound();
+        $this->get('/restaurantes/caja-china-criolla')->assertNotFound();
+    }
+
+    public function test_about_and_contact_heroes_are_compact_and_centered(): void
+    {
+        $about = $this->get('/nosotros');
+        $about->assertOk();
+        $about->assertSee('container-refugio relative z-10 text-center', false);
+        $about->assertSee('position: absolute !important', false);
+        $about->assertSee('rg-visit-hero-deco', false);
+        $about->assertSee('¿Quiénes', false);
+        $about->assertSee('Somos?', false);
+
+        $contact = $this->get('/contacto');
+        $contact->assertOk();
+        $contact->assertSee('container-refugio relative z-10 text-center', false);
+        $contact->assertSee('¡Hola! ¿En qué te podemos ayudar?', false);
+    }
+
+    public function test_restaurant_index_orders_by_category_when_showing_all(): void
+    {
+        $response = $this->get('/restaurantes');
+        $response->assertOk();
+
+        $html = $response->getContent();
+        $barPos = strpos($html, 'Refugio Bar');
+        $cafePos = strpos($html, 'Tortas Gaby');
+        $internationalPos = strpos($html, 'Ahumare');
+        $peruvianPos = strpos($html, 'Anticuching');
+
+        $this->assertNotFalse($barPos);
+        $this->assertNotFalse($cafePos);
+        $this->assertNotFalse($internationalPos);
+        $this->assertNotFalse($peruvianPos);
+        $this->assertTrue($barPos < $cafePos);
+        $this->assertTrue($cafePos < $internationalPos);
+        $this->assertTrue($internationalPos < $peruvianPos);
     }
 }

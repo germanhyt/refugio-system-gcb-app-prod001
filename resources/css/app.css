@@ -2264,20 +2264,37 @@
   }
 }
 
-/* Visítanos / Nosotros */
-.rg-visit-hero {
+/* Visítanos / Nosotros / Contacto — mismo patrón que .rg-rest-hero */
+.rg-visit-hero,
+.rg-contact-hero {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 280px;
-  padding: 7.5rem 1rem 4.5rem;
+  width: 100%;
+  min-height: 420px;
+  padding: 11.5rem 1rem 4rem;
   overflow: hidden;
-  background-color: #a7623d;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
   text-align: center;
+  box-sizing: border-box;
+}
+
+.rg-visit-hero-inner,
+.rg-contact-hero-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  text-align: center;
+}
+
+@media (min-width: 1024px) {
+  .rg-visit-hero-inner,
+  .rg-contact-hero-inner {
+    padding-inline: 2.5rem;
+  }
 }
 
 .rg-visit-hero-deco {
@@ -2314,21 +2331,34 @@
 }
 
 .rg-visit-hero-title {
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.75rem 0 0.75rem;
   font-family: var(--font-display);
   font-size: clamp(1.6rem, 3.6vw, 2.8rem);
   font-weight: 500;
-  line-height: 1.2;
+  line-height: 1.15;
+  text-align: center;
   text-transform: uppercase;
   color: #fff;
 }
 
-.rg-visit-hero-title span {
-  display: inline-block;
+.rg-visit-hero-title-lead {
+  display: block;
+  margin-bottom: 0.55rem;
   font-family: var(--font-body);
-  font-size: clamp(1.4rem, 3vw, 2.5rem);
+  font-size: clamp(1.35rem, 2.8vw, 2.35rem);
   font-weight: 400;
+  line-height: 1.2;
   text-transform: none;
+}
+
+.rg-visit-hero-title-main {
+  display: block;
 }
 
 .rg-leaf-divider {
@@ -2452,9 +2482,16 @@
 }
 
 @media (min-width: 768px) {
-  .rg-visit-hero {
-    min-height: 360px;
-    padding: 9.5rem 1rem 6.25rem;
+  .rg-visit-hero,
+  .rg-contact-hero {
+    min-height: 480px;
+    padding: 13rem 1rem 4.5rem;
+  }
+
+  .rg-visit-hero-title,
+  .rg-contact-hero-title {
+    padding-top: 2rem;
+    padding-bottom: 1.25rem;
   }
 
   .rg-visit-map-section {
@@ -2480,10 +2517,6 @@
 }
 
 @media (min-width: 1025px) {
-  .rg-visit-hero {
-    padding: 12.5rem 1rem 7.5rem;
-  }
-
   .rg-visit-map {
     height: 750px;
   }
@@ -3535,7 +3568,7 @@
 }
 
 .rg-hola-section {
-  padding: 4.5rem 0;
+  padding: 3rem 0;
   background: #f7f3ee;
 }
 
@@ -3545,7 +3578,7 @@
 
 .rg-hola-leaf-ribbon {
   height: 48px;
-  margin-bottom: 2.75rem;
+  margin-bottom: 1.5rem;
   background-color: transparent;
   background-repeat: repeat-x;
   background-position: center top;
@@ -3659,16 +3692,24 @@
   opacity: 0.55;
 }
 
-.rg-visit-hero.rg-visit-hero--birds-dark > *,
-.rg-contact-hero.rg-contact-hero--birds-dark > *,
-.rg-static-hero.rg-static-hero--birds-dark > * {
+.rg-visit-hero.rg-visit-hero--birds-dark > .container-refugio,
+.rg-contact-hero.rg-contact-hero--birds-dark > .container-refugio,
+.rg-static-hero.rg-static-hero--birds-dark > .container-refugio {
   position: relative;
+  z-index: 2;
+}
+
+/* Las plantas decorativas deben quedar fuera del flujo flex (no empujan el título) */
+.rg-visit-hero--birds-dark .rg-visit-hero-deco,
+.rg-contact-hero--birds-dark .rg-visit-hero-deco {
+  position: absolute;
   z-index: 1;
 }
 
 .rg-hola-grid {
   display: grid;
   gap: 2rem;
+  padding-top: 1.75rem;
 }
 
 @media (min-width: 900px) {
@@ -3772,36 +3813,42 @@
 
 .rg-logo-carousel-track {
   overflow: hidden;
+  padding-block: 0.85rem;
   mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
 
 .rg-logo-carousel-row {
   display: flex;
   width: max-content;
-  gap: 2.5rem;
+  gap: 2.75rem;
   align-items: center;
-  animation: rg-logo-marquee 32s linear infinite;
+  animation: rg-logo-marquee 38s linear infinite;
+}
+
+.rg-logo-carousel-track:hover .rg-logo-carousel-row {
+  animation-play-state: paused;
 }
 
 .rg-logo-carousel-item {
   display: grid;
   place-items: center;
-  width: 140px;
-  height: 88px;
+  width: 176px;
+  height: 108px;
   flex: 0 0 auto;
 }
 
 .rg-logo-carousel-item img {
   max-width: 100%;
-  max-height: 72px;
+  max-height: 92px;
   object-fit: contain;
   filter: grayscale(0.2);
-  transition: filter 0.25s ease, transform 0.25s ease;
+  transform: scale(1);
+  transition: filter 0.35s ease, transform 0.35s ease;
 }
 
 .rg-logo-carousel-item:hover img {
   filter: none;
-  transform: scale(1.04);
+  transform: scale(1.12);
 }
 
 @keyframes rg-logo-marquee {
@@ -3981,6 +4028,17 @@
   color: #776f69;
 }
 
+.rg-service-whatsapp {
+  color: #236869;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.rg-service-whatsapp:hover {
+  color: #a7623d;
+}
+
 .rg-services-preview-cta {
   margin-top: 2.5rem;
   text-align: center;
@@ -4016,7 +4074,7 @@
 }
 
 .rg-contact-blocks {
-  padding: 4.5rem 0 7rem;
+  padding: 3rem 0 5rem;
   background: #fff;
 }
 
@@ -4042,7 +4100,7 @@
 
 @media (min-width: 1100px) {
   .rg-contact-blocks-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -4613,6 +4671,21 @@ a.rg-delivery-circle {
   margin: 1.5rem 0 0;
 }
 
+.rg-rest-discount-flag--clickable {
+  cursor: pointer;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+.rg-rest-discount-flag--clickable:hover .rg-rest-discount-flag-label {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .rg-rest-discount-check {
   display: grid;
   place-items: center;
@@ -4630,6 +4703,54 @@ a.rg-delivery-circle {
   font-size: 1.05rem;
   font-weight: 700;
   color: #236869;
+}
+
+.rg-discount-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+
+.rg-discount-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 18, 16, 0.62);
+}
+
+.rg-discount-modal-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(920px, 100%);
+  max-height: min(88vh, 900px);
+  overflow: auto;
+  background: #fffaf1;
+  border-radius: 8px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+}
+
+.rg-discount-modal-dialog img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.rg-discount-modal-close {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.55rem;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 250, 241, 0.92);
+  color: #3d332c;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .rg-rest-discounts {
@@ -4720,12 +4841,45 @@ a.rg-delivery-circle {
   border-top: 1px solid rgba(61, 51, 44, 0.12);
 }
 
+.rg-rest-social-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem 1.25rem;
+  width: 100%;
+}
+
 .rg-rest-social {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.7rem 0.9rem;
   margin: 0;
+}
+
+.rg-rest-reserve {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-left: auto;
+  text-decoration: none;
+  color: inherit;
+}
+
+.rg-rest-reserve-label {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #236869;
+}
+
+.rg-rest-reserve:hover .rg-rest-social-icon {
+  color: #fff;
+  background: #a7623d;
+  border-color: #a7623d;
+  transform: translateY(-2px);
 }
 
 .rg-rest-social-row {
@@ -4773,26 +4927,29 @@ a.rg-delivery-circle {
 }
 
 .rg-hola-section {
-  padding-block: 5rem;
+  padding-block: 3rem;
 }
 
 .rg-hola-section--top-ribbon {
   padding-top: 0;
 }
 
-.rg-services-preview,
+.rg-services-preview {
+  padding-block: 3rem 3.25rem;
+}
+
 .rg-services-page {
   padding-block: 5rem 5.75rem;
 }
 
 .rg-logo-carousel {
-  padding: 4.75rem 0 4rem;
+  padding: 2.75rem 0 2.5rem;
 }
 
 .rg-visit-us {
   /* Espacio extra inferior para que el borde del footer no “coma” la card */
-  padding: 5.5rem 0 7.5rem;
-  min-height: 460px;
+  padding: 3.25rem 0 5rem;
+  min-height: 380px;
 }
 
 /* Carrusel Ofertas similares */
@@ -4943,16 +5100,19 @@ a.rg-delivery-circle {
 
 /* Página contacto */
 .rg-contact-hero {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 420px;
-  padding: 7.5rem 0 4.5rem;
-  overflow: hidden;
   background-color: #1e4d33;
   background-position: center top;
   background-repeat: no-repeat;
+}
+
+.rg-contact-hero > .container-refugio,
+.rg-visit-hero > .container-refugio,
+.rg-visit-hero-content,
+.rg-contact-hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  text-align: center;
 }
 
 .rg-contact-hero-overlay {
@@ -4964,21 +5124,30 @@ a.rg-delivery-circle {
 }
 
 .rg-contact-hero--birds-dark .rg-contact-hero-overlay {
-  background:
-    linear-gradient(to bottom, rgba(30, 77, 51, 0.08) 0%, rgba(30, 77, 51, 0.22) 100%),
-    radial-gradient(ellipse at center, transparent 45%, rgba(17, 17, 17, 0.12) 100%);
+  display: none;
 }
 
 .rg-contact-hero-title {
+  display: block;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.75rem 0 0.75rem;
   font-family: var(--font-display, inherit);
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(1.7rem, 3.4vw, 2.6rem);
   font-weight: 600;
+  line-height: 1.15;
+  text-align: center;
   color: #fff;
 }
 
 .rg-contact-hero-subtitle {
-  margin-top: 0.75rem;
+  display: block;
+  width: 100%;
+  max-width: 36rem;
+  margin: 1.15rem auto 0;
   font-size: 1.05rem;
+  line-height: 1.45;
+  text-align: center;
   color: rgba(255, 255, 255, 0.9);
 }
 

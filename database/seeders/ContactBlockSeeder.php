@@ -11,13 +11,7 @@ class ContactBlockSeeder extends Seeder
     {
         $blocks = [
             [
-                'title' => 'Espacios publicitarios',
-                'body' => null,
-                'emails' => ['mike@gcb.pe', 'leilah@gcb.pe'],
-                'phones' => ['994 848 723'],
-            ],
-            [
-                'title' => 'Espacios comerciales',
+                'title' => 'Espacios publicitarios y comerciales',
                 'body' => null,
                 'emails' => ['mike@gcb.pe', 'leilah@gcb.pe'],
                 'phones' => ['994 848 723'],
@@ -48,5 +42,9 @@ class ContactBlockSeeder extends Seeder
                 ]
             );
         }
+
+        ContactBlock::query()
+            ->whereIn('title', ['Espacios publicitarios', 'Espacios comerciales'])
+            ->update(['is_active' => false]);
     }
 }

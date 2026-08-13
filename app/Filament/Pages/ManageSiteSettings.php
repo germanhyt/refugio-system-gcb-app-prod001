@@ -91,7 +91,22 @@ class ManageSiteSettings extends Page implements HasForms
                             ->helperText('Icono en el menú overlay y en el footer. Si está vacío, no se muestra.')
                             ->url()
                             ->maxLength(500),
+                        Forms\Components\TextInput::make('youtube_url')
+                            ->label('YouTube')
+                            ->helperText('Icono en el menú overlay y en el footer. Si está vacío, no se muestra.')
+                            ->url()
+                            ->maxLength(500),
                     ])->columns(2),
+                Forms\Components\Section::make('Documentos')
+                    ->description('Archivos que se abren desde el footer.')
+                    ->schema([
+                        SpatieMediaLibraryFileUpload::make('ulima_discounts_pdf')
+                            ->label('PDF Descuentos U. Lima')
+                            ->helperText('Si se carga, el enlace «Descuentos U. Lima» del footer abre este PDF en una ventana nueva.')
+                            ->collection('ulima_discounts_pdf')
+                            ->acceptedFileTypes(['application/pdf'])
+                            ->columnSpanFull(),
+                    ]),
                 Forms\Components\Section::make('SEO')
                     ->schema([
                         Forms\Components\TextInput::make('seo_title')
@@ -120,6 +135,25 @@ class ManageSiteSettings extends Page implements HasForms
                             ->label('Servicios')
                             ->maxLength(255),
                     ])->columns(2),
+                Forms\Components\Section::make('Fondos de banner')
+                    ->description('Tres fondos según el título de cada página: Restaurantes, Servicios y Eventos.')
+                    ->schema([
+                        SpatieMediaLibraryFileUpload::make('hero_restaurants')
+                            ->label('Restaurantes — ¿Qué te provoca hoy?')
+                            ->collection('hero_restaurants')
+                            ->image()
+                            ->imageEditor(),
+                        SpatieMediaLibraryFileUpload::make('hero_services')
+                            ->label('Servicios — Nuestros servicios')
+                            ->collection('hero_services')
+                            ->image()
+                            ->imageEditor(),
+                        SpatieMediaLibraryFileUpload::make('hero_events')
+                            ->label('Eventos — Somos el refugio de tu diversión')
+                            ->collection('hero_events')
+                            ->image()
+                            ->imageEditor(),
+                    ])->columns(3),
                 Forms\Components\Section::make('Secciones del sitio')
                     ->description('Controla qué bloques aparecen en el frontend público.')
                     ->schema([
