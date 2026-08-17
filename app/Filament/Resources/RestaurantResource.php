@@ -73,16 +73,28 @@ class RestaurantResource extends Resource
                         ->collection('logo')
                         ->image()
                         ->imageEditor(),
+                    SpatieMediaLibraryFileUpload::make('banner_image')
+                        ->label('Banner / cartel')
+                        ->helperText('Cartel promocional del local. Se usa como fondo del hero en la ficha del restaurante.')
+                        ->collection('banner_image')
+                        ->image()
+                        ->imageEditor(),
                     SpatieMediaLibraryFileUpload::make('featured_image')
                         ->label('Imagen de comida')
-                        ->helperText('Plato para el hover de la grilla y el banner del detalle.')
+                        ->helperText('Plato para el hover de la grilla.')
                         ->collection('featured_image')
                         ->image()
                         ->imageEditor(),
                     SpatieMediaLibraryFileUpload::make('location_image')
                         ->label('Posición en el parque')
-                        ->helperText('Imagen (plano o foto) que indica dónde está el restaurante dentro del Refugio. Opcional: si no se carga, no se muestra en la ficha.')
+                        ->helperText('Plano del local dentro del Refugio. En la ficha alterna con la foto de frontis al pasar el mouse.')
                         ->collection('location_image')
+                        ->image()
+                        ->imageEditor(),
+                    SpatieMediaLibraryFileUpload::make('facade_image')
+                        ->label('Foto de frontis')
+                        ->helperText('Fachada del local. En la ficha se muestra al pasar el mouse sobre la posición en el parque.')
+                        ->collection('facade_image')
                         ->image()
                         ->imageEditor(),
                     SpatieMediaLibraryFileUpload::make('exclusive_discount_image')

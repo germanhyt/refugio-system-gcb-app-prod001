@@ -205,7 +205,7 @@ class WebRestructureTest extends TestCase
 
         $this->get('/restaurantes/ahumare')
             ->assertOk()
-            ->assertSee($restaurant->featuredImageUrl(), false);
+            ->assertSee($restaurant->bannerImageUrl() ?: $restaurant->featuredImageUrl(), false);
     }
 
     public function test_retired_restaurants_are_not_public(): void

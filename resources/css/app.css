@@ -4654,7 +4654,11 @@ a.rg-delivery-circle {
   border-top: 1px solid rgba(61, 51, 44, 0.06);
 }
 
-.rg-rest-detail-location img {
+.rg-rest-detail-location-figure--swap {
+  position: relative;
+}
+
+.rg-rest-detail-location-figure img {
   display: block;
   width: 100%;
   height: auto;
@@ -4662,6 +4666,21 @@ a.rg-delivery-circle {
   object-fit: contain;
   object-position: center;
   padding: 0.65rem;
+  transition: opacity 0.35s ease;
+}
+
+.rg-rest-detail-location-hover {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.rg-rest-detail-location-figure--swap:hover .rg-rest-detail-location-hover {
+  opacity: 1;
+}
+
+.rg-rest-detail-location-figure--swap:hover .rg-rest-detail-location-primary {
+  opacity: 0;
 }
 
 .rg-rest-discount-flag {

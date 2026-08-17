@@ -278,17 +278,15 @@ Limanesas	Milanesas crujientes, hechas al momento y llenas de sabor.	https://www
 Nashmys	Comida Árabe Rápida	NO TIENE	NO TIENE
 Curich	Cremoladas con calidad, sabor y tradición desde 1942.	https://www.cremoladascurich.com	NO TIENE"
 
-
-
 (x) En /nosotros y  /contacto se observa que los textos del banner no están centrados, revisamos
 () En la cinta de logos "Nuestros restaurantes" mencioné que al posar el hover que se detanga la cinta también
-
 
 
 (x) actualizamos estas imágenes incluso en el panel, los logos (/images/nuevo/logos), para los banners de páginas hay para realiza en 3 partes según al descripción de cada fondo de banner /images/nuevo/banners, e imágenes de platos de restaraunte para la grilla y detalle (/images/nuevo/platos)
 
 
 (x) Disminuir el height del banner de Nosotros y contacto, además centrar también el titulo, será eso o tiene que el panel administrable al respecto?, revisamos referencias de los otros
+
 
 
 

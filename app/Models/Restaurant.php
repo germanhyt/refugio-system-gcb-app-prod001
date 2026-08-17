@@ -78,6 +78,8 @@ class Restaurant extends Model implements HasMedia
     {
         $this->addMediaCollection('logo')->singleFile();
         $this->addMediaCollection('featured_image')->singleFile();
+        $this->addMediaCollection('banner_image')->singleFile();
+        $this->addMediaCollection('facade_image')->singleFile();
         $this->addMediaCollection('location_image')->singleFile();
         $this->addMediaCollection('exclusive_discount_image')->singleFile();
         $this->addMediaCollection('menu_pdf')->singleFile()->acceptsMimeTypes(['application/pdf']);
@@ -91,7 +93,7 @@ class Restaurant extends Model implements HasMedia
 
         $this->addMediaConversion('webp')
             ->format('webp')
-            ->performOnCollections('featured_image', 'location_image')
+            ->performOnCollections('featured_image', 'banner_image', 'facade_image', 'location_image')
             ->nonQueued();
     }
 
@@ -115,6 +117,28 @@ class Restaurant extends Model implements HasMedia
         }
 
         return $this->publicAssetUrl(config('restaurant-assets.dishes.'.$this->slug));
+    }
+
+    public function bannerImageUrl(): ?string
+    {
+        $url = $this->getFirstMediaUrl('banner_image');
+
+        if (filled($url)) {
+            return $url;
+        }
+
+        return $this->publicAssetUrl(config('restaurant-assets.banners.'.$this->slug));
+    }
+
+    public function facadeImageUrl(): ?string
+    {
+        $url = $this->getFirstMediaUrl('facade_image');
+
+        if (filled($url)) {
+            return $url;
+        }
+
+        return $this->publicAssetUrl(config('restaurant-assets.frontis.'.$this->slug));
     }
 
     public function categories(): BelongsToMany
@@ -251,7 +275,14 @@ class Restaurant extends Model implements HasMedia
 
     public function hasDetailAside(): bool
     {
-        return $this->showsDeliveryLogos() || filled($this->parkPositionImageUrl());
+        return $this->showsDeliveryLogos()
+            || filled($this->parkPositionImageUrl())
+            || filled($this->facadeImageUrl());
+    }
+
+    public function showsLocationPanel(): bool
+    {
+        return filled($this->parkPositionImageUrl()) || filled($this->facadeImageUrl());
     }
 
     public function detailLeadText(): ?string

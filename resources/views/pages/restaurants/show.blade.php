@@ -4,8 +4,11 @@
 @section('meta_description', $restaurant->meta_description ?: \Illuminate\Support\Str::limit(strip_tags($restaurant->short_description ?: $restaurant->description ?? ''), 160))
 
 @php
-    $heroImage = $restaurant->featuredImageUrl() ?: $restaurant->logoUrl();
+    $heroImage = $restaurant->bannerImageUrl() ?: $restaurant->featuredImageUrl() ?: $restaurant->logoUrl();
     $locationImage = $restaurant->parkPositionImageUrl();
+    $facadeImage = $restaurant->facadeImageUrl();
+    $locationSwap = filled($locationImage) && filled($facadeImage);
+    $panelImage = $locationImage ?: $facadeImage;
     $leadText = $restaurant->detailLeadText();
     $bodyHtml = $restaurant->detailBodyHtml();
     $menuPdf = $restaurant->getFirstMediaUrl('menu_pdf');
@@ -84,15 +87,27 @@
 
             @if($restaurant->hasDetailAside())
                 <aside class="rg-rest-detail-aside">
-                    @if($locationImage)
+                    @if($restaurant->showsLocationPanel())
                         <div class="rg-rest-panel rg-rest-detail-location">
                             <h2 class="rg-rest-panel-title">Posición en el parque</h2>
-                            <figure class="rg-rest-detail-location-figure">
+                            <figure @class([
+                                'rg-rest-detail-location-figure',
+                                'rg-rest-detail-location-figure--swap' => $locationSwap,
+                            ])>
                                 <img
-                                    src="{{ $locationImage }}"
+                                    class="rg-rest-detail-location-primary"
+                                    src="{{ $panelImage }}"
                                     alt="Posición de {{ $restaurant->name }} dentro del Refugio"
                                     loading="lazy"
                                 >
+                                @if($locationSwap)
+                                    <img
+                                        class="rg-rest-detail-location-hover"
+                                        src="{{ $facadeImage }}"
+                                        alt="Frontis de {{ $restaurant->name }}"
+                                        loading="lazy"
+                                    >
+                                @endif
                             </figure>
                         </div>
                     @endif
