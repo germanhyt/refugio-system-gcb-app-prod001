@@ -24,6 +24,7 @@
 </head>
 <body class="min-h-screen bg-[var(--color-surface)] text-[var(--color-text-body)] antialiased" x-data="{ menuOpen: false }" :class="{ 'overflow-hidden': menuOpen }">
     <x-header :settings="$siteSettings" />
+    <x-fixed-social-sidebar :settings="$siteSettings" />
 
     <main>
         @yield('content')

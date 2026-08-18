@@ -118,6 +118,9 @@ return [
         'mr-smash' => 'images/refugio/frontis/16-mr-smash.png',
         'caldos-doris' => 'images/refugio/frontis/17-cados-doris.png',
         'limanesas' => 'images/refugio/frontis/18-limanesas.png',
+        'refugio-bar' => 'images/refugio/frontis/refugio-bar.jpg',
+        'nashmys' => 'images/refugio/frontis/nashmys.jpg',
+        'sisa-coffee-wine' => 'images/refugio/frontis/sisa.jpg',
     ],
 
     'page_banners' => [

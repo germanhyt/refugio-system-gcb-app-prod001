@@ -74,7 +74,7 @@ class ManageVisitInfo extends Page implements HasForms
                             ->maxLength(20),
                         Forms\Components\TextInput::make('email')
                             ->label('Email')
-                            ->helperText('Página /contacto, junto al formulario.')
+                            ->helperText('Página /contacto y destino de los mensajes del formulario.')
                             ->email()
                             ->maxLength(255),
                     ])->columns(3),

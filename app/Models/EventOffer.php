@@ -37,6 +37,10 @@ class EventOffer extends Model implements HasMedia
 
     public function registerMediaConversions(?Media $media = null): void
     {
+        if (! function_exists('imagewebp')) {
+            return;
+        }
+
         $this->addMediaConversion('webp')
             ->format('webp')
             ->performOnCollections('cover')

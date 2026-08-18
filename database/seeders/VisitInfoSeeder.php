@@ -22,7 +22,7 @@ class VisitInfoSeeder extends Seeder
                 'about_content' => "TODO LO QUE TE PROVOCA, EN UN SOLO LUGAR.\n\nRefugio Gastronómico es el punto de encuentro donde la mejor gastronomía, el entretenimiento y los buenos momentos se unen en un solo espacio. Con más de 20 propuestas gastronómicas, música en vivo, eventos y experiencias para toda la familia, aquí siempre encontrarás un motivo para volver.",
                 'phone_reservations' => '991318720',
                 'phone_events' => '994848723',
-                'email' => 'hola@refugiogastronomico.pe',
+                'email' => 'leilah@gcb.pe',
             ]
         );
     }

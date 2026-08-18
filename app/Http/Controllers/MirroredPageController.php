@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PageInquiryReceived;
 use App\Models\ComplaintBookEntry;
 use App\Models\PageInquiry;
 use App\Models\VisitInfo;
 use App\Services\Scraper\MirroredPageScraper;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -52,7 +54,7 @@ class MirroredPageController extends Controller
             'message.min' => 'Tu mensaje debe tener al menos 10 caracteres.',
         ]);
 
-        PageInquiry::query()->create([
+        $inquiry = PageInquiry::query()->create([
             'page_slug' => $validated['page_slug'],
             'full_name' => $validated['full_name'],
             'email' => $validated['email'],
@@ -62,6 +64,16 @@ class MirroredPageController extends Controller
             'ip_address' => $request->ip(),
             'user_agent' => (string) $request->userAgent(),
         ]);
+
+        $recipient = VisitInfo::current()->email;
+
+        if ($recipient) {
+            try {
+                Mail::to($recipient)->send(new PageInquiryReceived($inquiry));
+            } catch (\Throwable $exception) {
+                report($exception);
+            }
+        }
 
         return back()->with('inquiry_success', 'Gracias, recibimos tu mensaje y te responderemos pronto.');
     }

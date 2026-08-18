@@ -6,7 +6,7 @@
     $whatsapp = $settings->whatsapp_url ?: 'https://wa.link/ltbwxk';
     $instagram = $settings->instagram_url ?: 'https://www.instagram.com/refugiogastronomico.pe/';
     $facebook = $settings->facebook_url ?: 'https://www.facebook.com/RefugioParqueGastronomico';
-    $tiktok = $settings->tiktok_url;
+    $tiktok = $settings->tiktok_url ?: 'https://www.tiktok.com/@refugiogastronomico.pe';
     $youtube = $settings->youtube_url;
     $navItems = config('navigation.primary', []);
 @endphp
@@ -77,9 +77,9 @@
         padding: 10px 50px 12px !important;
         font-size: 18px !important;
         font-weight: 600 !important;
-        font-family: var(--font-accent) !important;
-        background: #a7623d !important;
-        border: 1px solid #a7623d !important;
+        font-family: var(--font-display) !important;
+        background: var(--color-accent) !important;
+        border: 1px solid var(--color-accent) !important;
         border-radius: 0 !important;
         height: auto !important;
         align-self: center !important;
@@ -201,8 +201,6 @@
                 <div class="rg-menu-footer">
                     <div class="rg-menu-footer-links">
                         <a href="{{ route('contact') }}" @click="menuOpen = false">Contacto</a>
-                        <span aria-hidden="true">·</span>
-                        <a href="{{ route('contact') }}" @click="menuOpen = false">Convocatorias</a>
                     </div>
                     <div class="rg-menu-socials">
                         <a href="{{ $instagram }}" target="_blank" rel="noopener" class="rg-menu-social" aria-label="Instagram">

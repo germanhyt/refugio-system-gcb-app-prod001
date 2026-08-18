@@ -21,6 +21,7 @@
                     $hasCopy = filled($slide->title)
                         || filled($slide->subtitle)
                         || (filled($slide->cta_text) && filled($slide->cta_url));
+                    $showVideoTagline = $isVideo && ! $hasCopy;
                 @endphp
                 <div class="swiper-slide relative overflow-hidden">
                     <div class="absolute inset-0">
@@ -45,7 +46,11 @@
                         @endif
                         <div class="rg-hero-overlay absolute inset-0"></div>
                     </div>
-                    @if($hasCopy)
+                    @if($showVideoTagline)
+                        <div class="relative z-10 flex h-full rg-hero-tagline-wrap">
+                            <h1 class="rg-hero-tagline" data-hero-title>¡DE TODO,<br>PARA TODOS!</h1>
+                        </div>
+                    @elseif($hasCopy)
                         <div class="relative z-10 flex h-full items-center justify-center px-6 text-center">
                             <div class="flex max-w-4xl flex-col items-center" data-hero-title>
                                 @if($slide->subtitle)

@@ -110,7 +110,7 @@ class SiteSetting extends Model implements HasMedia
                 'whatsapp_url' => 'https://wa.link/ltbwxk',
                 'instagram_url' => 'https://www.instagram.com/refugiogastronomico.pe/',
                 'facebook_url' => 'https://www.facebook.com/RefugioParqueGastronomico',
-                'tiktok_url' => 'https://www.tiktok.com/@refugio.peru',
+                'tiktok_url' => 'https://www.tiktok.com/@refugiogastronomico.pe',
                 'youtube_url' => null,
                 'seo_title' => 'Refugio Gastronómico | Juntos todo sabe mejor',
                 'seo_description' => '¡Descubre Refugio! Disfruta de una gran variedad de opciones gastronómicas, bebidas, música en vivo, talleres y actividades en Surco.',

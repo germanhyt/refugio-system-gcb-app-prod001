@@ -13,7 +13,7 @@ class ContactBlockSeeder extends Seeder
             [
                 'title' => 'Espacios publicitarios y comerciales',
                 'body' => null,
-                'emails' => ['mike@gcb.pe', 'leilah@gcb.pe'],
+                'emails' => [],
                 'phones' => ['994 848 723'],
             ],
             [
@@ -26,7 +26,7 @@ class ContactBlockSeeder extends Seeder
                 'title' => '¡Trabaja con nosotros!',
                 'body' => null,
                 'emails' => [],
-                'phones' => ['991 318 720'],
+                'phones' => ['+51 994 848 376'],
             ],
         ];
 

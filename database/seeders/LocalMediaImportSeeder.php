@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\EventOffer;
+use App\Models\HeroSlide;
 use App\Models\Restaurant;
 use App\Models\VisitInfo;
 use Illuminate\Database\Seeder;
@@ -12,8 +14,34 @@ class LocalMediaImportSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->importHeroVideo();
         $this->importAboutGallery();
         $this->importRestaurantAssets();
+        $this->importEventOffers();
+    }
+
+    private function importHeroVideo(): void
+    {
+        HeroSlide::query()->update(['is_active' => false]);
+
+        $slide = HeroSlide::query()->updateOrCreate(
+            ['sort_order' => 0],
+            [
+                'title' => '',
+                'subtitle' => null,
+                'description' => null,
+                'media_type' => 'video',
+                'cta_text' => null,
+                'cta_url' => null,
+                'is_active' => true,
+            ],
+        );
+
+        $slide->clearMediaCollection('background_video');
+        $slide->clearMediaCollection('background_image');
+
+        $this->attachIfPresent($slide, 'background_video', config('local-media-import.hero_video'));
+        $this->attachIfPresent($slide, 'background_image', config('local-media-import.hero_poster'));
     }
 
     private function importAboutGallery(): void
@@ -44,6 +72,19 @@ class LocalMediaImportSeeder extends Seeder
             $this->attachIfPresent($restaurant, 'logo', config('local-media-import.logos.'.$slug));
             $this->attachIfPresent($restaurant, 'banner_image', config('local-media-import.banners.'.$slug));
             $this->attachIfPresent($restaurant, 'facade_image', config('local-media-import.frontis.'.$slug));
+        }
+    }
+
+    private function importEventOffers(): void
+    {
+        foreach (config('local-media-import.event_offers', []) as $slug => $relativePath) {
+            $offer = EventOffer::query()->where('slug', $slug)->first();
+
+            if (! $offer) {
+                continue;
+            }
+
+            $this->attachIfPresent($offer, 'cover', $relativePath);
         }
     }
 

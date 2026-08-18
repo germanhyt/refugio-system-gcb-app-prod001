@@ -76,5 +76,19 @@ return [
         'mr-smash' => 'images/refugio/frontis/16-mr-smash.png',
         'caldos-doris' => 'images/refugio/frontis/17-cados-doris.png',
         'limanesas' => 'images/refugio/frontis/18-limanesas.png',
+        'refugio-bar' => 'images/refugio/frontis/refugio-bar.jpg',
+        'nashmys' => 'images/refugio/frontis/nashmys.jpg',
+        'sisa-coffee-wine' => 'images/refugio/frontis/sisa.jpg',
+    ],
+
+    'hero_video' => 'videos/video-principal.mp4',
+
+    'hero_poster' => 'images/refugio/fondohome.jpg',
+
+    'event_offers' => [
+        'shows-musicales' => 'images/refugio/eventos/SHOW EN VIVO.jpg',
+        'show-para-ninos' => 'images/refugio/eventos/SHOW INFANTIL.jpg',
+        'organiza-tu-evento-con-nosotros' => 'images/refugio/eventos/EVENTOS.jpg',
+        'organiza-tu-fiesta-infantil' => 'images/refugio/eventos/FIESTAS INFANTILES.jpg',
     ],
 ];

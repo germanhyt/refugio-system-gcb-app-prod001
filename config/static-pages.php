@@ -27,7 +27,7 @@ return [
                     ],
                     [
                         'question' => '¿Organizan eventos privados?',
-                        'answer' => 'Sí. Disponemos de espacios para eventos corporativos, cumpleaños y activaciones de marca. Escríbenos a hola@refugiogastronomico.pe o al 994 848 723.',
+                        'answer' => 'Sí. Disponemos de espacios para eventos corporativos, cumpleaños y activaciones de marca. Escríbenos a mike@gcb.pe o al 994 848 723.',
                     ],
                 ],
             ],

@@ -14,6 +14,23 @@
 
 @if($links !== [] || filled($reserveUrl))
     <div class="rg-rest-social-bar">
+        @if(filled($reserveUrl))
+            <a
+                href="{{ $reserveUrl }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="rg-rest-reserve"
+                aria-label="Reservar en {{ $restaurant->name }} por WhatsApp"
+            >
+                <span class="rg-rest-reserve-label">Reserva</span>
+                <span class="rg-rest-social-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="{{ $icons['whatsapp'] }}"/>
+                    </svg>
+                </span>
+            </a>
+        @endif
+
         @if($links !== [])
             <div class="rg-rest-social" aria-label="Redes sociales">
                 <p class="rg-rest-panel-title rg-rest-panel-title--inline">Síguenos</p>
@@ -34,23 +51,6 @@
                     @endforeach
                 </div>
             </div>
-        @endif
-
-        @if(filled($reserveUrl))
-            <a
-                href="{{ $reserveUrl }}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="rg-rest-reserve"
-                aria-label="Reservar en {{ $restaurant->name }} por WhatsApp"
-            >
-                <span class="rg-rest-reserve-label">Reserva</span>
-                <span class="rg-rest-social-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                        <path d="{{ $icons['whatsapp'] }}"/>
-                    </svg>
-                </span>
-            </a>
         @endif
     </div>
 @endif
