@@ -178,11 +178,20 @@
 
             <div class="rg-menu-content">
                 <div class="rg-menu-toolbar">
-                    <a
-                        href="{{ route('restaurants.index') }}"
-                        class="btn-provoc-menu"
-                        @click="menuOpen = false"
-                    >¿Qué te provoca?</a>
+                    <div class="rg-menu-toolbar-ctas">
+                        <a
+                            href="{{ $whatsapp }}"
+                            target="_blank"
+                            rel="noopener"
+                            class="btn-reserva-menu"
+                            @click="menuOpen = false"
+                        >¡Reserva aquí!</a>
+                        <a
+                            href="{{ route('restaurants.index') }}"
+                            class="btn-provoc-menu"
+                            @click="menuOpen = false"
+                        >¿Qué te provoca?</a>
+                    </div>
                     <button type="button" class="rg-menu-close" @click="menuOpen = false" aria-label="Cerrar menú">
                         <span class="rg-menu-close-x" aria-hidden="true"></span>
                     </button>
