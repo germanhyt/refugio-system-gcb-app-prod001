@@ -15,7 +15,7 @@ class RestaurantCategoryAssignmentSeeder extends Seeder
             'tortas-gaby' => ['cafes-y-postres'],
             'cremoladas-curich' => ['cafes-y-postres'],
             'sisa-coffee-wine' => ['cafes-y-postres'],
-            'lili-blue' => ['internacional'],
+            'lili-blue' => ['saludable'],
             'ahumare' => ['internacional'],
             'barrio-wok' => ['internacional'],
             'cavenecia' => ['internacional'],
@@ -38,12 +38,16 @@ class RestaurantCategoryAssignmentSeeder extends Seeder
         foreach ($map as $slug => $categorySlugs) {
             $restaurant = Restaurant::query()->where('slug', $slug)->first();
 
-            if (! $restaurant) {
+            if (! $restaurant || ! is_array($categorySlugs)) {
                 continue;
             }
 
             $categoryIds = RestaurantCategory::query()
-                ->whereIn('slug', $categorySlugs)
+                ->where(function ($query) use ($categorySlugs): void {
+                    foreach (array_values($categorySlugs) as $categorySlug) {
+                        $query->orWhere('slug', $categorySlug);
+                    }
+                })
                 ->pluck('id');
 
             if ($categoryIds->isNotEmpty()) {
