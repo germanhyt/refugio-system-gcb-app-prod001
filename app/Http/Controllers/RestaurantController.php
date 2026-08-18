@@ -15,6 +15,7 @@ class RestaurantController extends Controller
 
         $categories = RestaurantCategory::query()
             ->active()
+            ->where('slug', '!=', 'saludable')
             ->withCount(['restaurants' => fn ($q) => $q->active()])
             ->orderBy('sort_order')
             ->get();

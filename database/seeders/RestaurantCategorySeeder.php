@@ -15,7 +15,6 @@ class RestaurantCategorySeeder extends Seeder
             ['name' => 'Internacional', 'slug' => 'internacional', 'sort_order' => 3],
             ['name' => 'Peruana', 'slug' => 'peruana', 'sort_order' => 4],
             ['name' => 'Rápida', 'slug' => 'rapida', 'sort_order' => 5],
-            ['name' => 'Saludable', 'slug' => 'saludable', 'sort_order' => 6],
         ];
 
         foreach ($categories as $category) {
