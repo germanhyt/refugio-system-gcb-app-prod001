@@ -2554,12 +2554,57 @@
 }
 
 .rg-visit-leaf-divider {
-  height: 60px;
-  background-color: #fffaf1;
+  position: relative;
+  height: 52px;
+  background-color: #f7f3ee;
   background-image: url('/images/refugio/divisor-hojas-home.svg');
-  background-position: center;
+  background-position: center top;
   background-repeat: repeat-x;
-  background-size: contain;
+  background-size: auto 100%;
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .rg-visit-leaf-divider {
+    height: 44px;
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: min(36rem, 168vw) auto;
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      #000 10%,
+      #000 90%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      #000 10%,
+      #000 90%,
+      transparent 100%
+    );
+  }
+
+  .rg-visit-hero--birds-dark .rg-visit-hero-deco--bottom-left,
+  .rg-visit-hero--birds-dark .rg-visit-hero-deco--bottom-right,
+  .rg-contact-hero--birds-dark .rg-visit-hero-deco--bottom-left,
+  .rg-contact-hero--birds-dark .rg-visit-hero-deco--bottom-right {
+    opacity: 0.1;
+  }
+
+  .rg-visit-hero--birds-dark .rg-visit-hero-deco--right,
+  .rg-contact-hero--birds-dark .rg-visit-hero-deco--right {
+    width: clamp(88px, 24vw, 140px);
+    opacity: 0.18;
+  }
+}
+
+@media (max-width: 480px) {
+  .rg-visit-leaf-divider {
+    height: 40px;
+    background-size: min(28rem, 185vw) auto;
+  }
 }
 
 .rg-visit-map-section {
@@ -3862,6 +3907,24 @@
   .rg-section-deco {
     width: clamp(64px, 22vw, 96px) !important;
     opacity: 0.12;
+  }
+}
+
+@media (max-width: 767px) {
+  .rg-visit-hero,
+  .rg-contact-hero {
+    min-height: 360px;
+    padding: 10rem 1rem 3rem;
+  }
+
+  .rg-hola-grid {
+    padding-top: 1.15rem;
+  }
+
+  .rg-hola-section--birds-light,
+  .rg-about-gallery--birds-light {
+    background-size: min(120%, 720px) auto;
+    background-position: center -0.5rem;
   }
 }
 

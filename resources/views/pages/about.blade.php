@@ -35,11 +35,7 @@
     </div>
 </section>
 
-<div
-    class="rg-visit-leaf-divider"
-    style="background-image: url('{{ asset('images/refugio/divisor-hojas-home.svg') }}');"
-    aria-hidden="true"
-></div>
+<div class="rg-visit-leaf-divider" aria-hidden="true"></div>
 
 <x-hola-section class="rg-hola-section--with-gallery rg-hola-section--birds-light" />
 <x-about-gallery-carousel :images="$aboutGalleryImages" class="rg-about-gallery--birds-light" />
