@@ -2739,6 +2739,18 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .rg-visit-hero {
+    min-height: 240px;
+    padding: 5.5rem 1rem 1.75rem;
+  }
+
+  .rg-visit-hero-title {
+    padding-top: 0.35rem;
+    padding-bottom: 0.25rem;
+  }
+}
+
 @media (min-width: 1025px) {
   .rg-visit-map {
     height: 750px;
@@ -2754,6 +2766,10 @@
 }
 
 /* Events page */
+.rg-events-hero .rg-rest-hero-title {
+  padding-top: 0;
+}
+
 .rg-events-hero-tear {
   position: absolute;
   inset-inline: 0;
@@ -3911,7 +3927,11 @@
 }
 
 @media (max-width: 767px) {
-  .rg-visit-hero,
+  .rg-visit-hero {
+    min-height: 240px;
+    padding: 5.5rem 1rem 1.75rem;
+  }
+
   .rg-contact-hero {
     min-height: 360px;
     padding: 10rem 1rem 3rem;

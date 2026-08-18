@@ -12,7 +12,7 @@
     >
     <div class="absolute inset-0 bg-gradient-to-b from-black/35 via-black/20 to-black/40" aria-hidden="true"></div>
     <div class="container-refugio relative z-10 px-6 text-center">
-        <h1 class="font-display text-3xl font-medium uppercase tracking-wide text-white tablet:text-5xl wide:text-6xl">
+        <h1 class="rg-rest-hero-title">
             {{ $siteSettings->hero_title_events ?: '¡Somos el refugio de tu diversión!' }}
         </h1>
     </div>

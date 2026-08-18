@@ -61,5 +61,17 @@
                 padding-bottom: 1.25rem !important;
             }
         }
+
+        @media (max-width: 1024px) {
+            .rg-visit-hero.rg-visit-hero--birds-dark {
+                min-height: 240px !important;
+                padding: 5.5rem 1rem 1.75rem !important;
+            }
+
+            .rg-visit-hero.rg-visit-hero--birds-dark .rg-visit-hero-title {
+                padding-top: 0.35rem !important;
+                padding-bottom: 0.25rem !important;
+            }
+        }
     </style>
 @endonce
