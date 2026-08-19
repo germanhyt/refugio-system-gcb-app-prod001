@@ -90,7 +90,9 @@ class VisitInfo extends Model implements HasMedia
     public function aboutGallerySlides(): Collection
     {
         return $this->getMedia('about_gallery')->map(fn (Media $media) => [
-            'url' => $media->hasGeneratedConversion('webp') ? $media->getUrl('webp') : $media->getUrl(),
+            'url' => (function_exists('imagewebp') && $media->hasGeneratedConversion('webp'))
+                ? $media->getUrl('webp')
+                : $media->getUrl(),
             'alt' => $media->getCustomProperty('alt') ?: 'Refugio Gastronómico',
         ]);
     }
