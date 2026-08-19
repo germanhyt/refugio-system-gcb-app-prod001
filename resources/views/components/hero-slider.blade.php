@@ -43,7 +43,9 @@
                         <div class="rg-hero-overlay absolute inset-0"></div>
                     </div>
                     <div class="relative z-10 flex h-full rg-hero-tagline-wrap">
-                        <h1 class="rg-hero-tagline" data-hero-title>{!! $overlayHtml !!}</h1>
+                        <div class="rg-hero-tagline-col">
+                            <h1 class="rg-hero-tagline" data-hero-title>{!! $overlayHtml !!}</h1>
+                        </div>
                     </div>
                 </div>
             @endforeach

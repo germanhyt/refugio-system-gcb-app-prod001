@@ -3816,23 +3816,29 @@
   justify-content: flex-start;
   box-sizing: border-box;
   width: 100%;
-  padding-right: 1.25rem;
   padding-bottom: clamp(5rem, 14vh, 9rem);
+}
+
+.rg-hero-tagline-col {
+  box-sizing: border-box;
+  width: 100%;
   padding-left: 1.25rem;
+  padding-right: 1.25rem;
 }
 
 @media (min-width: 1024px) {
-  .rg-hero-tagline-wrap {
+  .rg-hero-tagline-col {
     padding-left: 2.5rem;
     padding-right: 2.5rem;
   }
 }
 
 @media (min-width: 1025px) {
-  /* Misma sangría que .rg-header-col--nav (padding-left: 10%) */
-  .rg-hero-tagline-wrap {
-    padding-left: 10%;
-    padding-right: 42%;
+  /* Misma caja que .rg-header-col--nav (42%). Margen izquierdo = padding del sitio. */
+  .rg-hero-tagline-col {
+    width: 42%;
+    padding-left: 2.5rem;
+    padding-right: 1.25rem;
   }
 }
 
