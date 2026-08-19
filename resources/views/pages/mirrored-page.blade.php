@@ -103,7 +103,7 @@
 
                         <form method="POST" action="{{ route('info.store') }}" class="rg-mirror-form" novalidate>
                             @csrf
-                            <input type="hidden" name="page_slug" value="{{ $remoteSlug ?: 'contacto' }}">
+                            <input type="hidden" name="page_slug" value="{{ $remoteSlug ?: 'convocatorias' }}">
                             <input type="text" name="website" class="rg-mirror-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 
                             <div class="rg-mirror-form-grid">

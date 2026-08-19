@@ -80,7 +80,9 @@ class Restaurant extends Model implements HasMedia
         $this->addMediaCollection('featured_image')->singleFile();
         $this->addMediaCollection('banner_image')->singleFile();
         $this->addMediaCollection('facade_image')->singleFile();
-        $this->addMediaCollection('location_image')->singleFile();
+        $this->addMediaCollection('location_image')
+            ->singleFile()
+            ->acceptsMimeTypes(['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp', 'image/gif']);
         $this->addMediaCollection('exclusive_discount_image')->singleFile();
         $this->addMediaCollection('menu_pdf')->singleFile()->acceptsMimeTypes(['application/pdf']);
     }
@@ -93,7 +95,7 @@ class Restaurant extends Model implements HasMedia
 
         $this->addMediaConversion('webp')
             ->format('webp')
-            ->performOnCollections('featured_image', 'banner_image', 'facade_image', 'location_image')
+            ->performOnCollections('featured_image', 'banner_image', 'facade_image')
             ->nonQueued();
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\SiteSetting;
 use App\Models\VisitInfo;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -15,15 +16,15 @@ class ManageVisitInfo extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-map-pin';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     protected static string $view = 'filament.pages.manage-visit-info';
 
-    protected static ?string $navigationGroup = 'Configuración';
+    protected static ?string $navigationGroup = 'Páginas';
 
-    protected static ?string $navigationLabel = 'Nosotros / Visítanos';
+    protected static ?string $navigationLabel = 'Nosotros';
 
-    protected static ?string $title = 'Nosotros / Visítanos';
+    protected static ?string $title = 'Nosotros';
 
     protected static ?int $navigationSort = 1;
 
@@ -34,80 +35,66 @@ class ManageVisitInfo extends Page implements HasForms
     public function mount(): void
     {
         $this->record = VisitInfo::current();
-        $this->form->fill($this->record->attributesToArray());
+        $settings = SiteSetting::current();
+        $copy = $this->record->holaCopy();
+        $this->form->fill([
+            'about_eyebrow' => $this->record->about_eyebrow ?: VisitInfo::DEFAULT_HOLA_EYEBROW,
+            'about_headline' => $copy['headline'],
+            'about_body' => $copy['body'],
+            'hero_title_about' => $settings->hero_title_about,
+            'hero_about' => $settings->heroMediaFormState('hero_about'),
+        ]);
     }
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Ubicación')
+                Forms\Components\Section::make('Banner de la página')
+                    ->description('Título e imagen del hero de /nosotros.')
                     ->schema([
-                        Forms\Components\TextInput::make('address')
-                            ->label('Dirección')
-                            ->helperText('Card «¿Nos visitas?» (home, /nosotros, /eventos, /servicios) y datos de /contacto.')
-                            ->required()
-                            ->maxLength(500)
-                            ->columnSpanFull(),
-                        Forms\Components\Textarea::make('map_embed_url')
-                            ->label('URL embed Google Maps')
+                        Forms\Components\Textarea::make('hero_title_about')
+                            ->label('Título del banner')
+                            ->helperText('Usa Enter para partir el título en dos líneas (ej. ¿Quiénes / Somos?).')
                             ->rows(2)
+                            ->maxLength(255)
                             ->columnSpanFull(),
-                        Forms\Components\Textarea::make('pedestrian_access')
-                            ->label('Acceso peatonal')
-                            ->rows(2),
-                        Forms\Components\Textarea::make('vehicle_access')
-                            ->label('Acceso vehicular')
-                            ->rows(2),
-                    ])->columns(2),
-                Forms\Components\Section::make('Contacto')
-                    ->schema([
-                        Forms\Components\TextInput::make('phone_reservations')
-                            ->label('Tel. reservas')
-                            ->helperText('Página /contacto, junto al formulario.')
-                            ->tel()
-                            ->maxLength(20),
-                        Forms\Components\TextInput::make('phone_events')
-                            ->label('Tel. eventos')
-                            ->helperText('Página /contacto, junto al formulario.')
-                            ->tel()
-                            ->maxLength(20),
-                        Forms\Components\TextInput::make('email')
-                            ->label('Email')
-                            ->helperText('Página /contacto y destino de los mensajes del formulario.')
-                            ->email()
-                            ->maxLength(255),
-                    ])->columns(3),
-                Forms\Components\Section::make('Horarios')
-                    ->schema([
-                        Forms\Components\Repeater::make('schedule')
-                            ->label('Horario')
-                            ->helperText('Lista de la card «¿Nos visitas?» en home y páginas internas.')
-                            ->schema([
-                                Forms\Components\TextInput::make('days')->label('Días')->required(),
-                                Forms\Components\TextInput::make('hours')->label('Horas')->required(),
-                            ])
-                            ->columns(2)
-                            ->defaultItems(1)
-                            ->columnSpanFull(),
-                        Forms\Components\TagsInput::make('amenities')
-                            ->label('Amenidades')
+                        SpatieMediaLibraryFileUpload::make('hero_about')
+                            ->label('Imagen de fondo')
+                            ->helperText('Usa una foto panorámica (~1920×640). Las fotos verticales se recortan en este banner compacto.')
+                            ->collection('hero_about')
+                            ->model(fn () => SiteSetting::current())
+                            ->image()
+                            ->imageEditor()
                             ->columnSpanFull(),
                     ]),
-                Forms\Components\Section::make('Textos de Nosotros')
-                    ->description('Titular y párrafo de «¡Hola! Somos Refugio Gastronómico» en /nosotros y en el home.')
+                Forms\Components\Section::make('Sección «¡Hola! Somos Refugio Gastronómico»')
+                    ->description('Saludo de la izquierda, titular y párrafo en /nosotros y en el home.')
                     ->schema([
-                        Forms\Components\RichEditor::make('about_content')
-                            ->label('Sección «¡Hola! Somos Refugio Gastronómico»')
-                            ->helperText('Primer párrafo = titular derecho (ej. TODO LO QUE TE PROVOCA…). Segundo párrafo = texto descriptivo. Separa con una línea en blanco.')
+                        Forms\Components\Textarea::make('about_eyebrow')
+                            ->label('Título izquierdo')
+                            ->helperText('Texto a la izquierda, p. ej. ¡Hola! Somos Refugio Gastronómico.')
+                            ->rows(2)
+                            ->required()
+                            ->columnSpanFull(),
+                        Forms\Components\Textarea::make('about_headline')
+                            ->label('Titular')
+                            ->helperText('Texto en mayúsculas a la derecha, p. ej. TODO LO QUE TE PROVOCA, EN UN SOLO LUGAR.')
+                            ->rows(2)
+                            ->required()
+                            ->columnSpanFull(),
+                        Forms\Components\Textarea::make('about_body')
+                            ->label('Párrafo')
+                            ->rows(5)
+                            ->required()
                             ->columnSpanFull(),
                     ]),
                 Forms\Components\Section::make('Carrusel «Nuestro espacio»')
-                    ->description('Lista de fotos del carrusel en /nosotros. Vacía por defecto: la sección solo aparece cuando hay al menos una imagen.')
+                    ->description('Fotos del carrusel en /nosotros. La sección solo aparece cuando hay al menos una imagen.')
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('about_gallery')
                             ->label('Imágenes')
-                            ->helperText('Agrega JPG o PNG a esta lista. El orden de aquí es el del carrusel. Sin archivos, /nosotros no muestra «Nuestro espacio».')
+                            ->helperText('El orden de aquí es el del carrusel.')
                             ->collection('about_gallery')
                             ->image()
                             ->multiple()
@@ -125,11 +112,23 @@ class ManageVisitInfo extends Page implements HasForms
     public function save(): void
     {
         $data = $this->form->getState();
-        $this->record->fill($data)->save();
+        $heroTitle = $data['hero_title_about'] ?? null;
+        $headline = (string) ($data['about_headline'] ?? '');
+        $body = (string) ($data['about_body'] ?? '');
+        $eyebrow = (string) ($data['about_eyebrow'] ?? '');
+        unset($data['hero_title_about'], $data['about_headline'], $data['about_body'], $data['about_eyebrow'], $data['hero_about']);
+
+        $this->record->fill([
+            ...$data,
+            'about_eyebrow' => $eyebrow,
+            'about_content' => VisitInfo::composeAboutContent($headline, $body),
+        ])->save();
+
+        SiteSetting::current()->fill(['hero_title_about' => $heroTitle])->save();
         $this->form->model($this->record)->saveRelationships();
 
         Notification::make()
-            ->title('Visítanos actualizado')
+            ->title('Nosotros actualizado')
             ->success()
             ->send();
     }

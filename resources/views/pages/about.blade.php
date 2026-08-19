@@ -8,8 +8,12 @@
 @endpush
 
 @section('content')
+@php
+    $aboutBanner = $siteSettings->pageHeroBannerUrl('about');
+@endphp
 <section
-    class="rg-visit-hero rg-visit-hero--birds-dark"
+    @class(['rg-visit-hero rg-visit-hero--birds-dark', 'rg-visit-hero--has-photo' => filled($aboutBanner)])
+    @if($aboutBanner) style="background-image: url('{{ $aboutBanner }}');" @endif
 >
     <img
         src="{{ asset('images/refugio/hojas-footer.png') }}"

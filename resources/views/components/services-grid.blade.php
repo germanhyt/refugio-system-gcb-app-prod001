@@ -14,7 +14,7 @@
                 @endif
             </div>
             <h3 class="rg-service-title">{{ $service->title }}</h3>
-            @if($service->description)
+            @if($service->description || $service->normalizedContactPhone())
                 <p class="rg-service-desc">{!! $service->descriptionWithWhatsappLinks() !!}</p>
             @endif
         </article>

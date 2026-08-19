@@ -39,6 +39,7 @@ class ContactBlockSeeder extends Seeder
                     'phones' => $block['phones'],
                     'sort_order' => $index + 1,
                     'is_active' => true,
+                    'redirects_enabled' => true,
                 ]
             );
         }

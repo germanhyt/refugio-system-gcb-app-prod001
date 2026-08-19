@@ -3,8 +3,10 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\StaticPageResource\Pages;
+use App\Models\SiteSetting;
 use App\Models\StaticPage;
 use Filament\Forms;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
@@ -17,7 +19,7 @@ class StaticPageResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Contenido';
+    protected static ?string $navigationGroup = 'Páginas';
 
     protected static ?string $navigationLabel = 'Páginas informativas';
 
@@ -25,7 +27,7 @@ class StaticPageResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Páginas informativas';
 
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 6;
 
     public static function canCreate(): bool
     {
@@ -40,7 +42,29 @@ class StaticPageResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
+            Forms\Components\Section::make('Documento PDF')
+                ->description('«Descuentos U. Lima» no es una página de contenido: el footer abre este PDF en una ventana nueva.')
+                ->visible(fn (?StaticPage $record): bool => (bool) $record?->isDocumentRedirect())
+                ->schema([
+                    Forms\Components\TextInput::make('slug')
+                        ->label('Identificador')
+                        ->disabled()
+                        ->dehydrated(false),
+                    Forms\Components\TextInput::make('title')
+                        ->label('Etiqueta en el footer')
+                        ->required()
+                        ->maxLength(255),
+                    SpatieMediaLibraryFileUpload::make('ulima_discounts_pdf')
+                        ->label('PDF')
+                        ->helperText('Si se carga, /descuentos-u-lima y el footer redirigen a este archivo.')
+                        ->collection('ulima_discounts_pdf')
+                        ->model(fn () => SiteSetting::current())
+                        ->acceptedFileTypes(['application/pdf'])
+                        ->dehydrated(false)
+                        ->columnSpanFull(),
+                ])->columns(2),
             Forms\Components\Section::make('Encabezado')
+                ->visible(fn (?StaticPage $record): bool => ! $record?->isDocumentRedirect())
                 ->schema([
                     Forms\Components\TextInput::make('slug')
                         ->label('Identificador')
@@ -58,6 +82,7 @@ class StaticPageResource extends Resource
                 ])->columns(2),
             Forms\Components\Section::make('Contenido')
                 ->description('Bloques que se muestran debajo del hero en la página pública.')
+                ->visible(fn (?StaticPage $record): bool => ! $record?->isDocumentRedirect())
                 ->schema([
                     Forms\Components\Repeater::make('blocks')
                         ->label('Bloques')
@@ -139,8 +164,13 @@ class StaticPageResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('slug')
+                    ->label('Tipo')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state, StaticPage $record): string => $record->isDocumentRedirect() ? 'PDF' : 'Página')
+                    ->color(fn (string $state, StaticPage $record): string => $record->isDocumentRedirect() ? 'warning' : 'gray'),
+                Tables\Columns\TextColumn::make('path')
                     ->label('Ruta')
-                    ->formatStateUsing(fn (string $state, StaticPage $record): string => ltrim(parse_url((string) $record->routeUrl(), PHP_URL_PATH) ?: '', '/'))
+                    ->getStateUsing(fn (StaticPage $record): string => ltrim(parse_url((string) $record->routeUrl(), PHP_URL_PATH) ?: '', '/'))
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Actualizado')

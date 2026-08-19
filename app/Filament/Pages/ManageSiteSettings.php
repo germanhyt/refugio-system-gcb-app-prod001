@@ -2,14 +2,19 @@
 
 namespace App\Filament\Pages;
 
+use App\Mail\SiteMailTest;
 use App\Models\SiteSetting;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class ManageSiteSettings extends Page implements HasForms
 {
@@ -21,9 +26,9 @@ class ManageSiteSettings extends Page implements HasForms
 
     protected static ?string $navigationGroup = 'Configuración';
 
-    protected static ?string $navigationLabel = 'Sitio';
+    protected static ?string $navigationLabel = 'Configuraciones del sitio';
 
-    protected static ?string $title = 'Configuración del sitio';
+    protected static ?string $title = 'Configuraciones del sitio';
 
     protected static ?int $navigationSort = 2;
 
@@ -31,10 +36,77 @@ class ManageSiteSettings extends Page implements HasForms
 
     public ?SiteSetting $record = null;
 
+    public ?string $mailPreviewHtml = null;
+
+    public ?string $mailPreviewTo = null;
+
     public function mount(): void
     {
         $this->record = SiteSetting::current();
-        $this->form->fill($this->record->attributesToArray());
+        $values = $this->record->attributesToArray();
+        unset($values['mail_password']);
+        $values['mail_mailer'] = $this->record->mail_mailer ?: (app()->environment('local') ? 'log' : 'smtp');
+        $this->form->fill($values);
+    }
+
+    /**
+     * @return array<int, Action>
+     */
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('sendTestMail')
+                ->label('Enviar correo de prueba')
+                ->icon('heroicon-o-paper-airplane')
+                ->color('gray')
+                ->modalHeading('Simular envío de correo')
+                ->modalDescription('Usa el emisor de marketing configurado. En local el envío no sale a internet.')
+                ->modalSubmitActionLabel('Enviar')
+                ->form([
+                    Forms\Components\TextInput::make('email')
+                        ->label('Destinatario')
+                        ->email()
+                        ->required()
+                        ->default(fn (): ?string => auth()->user()?->email),
+                ])
+                ->action(function (array $data): void {
+                    $this->deliverTestMail((string) $data['email']);
+                }),
+        ];
+    }
+
+    public function deliverTestMail(string $email): void
+    {
+        $this->record = SiteSetting::current();
+        $this->record->applyMailConfig();
+
+        $mailable = new SiteMailTest($email);
+
+        try {
+            Mail::mailer($this->record->resolvedMailer())->to($email)->send($mailable);
+        } catch (Throwable $exception) {
+            Notification::make()
+                ->title('No se pudo enviar el correo de prueba')
+                ->body($exception->getMessage())
+                ->danger()
+                ->send();
+
+            return;
+        }
+
+        $this->mailPreviewTo = $email;
+        $this->mailPreviewHtml = $mailable->render();
+        file_put_contents(storage_path('app/mail-preview.html'), $this->mailPreviewHtml);
+
+        $simulated = $this->record->usesSimulatedMail();
+
+        Notification::make()
+            ->title($simulated ? 'Correo simulado' : 'Correo de prueba enviado')
+            ->body($simulated
+                ? "No salió a internet. Destinatario: {$email}. Vista previa abajo y en storage/app/mail-preview.html."
+                : "Enviado a {$email} con la cuenta {$this->record->mail_from_address}.")
+            ->success()
+            ->send();
     }
 
     public function form(Form $form): Form
@@ -47,13 +119,9 @@ class ManageSiteSettings extends Page implements HasForms
                             ->label('Nombre del sitio')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('slogan')
-                            ->label('Slogan')
-                            ->helperText('No se muestra en la web actual: la sección de slogan/hotspots del home ya no está activa.')
-                            ->maxLength(255),
                         SpatieMediaLibraryFileUpload::make('logo')
                             ->label('Logo')
-                            ->helperText('Logo del header sobre el banner (hero). Si está vacío, se usa logo-v1-base.')
+                            ->helperText('Logo del header sobre el banner (hero).')
                             ->collection('logo')
                             ->image(),
                         SpatieMediaLibraryFileUpload::make('favicon')
@@ -69,44 +137,89 @@ class ManageSiteSettings extends Page implements HasForms
                             ->columnSpanFull(),
                     ])->columns(2),
                 Forms\Components\Section::make('Redes y WhatsApp')
-                    ->description('Enlaces que alimentan el header, el menú hamburguesa y el footer. Si un campo queda vacío, ese icono no se muestra (WhatsApp, Instagram y Facebook tienen un fallback).')
+                    ->description('Alimentan la barra flotante de la derecha, el menú hamburguesa y el footer. Si un campo queda vacío, ese icono no aparece.')
                     ->schema([
+                        Forms\Components\Toggle::make('show_fixed_social')
+                            ->label('Mostrar barra flotante a la derecha')
+                            ->helperText('Iconos fijos de redes en el borde derecho de toda la web.')
+                            ->default(true)
+                            ->inline(false)
+                            ->columnSpanFull(),
                         Forms\Components\TextInput::make('whatsapp_url')
                             ->label('WhatsApp')
-                            ->helperText('Botón «¡Reserva aquí!» del header (sobre el banner). También el botón Reservar en el detalle de un evento con fecha.')
+                            ->helperText('Botón «¡Reserva aquí!» del header, icono flotante de WhatsApp y reservas de eventos.')
                             ->url()
                             ->maxLength(500),
                         Forms\Components\TextInput::make('instagram_url')
                             ->label('Instagram')
-                            ->helperText('Icono en el menú overlay (hamburguesa) y en el footer, columna Legal.')
+                            ->helperText('Barra flotante, menú hamburguesa y footer.')
                             ->url()
                             ->maxLength(500),
                         Forms\Components\TextInput::make('facebook_url')
                             ->label('Facebook')
-                            ->helperText('Icono en el menú overlay (hamburguesa) y en el footer, columna Legal.')
+                            ->helperText('Barra flotante, menú hamburguesa y footer.')
                             ->url()
                             ->maxLength(500),
                         Forms\Components\TextInput::make('tiktok_url')
                             ->label('TikTok')
-                            ->helperText('Icono en el menú overlay y en el footer. Si está vacío, no se muestra.')
+                            ->helperText('Barra flotante, menú hamburguesa y footer. Si está vacío, no se muestra.')
                             ->url()
                             ->maxLength(500),
                         Forms\Components\TextInput::make('youtube_url')
                             ->label('YouTube')
-                            ->helperText('Icono en el menú overlay y en el footer. Si está vacío, no se muestra.')
+                            ->helperText('Barra flotante, menú hamburguesa y footer. Si está vacío, no se muestra.')
                             ->url()
                             ->maxLength(500),
                     ])->columns(2),
-                Forms\Components\Section::make('Documentos')
-                    ->description('Archivos que se abren desde el footer.')
+                Forms\Components\Section::make('Correo SMTP emisor')
+                    ->description('Cuenta de marketing que envía los correos del sitio (libro de reclamaciones, formularios, etc.). En local el modo simulado no sale a internet.')
                     ->schema([
-                        SpatieMediaLibraryFileUpload::make('ulima_discounts_pdf')
-                            ->label('PDF Descuentos U. Lima')
-                            ->helperText('Si se carga, el enlace «Descuentos U. Lima» del footer abre este PDF en una ventana nueva.')
-                            ->collection('ulima_discounts_pdf')
-                            ->acceptedFileTypes(['application/pdf'])
+                        Forms\Components\Select::make('mail_mailer')
+                            ->label('Modo de envío')
+                            ->options([
+                                'log' => 'Simulado (local, no sale a internet)',
+                                'smtp' => 'SMTP real (marketing@)',
+                            ])
+                            ->required()
+                            ->live()
+                            ->helperText('En local deja Simulado. SMTP real usa mail.refugiogastronomico.pe.')
                             ->columnSpanFull(),
-                    ]),
+                        Forms\Components\TextInput::make('mail_from_name')
+                            ->label('Nombre del remitente')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('mail_from_address')
+                            ->label('Correo emisor')
+                            ->email()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('mail_host')
+                            ->label('Host SMTP')
+                            ->maxLength(255)
+                            ->visible(fn (Get $get): bool => $get('mail_mailer') === 'smtp'),
+                        Forms\Components\TextInput::make('mail_port')
+                            ->label('Puerto')
+                            ->numeric()
+                            ->placeholder('587')
+                            ->visible(fn (Get $get): bool => $get('mail_mailer') === 'smtp'),
+                        Forms\Components\TextInput::make('mail_username')
+                            ->label('Usuario SMTP')
+                            ->maxLength(255)
+                            ->visible(fn (Get $get): bool => $get('mail_mailer') === 'smtp'),
+                        Forms\Components\TextInput::make('mail_password')
+                            ->label('Contraseña SMTP')
+                            ->password()
+                            ->revealable()
+                            ->dehydrated(fn (?string $state): bool => filled($state))
+                            ->helperText('Déjala vacía para no cambiar la contraseña guardada.')
+                            ->visible(fn (Get $get): bool => $get('mail_mailer') === 'smtp'),
+                        Forms\Components\Select::make('mail_encryption')
+                            ->label('Cifrado')
+                            ->options([
+                                'tls' => 'TLS (puerto 587)',
+                                'ssl' => 'SSL (puerto 465)',
+                                'none' => 'Ninguno',
+                            ])
+                            ->visible(fn (Get $get): bool => $get('mail_mailer') === 'smtp'),
+                    ])->columns(2),
                 Forms\Components\Section::make('SEO')
                     ->schema([
                         Forms\Components\TextInput::make('seo_title')
@@ -117,43 +230,6 @@ class ManageSiteSettings extends Page implements HasForms
                             ->rows(3)
                             ->columnSpanFull(),
                     ]),
-                Forms\Components\Section::make('Títulos de hero')
-                    ->description('Textos principales de las páginas Nosotros, Restaurantes, Eventos y Servicios.')
-                    ->schema([
-                        Forms\Components\Textarea::make('hero_title_about')
-                            ->label('Nosotros')
-                            ->helperText('Usa Enter para partir el título en dos líneas (ej. ¿Quiénes / Somos?).')
-                            ->rows(2)
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('hero_title_restaurants')
-                            ->label('Restaurantes')
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('hero_title_events')
-                            ->label('Eventos')
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('hero_title_services')
-                            ->label('Servicios')
-                            ->maxLength(255),
-                    ])->columns(2),
-                Forms\Components\Section::make('Fondos de banner')
-                    ->description('Tres fondos según el título de cada página: Restaurantes, Servicios y Eventos.')
-                    ->schema([
-                        SpatieMediaLibraryFileUpload::make('hero_restaurants')
-                            ->label('Restaurantes — ¿Qué te provoca hoy?')
-                            ->collection('hero_restaurants')
-                            ->image()
-                            ->imageEditor(),
-                        SpatieMediaLibraryFileUpload::make('hero_services')
-                            ->label('Servicios — Nuestros servicios')
-                            ->collection('hero_services')
-                            ->image()
-                            ->imageEditor(),
-                        SpatieMediaLibraryFileUpload::make('hero_events')
-                            ->label('Eventos — Somos el refugio de tu diversión')
-                            ->collection('hero_events')
-                            ->image()
-                            ->imageEditor(),
-                    ])->columns(3),
                 Forms\Components\Section::make('Secciones del sitio')
                     ->description('Controla qué bloques aparecen en el frontend público.')
                     ->schema([
@@ -171,8 +247,24 @@ class ManageSiteSettings extends Page implements HasForms
     public function save(): void
     {
         $data = $this->form->getState();
+
+        if (blank($data['mail_password'] ?? null)) {
+            unset($data['mail_password']);
+        }
+
+        if (($data['mail_mailer'] ?? null) !== 'smtp') {
+            unset(
+                $data['mail_host'],
+                $data['mail_port'],
+                $data['mail_username'],
+                $data['mail_password'],
+                $data['mail_encryption'],
+            );
+        }
+
         $this->record->fill($data)->save();
         $this->form->model($this->record)->saveRelationships();
+        $this->record->refresh()->applyMailConfig();
 
         Notification::make()
             ->title('Configuración guardada')

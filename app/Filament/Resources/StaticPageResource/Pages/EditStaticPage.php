@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\StaticPageResource\Pages;
 
 use App\Filament\Resources\StaticPageResource;
+use App\Models\SiteSetting;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -45,11 +46,17 @@ class EditStaticPage extends EditRecord
     {
         return [
             Actions\Action::make('view')
-                ->label('Ver página')
+                ->label(fn (): string => $this->record->isDocumentRedirect() ? 'Ver PDF' : 'Ver página')
                 ->icon('heroicon-o-arrow-top-right-on-square')
-                ->url(fn (): ?string => $this->record->routeUrl())
+                ->url(function (): ?string {
+                    if ($this->record->isDocumentRedirect()) {
+                        return SiteSetting::current()->ulimaDiscountsPdfUrl() ?: $this->record->routeUrl();
+                    }
+
+                    return $this->record->routeUrl();
+                })
                 ->openUrlInNewTab()
-                ->visible(fn (): bool => filled($this->record->routeUrl())),
+                ->visible(fn (): bool => filled($this->record->routeUrl()) || filled(SiteSetting::current()->ulimaDiscountsPdfUrl())),
         ];
     }
 

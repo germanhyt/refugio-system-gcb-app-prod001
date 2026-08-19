@@ -19,7 +19,12 @@ class VisitInfoSeeder extends Seeder
                     ['days' => 'Viernes y sábado', 'hours' => 'Hasta las 3:00 p.m.'],
                     ['days' => 'Música en vivo', 'hours' => 'Jueves a viernes, desde las 8:00 p.m.'],
                 ],
-                'about_content' => "TODO LO QUE TE PROVOCA, EN UN SOLO LUGAR.\n\nRefugio Gastronómico es el punto de encuentro donde la mejor gastronomía, el entretenimiento y los buenos momentos se unen en un solo espacio. Con más de 20 propuestas gastronómicas, música en vivo, eventos y experiencias para toda la familia, aquí siempre encontrarás un motivo para volver.",
+                'about_content' => VisitInfo::composeAboutContent(
+                    VisitInfo::DEFAULT_HOLA_HEADLINE,
+                    VisitInfo::DEFAULT_HOLA_BODY
+                ),
+                'about_eyebrow' => VisitInfo::DEFAULT_HOLA_EYEBROW,
+                'map_embed_url' => VisitInfo::DEFAULT_MAP_EMBED_URL,
                 'phone_reservations' => '991318720',
                 'phone_events' => '994848723',
                 'email' => 'leilah@gcb.pe',

@@ -24,8 +24,7 @@
         ];
     }
 
-    $mapEmbed = $visit->map_embed_url
-        ?: 'https://maps.google.com/maps?q=-12.0842658,-76.9734978&z=16&hl=es&t=m&output=embed';
+    $mapEmbed = $visit->mapEmbedUrl();
 @endphp
 
 <section class="rg-visit-us" {{ $attributes }}>

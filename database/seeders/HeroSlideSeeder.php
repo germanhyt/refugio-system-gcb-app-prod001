@@ -15,7 +15,7 @@ class HeroSlideSeeder extends Seeder
         $slide = HeroSlide::query()->updateOrCreate(
             ['sort_order' => 0],
             [
-                'title' => '',
+                'title' => "¡DE TODO,\nPARA TODOS!",
                 'subtitle' => null,
                 'description' => null,
                 'media_type' => 'video',
@@ -34,14 +34,6 @@ class HeroSlideSeeder extends Seeder
             $slide->addMedia($videoPath)
                 ->preservingOriginal()
                 ->toMediaCollection('background_video');
-        }
-
-        $poster = public_path('images/refugio/fondohome.jpg');
-
-        if (File::exists($poster)) {
-            $slide->addMedia($poster)
-                ->preservingOriginal()
-                ->toMediaCollection('background_image');
         }
     }
 }

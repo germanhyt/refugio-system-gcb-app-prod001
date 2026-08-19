@@ -3,17 +3,20 @@
 @section('title', 'Eventos | Refugio Gastronómico')
 
 @section('content')
-<section class="rg-events-hero relative flex min-h-[420px] items-center justify-center overflow-hidden tablet:min-h-[500px]">
-    <img
-        src="{{ $siteSettings->pageHeroBannerUrl('events') }}"
-        alt=""
-        class="absolute inset-0 h-full w-full object-cover object-bottom"
-        fetchpriority="high"
-    >
+<section class="rg-events-hero relative flex min-h-[420px] items-center justify-center overflow-hidden bg-[#1a1210] tablet:min-h-[500px]">
+    @php $eventsBanner = $siteSettings->pageHeroBannerUrl('events'); @endphp
+    @if($eventsBanner)
+        <img
+            src="{{ $eventsBanner }}"
+            alt=""
+            class="absolute inset-0 h-full w-full object-cover object-bottom"
+            fetchpriority="high"
+        >
+    @endif
     <div class="absolute inset-0 bg-gradient-to-b from-black/35 via-black/20 to-black/40" aria-hidden="true"></div>
     <div class="container-refugio relative z-10 px-6 text-center">
         <h1 class="rg-rest-hero-title">
-            {{ $siteSettings->hero_title_events ?: '¡Somos el refugio de tu diversión!' }}
+            {{ $siteSettings->hero_title_events }}
         </h1>
     </div>
     <div class="rg-events-hero-tear" aria-hidden="true"></div>
@@ -28,7 +31,7 @@
             @forelse($offers as $offer)
                 @php
                     $cover = $offer->getFirstMediaUrl('cover') ?: asset('images/refugio/eventos-hero.jpg');
-                    $href = $offer->cta_url ?: route('contact');
+                    $href = $offer->cta_url ?: url('/#contacto');
                     $isExternal = str_starts_with($href, 'http://') || str_starts_with($href, 'https://');
                 @endphp
                 <article class="rg-event-offer-card group">

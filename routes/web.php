@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\BlogController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MirroredPageController;
@@ -30,7 +29,7 @@ Route::get('/reglamento-pet-friendly', [StaticPageController::class, 'petFriendl
 Route::get('/politica-de-estacionamiento', [StaticPageController::class, 'parking'])->name('static.parking');
 Route::get('/descuentos-u-lima', [StaticPageController::class, 'ulima'])->name('static.ulima');
 
-Route::get('/contacto', ContactController::class)->name('contact');
+Route::get('/contacto', fn () => abort(404));
 Route::get('/convocatoria', [MirroredPageController::class, 'convocatoria'])->name('convocatoria');
 Route::get('/convocatorias', [MirroredPageController::class, 'convocatoria']);
 Route::get('/convoctaria', [MirroredPageController::class, 'convocatoria']);

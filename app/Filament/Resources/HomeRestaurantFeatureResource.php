@@ -16,21 +16,21 @@ class HomeRestaurantFeatureResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
 
-    protected static ?string $navigationGroup = 'Contenido';
+    protected static ?string $navigationGroup = 'Inicio';
 
-    protected static ?string $navigationLabel = 'Logos home';
+    protected static ?string $navigationLabel = 'Cinta de Logos (Home)';
 
-    protected static ?string $modelLabel = 'Logo en carousel';
+    protected static ?string $modelLabel = 'Logo en cinta';
 
-    protected static ?string $pluralModelLabel = 'Logos carousel home';
+    protected static ?string $pluralModelLabel = 'Cinta de logos';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Carousel home')
-                ->description('Logos de restaurantes que rotan en la sección «Nuestros restaurantes» del home.')
+            Forms\Components\Section::make('Cinta de logos')
+                ->description('Logos que rotan en la cinta «Nuestros restaurantes» del home. El logo se toma del restaurante seleccionado.')
                 ->schema([
                     Forms\Components\Select::make('restaurant_id')
                         ->label('Restaurante')

@@ -1,5 +1,5 @@
 @props([
-    'eyebrow' => '¡Hola! Somos Refugio Gastronómico.',
+    'eyebrow' => null,
     'headline' => null,
     'body' => null,
     'cornerDeco' => null,
@@ -8,15 +8,10 @@
 
 @php
     $visit = $visitInfo ?? \App\Models\VisitInfo::current();
-    $raw = $body ?? $visit->about_content ?? '';
-    $parts = preg_split("/\n\s*\n/", trim((string) $raw), 2) ?: [''];
-    $headline = $headline ?: trim($parts[0] ?? 'TODO LO QUE TE PROVOCA, EN UN SOLO LUGAR.');
-    $paragraph = trim($parts[1] ?? (count($parts) === 1 && ! str_contains($headline, 'TODO LO QUE')
-        ? (string) $raw
-        : 'Refugio Gastronómico es el punto de encuentro donde la mejor gastronomía, el entretenimiento y los buenos momentos se unen en un solo espacio. Con más de 20 propuestas gastronómicas, música en vivo, eventos y experiencias para toda la familia, aquí siempre encontrarás un motivo para volver.'));
-    if ($paragraph === $headline) {
-        $paragraph = 'Refugio Gastronómico es el punto de encuentro donde la mejor gastronomía, el entretenimiento y los buenos momentos se unen en un solo espacio. Con más de 20 propuestas gastronómicas, música en vivo, eventos y experiencias para toda la familia, aquí siempre encontrarás un motivo para volver.';
-    }
+    $copy = $visit->holaCopy();
+    $eyebrow = $eyebrow ?: $visit->aboutEyebrow();
+    $headline = $headline ?: $copy['headline'];
+    $paragraph = $body ?: $copy['body'];
 @endphp
 
 <section @class(['rg-hola-section', 'rg-section--decorated' => filled($cornerDeco), 'rg-hola-section--top-ribbon' => $topRibbon]) {{ $attributes }}>

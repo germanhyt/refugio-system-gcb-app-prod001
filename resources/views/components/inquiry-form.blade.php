@@ -1,5 +1,5 @@
 @props([
-    'pageSlug' => 'contacto',
+    'pageSlug' => 'convocatorias',
     'title' => 'Envíanos un mensaje',
     'subtitle' => 'Cuéntanos en qué te podemos ayudar y te contactamos.',
 ])

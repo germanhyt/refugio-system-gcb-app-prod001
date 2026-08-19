@@ -281,11 +281,36 @@ Curich	Cremoladas con calidad, sabor y tradición desde 1942.	https://www.cremol
 (x) En /nosotros y  /contacto se observa que los textos del banner no están centrados, revisamos
 () En la cinta de logos "Nuestros restaurantes" mencioné que al posar el hover que se detanga la cinta también
 
-
 (x) actualizamos estas imágenes incluso en el panel, los logos (/images/nuevo/logos), para los banners de páginas hay para realiza en 3 partes según al descripción de cada fondo de banner /images/nuevo/banners, e imágenes de platos de restaraunte para la grilla y detalle (/images/nuevo/platos)
 
-
 (x) Disminuir el height del banner de Nosotros y contacto, además centrar también el titulo, será eso o tiene que el panel administrable al respecto?, revisamos referencias de los otros
+
+(x) Panel administrable alineado al maquetado actual:
+- Banner home: sin título/subtítulo/CTA; texto overlay editable tipo «¡DE TODO, PARA TODOS!»
+- /contacto oculto (404) y fuera del menú; no es un módulo administrable
+- «Logos home» pasa a «Cinta de Logos (Home)»
+- Libro de reclamaciones notifica a leilah@gcb.pe, mario@refugiogastronomico.pe y nataly@gcb.pe
+- Módulos del panel por componentes de la web (Inicio / Páginas / Operaciones / Configuración); campos que ya no van (slogan, CTA de hero, Google Maps de ficha, teléfonos de /contacto, accesos peatonal/vehicular, amenidades) se quitaron del formulario
+
+(x) Overlay «¡DE TODO, PARA TODOS!» encima del video del home
+(x) Descuentos U. Lima en Páginas informativas como documento PDF (no contenido)
+(x) Teléfono/WhatsApp configurable por servicio (el número es el enlace)
+(x) Se quitó Mensajes (convocatorias)
+(x) «¿Nos visitas?» es módulo propio (componente reutilizable); Nosotros solo banner/hola/galería
+(x) Banners de Restaurantes/Eventos/Servicios/Nosotros se editan desde su módulo
+(x) Barra flotante de redes a la derecha configurable en Sitio
+(x) Canales de contacto: opción de redirigir o no al hacer clic
+(x) ¿Nos visitas?: URL de Google Maps visible y editable (acepta iframe)
+(x) Nosotros: titular y párrafo separados, sin HTML crudo duplicado
+(x) Sin fallbacks de imagen en banner home ni banners de página (solo lo subido en el módulo)
+(x) Nosotros: imagen de banner + título izquierdo «¡Hola! Somos…» editable
+(x) Título e imagen de banner en la parte superior de cada módulo de página
+(x) Libro de reclamaciones: correos de notificación configurables
+(x) Configuraciones del sitio: SMTP emisor
+(x) Mapas de restaurantes actualizados (SVG MAPA WEB 1, incluye La 22)
+(x) Libro de reclamaciones: banner configurable desde su módulo
+(x) Banners de /nosotros /eventos /restaurantes precargados y visibles en el panel
+(x) Dashboard con métricas actuales (restaurantes, logos, eventos, servicios, reclamaciones, contacto)
 
 
 
@@ -293,7 +318,6 @@ Curich	Cremoladas con calidad, sabor y tradición desde 1942.	https://www.cremol
 https://www.dropbox.com/scl/fo/k8y7gy08h01agnd88bfea/ALYBxlV1cYIOAmY6wurWFv8?rlkey=95w9y72nmxjykoeqee65cg7iv&st=3pnw98em&e=1&dl=0
 - tabla de info
 https://docs.google.com/spreadsheets/d/1-J-MTxzpSYrmb9nn6rju2ySrTpdB5ac7rGAy-8D89mM/edit?gid=0#gid=0
-
 
 
 

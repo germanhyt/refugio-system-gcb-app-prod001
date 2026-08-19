@@ -38,7 +38,8 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::hex('#A7623D'),
             ])
             ->navigationGroups([
-                'Contenido',
+                'Inicio',
+                'Páginas',
                 'Operaciones',
                 'Configuración',
             ])

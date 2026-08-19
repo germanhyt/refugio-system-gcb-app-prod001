@@ -2,12 +2,17 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\BlogPost;
+use App\Filament\Resources\ComplaintBookEntryResource;
+use App\Filament\Resources\EventOfferResource;
+use App\Filament\Resources\HomeRestaurantFeatureResource;
+use App\Filament\Resources\RestaurantResource;
+use App\Filament\Resources\ServiceItemResource;
+use App\Models\ComplaintBookEntry;
+use App\Models\ContactBlock;
 use App\Models\EventOffer;
-use App\Models\PageInquiry;
+use App\Models\HomeRestaurantFeature;
 use App\Models\Restaurant;
 use App\Models\ServiceItem;
-use App\Models\SiteSetting;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -17,35 +22,44 @@ class RefugioStatsOverview extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $settings = SiteSetting::current();
+        $complaintsTotal = ComplaintBookEntry::query()->count();
+        $complaintsMonth = ComplaintBookEntry::query()
+            ->where('created_at', '>=', now()->startOfMonth())
+            ->count();
+        $complaintsWeek = ComplaintBookEntry::query()
+            ->where('created_at', '>=', now()->startOfWeek())
+            ->count();
 
         return [
             Stat::make('Restaurantes activos', Restaurant::query()->active()->count())
                 ->description('Visibles en /restaurantes')
                 ->descriptionIcon('heroicon-m-building-storefront')
-                ->color('success'),
+                ->color('success')
+                ->url(RestaurantResource::getUrl('index')),
+            Stat::make('Cinta de logos', HomeRestaurantFeature::query()->active()->count())
+                ->description('Logos del home')
+                ->descriptionIcon('heroicon-m-photo')
+                ->color('success')
+                ->url(HomeRestaurantFeatureResource::getUrl('index')),
             Stat::make('Ofertas de eventos', EventOffer::query()->active()->count())
                 ->description('Tarjetas en /eventos')
                 ->descriptionIcon('heroicon-m-ticket')
-                ->color('warning'),
+                ->color('warning')
+                ->url(EventOfferResource::getUrl('index')),
             Stat::make('Servicios activos', ServiceItem::query()->active()->count())
                 ->description(ServiceItem::query()->active()->showOnHome()->count().' en preview home')
                 ->descriptionIcon('heroicon-m-sparkles')
+                ->color('primary')
+                ->url(ServiceItemResource::getUrl('index')),
+            Stat::make('Reclamaciones', $complaintsTotal)
+                ->description($complaintsMonth.' este mes · '.$complaintsWeek.' esta semana')
+                ->descriptionIcon('heroicon-m-book-open')
+                ->color($complaintsMonth > 0 ? 'danger' : 'gray')
+                ->url(ComplaintBookEntryResource::getUrl('index')),
+            Stat::make('Canales de contacto', ContactBlock::query()->active()->count())
+                ->description('Sección «¿Dudas? ¡Contáctanos!»')
+                ->descriptionIcon('heroicon-m-chat-bubble-left-right')
                 ->color('primary'),
-            Stat::make(
-                'Blog',
-                BlogPost::query()->active()->count()
-            )
-                ->description(
-                    ($settings->show_blog_section ? 'Rutas /blog ON' : 'Rutas /blog OFF')
-                    .' · solo footer (no home)'
-                )
-                ->descriptionIcon('heroicon-m-newspaper')
-                ->color($settings->show_blog_section ? 'gray' : 'gray'),
-            Stat::make('Mensajes de contacto', PageInquiry::query()->count())
-                ->description('Formulario de /contacto y convocatorias')
-                ->descriptionIcon('heroicon-m-envelope')
-                ->color('success'),
         ];
     }
 }

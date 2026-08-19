@@ -18,11 +18,11 @@ class PageInquiryResource extends Resource
 
     protected static ?string $navigationGroup = 'Operaciones';
 
-    protected static ?string $navigationLabel = 'Mensajes de contacto';
+    protected static ?string $navigationLabel = 'Mensajes (convocatorias)';
 
     protected static ?string $modelLabel = 'Mensaje';
 
-    protected static ?string $pluralModelLabel = 'Mensajes de contacto';
+    protected static ?string $pluralModelLabel = 'Mensajes de convocatorias';
 
     protected static ?int $navigationSort = 4;
 
@@ -50,7 +50,6 @@ class PageInquiryResource extends Resource
                     ->label('Origen')
                     ->badge()
                     ->formatStateUsing(fn (?string $state): string => match ($state) {
-                        'contacto' => 'Contacto',
                         'convocatorias' => 'Convocatorias',
                         default => (string) $state,
                     }),
@@ -72,6 +71,16 @@ class PageInquiryResource extends Resource
     }
 
     public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
+    public static function canViewAny(): bool
     {
         return false;
     }

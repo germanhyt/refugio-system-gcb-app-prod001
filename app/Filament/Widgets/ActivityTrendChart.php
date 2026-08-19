@@ -2,9 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\BlogPost;
-use App\Models\EventOffer;
-use App\Models\PageInquiry;
+use App\Models\ComplaintBookEntry;
+use App\Models\NewsletterSubscriber;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 
@@ -12,7 +11,7 @@ class ActivityTrendChart extends ChartWidget
 {
     protected static ?string $heading = 'Actividad últimos 6 meses';
 
-    protected static ?string $description = 'Mensajes de contacto, blog y ofertas de eventos publicadas';
+    protected static ?string $description = 'Reclamaciones y suscriptores de newsletter';
 
     protected static ?int $sort = 3;
 
@@ -34,21 +33,14 @@ class ActivityTrendChart extends ChartWidget
 
         $labels = $months->map(fn (Carbon $month) => $month->translatedFormat('M Y'))->all();
 
-        $inquiries = $months->map(function (Carbon $month) {
-            return PageInquiry::query()
+        $complaints = $months->map(function (Carbon $month) {
+            return ComplaintBookEntry::query()
                 ->whereBetween('created_at', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
                 ->count();
         })->all();
 
-        $blog = $months->map(function (Carbon $month) {
-            return BlogPost::query()
-                ->whereNotNull('published_at')
-                ->whereBetween('published_at', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
-                ->count();
-        })->all();
-
-        $eventOffers = $months->map(function (Carbon $month) {
-            return EventOffer::query()
+        $newsletter = $months->map(function (Carbon $month) {
+            return NewsletterSubscriber::query()
                 ->whereBetween('created_at', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
                 ->count();
         })->all();
@@ -56,21 +48,15 @@ class ActivityTrendChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Mensajes',
-                    'data' => $inquiries,
+                    'label' => 'Reclamaciones',
+                    'data' => $complaints,
                     'backgroundColor' => '#A7623D',
                     'borderRadius' => 4,
                 ],
                 [
-                    'label' => 'Blog',
-                    'data' => $blog,
-                    'backgroundColor' => '#8B5E3C',
-                    'borderRadius' => 4,
-                ],
-                [
-                    'label' => 'Ofertas eventos',
-                    'data' => $eventOffers,
-                    'backgroundColor' => '#C4895F',
+                    'label' => 'Newsletter',
+                    'data' => $newsletter,
+                    'backgroundColor' => '#236869',
                     'borderRadius' => 4,
                 ],
             ],

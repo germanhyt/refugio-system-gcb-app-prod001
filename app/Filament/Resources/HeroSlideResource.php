@@ -18,13 +18,13 @@ class HeroSlideResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-photo';
 
-    protected static ?string $navigationGroup = 'Contenido';
+    protected static ?string $navigationGroup = 'Inicio';
 
-    protected static ?string $navigationLabel = 'Banners / Hero';
+    protected static ?string $navigationLabel = 'Banner (Home)';
 
-    protected static ?string $modelLabel = 'Banner';
+    protected static ?string $modelLabel = 'Slide de banner';
 
-    protected static ?string $pluralModelLabel = 'Banners';
+    protected static ?string $pluralModelLabel = 'Banner (Home)';
 
     protected static ?int $navigationSort = 1;
 
@@ -32,16 +32,9 @@ class HeroSlideResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Contenido')
-                    ->description('Soporta imagen o video. La imagen actúa como poster/fallback cuando el tipo es video. Controles del carousel solo aparecen con más de un slide activo.')
+                Forms\Components\Section::make('Media')
+                    ->description('Imagen o video de fondo. Los controles laterales del carousel solo aparecen si hay más de un slide activo.')
                     ->schema([
-                        Forms\Components\TextInput::make('title')
-                            ->label('Título')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('subtitle')
-                            ->label('Subtítulo')
-                            ->maxLength(500),
                         Forms\Components\Select::make('media_type')
                             ->label('Tipo de media')
                             ->options([
@@ -51,12 +44,11 @@ class HeroSlideResource extends Resource
                             ->default('image')
                             ->required()
                             ->live(),
-                        Forms\Components\Textarea::make('description')
-                            ->label('Notas / descripción')
-                            ->rows(3)
-                            ->columnSpanFull(),
                         SpatieMediaLibraryFileUpload::make('background_image')
-                            ->label(fn (Get $get) => $get('media_type') === 'video' ? 'Poster / fallback' : 'Imagen de fondo')
+                            ->label(fn (Get $get) => $get('media_type') === 'video' ? 'Poster (opcional)' : 'Imagen de fondo')
+                            ->helperText(fn (Get $get) => $get('media_type') === 'video'
+                                ? 'Imagen que se muestra mientras carga el video. Si no subes una, el video arranca sin poster.'
+                                : null)
                             ->collection('background_image')
                             ->image()
                             ->imageEditor()
@@ -69,16 +61,21 @@ class HeroSlideResource extends Resource
                             ->visible(fn (Get $get) => $get('media_type') === 'video')
                             ->required(fn (Get $get) => $get('media_type') === 'video')
                             ->columnSpanFull(),
-                    ])->columns(2),
-                Forms\Components\Section::make('CTA y visibilidad')
+                    ]),
+                Forms\Components\Section::make('Texto overlay')
+                    ->description('Texto grande sobre el banner, como «¡DE TODO, PARA TODOS!». Sin título, subtítulo ni botones CTA.')
                     ->schema([
-                        Forms\Components\TextInput::make('cta_text')
-                            ->label('Texto CTA')
-                            ->maxLength(100),
-                        Forms\Components\TextInput::make('cta_url')
-                            ->label('URL CTA')
-                            ->url()
-                            ->maxLength(500),
+                        Forms\Components\Textarea::make('title')
+                            ->label('Texto overlay')
+                            ->helperText('Texto grande sobre el video o la imagen.')
+                            ->placeholder(HeroSlide::DEFAULT_OVERLAY)
+                            ->default(HeroSlide::DEFAULT_OVERLAY)
+                            ->rows(3)
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                    ]),
+                Forms\Components\Section::make('Visibilidad')
+                    ->schema([
                         Forms\Components\TextInput::make('sort_order')
                             ->label('Orden')
                             ->numeric()
@@ -96,20 +93,18 @@ class HeroSlideResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\SpatieMediaLibraryImageColumn::make('background_image')
-                    ->label('Imagen')
+                    ->label('Media')
                     ->collection('background_image'),
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Título')
+                    ->label('Texto overlay')
+                    ->placeholder('Sin texto')
+                    ->limit(40)
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('media_type')
                     ->label('Tipo')
                     ->badge()
                     ->formatStateUsing(fn (?string $state) => $state === 'video' ? 'Video' : 'Imagen'),
-                Tables\Columns\TextColumn::make('subtitle')
-                    ->label('Subtítulo')
-                    ->limit(40)
-                    ->toggleable(),
                 Tables\Columns\TextColumn::make('sort_order')
                     ->label('Orden')
                     ->sortable(),

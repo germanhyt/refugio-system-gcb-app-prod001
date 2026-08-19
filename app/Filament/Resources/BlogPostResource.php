@@ -19,7 +19,7 @@ class BlogPostResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-newspaper';
 
-    protected static ?string $navigationGroup = 'Contenido';
+    protected static ?string $navigationGroup = 'Páginas';
 
     protected static ?string $navigationLabel = 'Blog';
 
@@ -27,7 +27,7 @@ class BlogPostResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Posts';
 
-    protected static ?int $navigationSort = 46;
+    protected static ?int $navigationSort = 7;
 
     public static function form(Form $form): Form
     {
@@ -93,7 +93,7 @@ class BlogPostResource extends Resource
                             'undo',
                         ])
                         ->columnSpanFull(),
-                    Forms\Components\Toggle::make('is_featured')->label('Destacado home')->default(true),
+                    Forms\Components\Toggle::make('is_featured')->label('Destacado')->default(true),
                     Forms\Components\Toggle::make('is_active')->label('Activo')->default(true),
                 ])->columns(2),
         ]);
@@ -113,13 +113,13 @@ class BlogPostResource extends Resource
                     ->label('Detalle')
                     ->boolean()
                     ->getStateUsing(fn (BlogPost $record): bool => filled($record->body)),
-                Tables\Columns\IconColumn::make('is_featured')->label('Home')->boolean(),
+                Tables\Columns\IconColumn::make('is_featured')->label('Destacado')->boolean(),
                 Tables\Columns\IconColumn::make('is_active')->label('Activo')->boolean(),
                 Tables\Columns\TextColumn::make('published_at')->label('Fecha')->date('d/m/Y'),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')->label('Activo'),
-                Tables\Filters\TernaryFilter::make('is_featured')->label('Destacado home'),
+                Tables\Filters\TernaryFilter::make('is_featured')->label('Destacado'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

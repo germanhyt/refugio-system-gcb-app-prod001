@@ -4,13 +4,14 @@
 
 @section('content')
 {{-- Hero --}}
+@php $restaurantsBanner = $siteSettings->pageHeroBannerUrl('restaurants'); @endphp
 <section
     class="rg-rest-hero"
-    style="background-image: url('{{ $siteSettings->pageHeroBannerUrl('restaurants') }}');"
+    @if($restaurantsBanner) style="background-image: url('{{ $restaurantsBanner }}');" @endif
 >
     <div class="rg-rest-hero-overlay" aria-hidden="true"></div>
     <div class="container-refugio relative z-10 px-6 text-center">
-        <h1 class="rg-rest-hero-title">{{ $siteSettings->hero_title_restaurants ?: '¿Qué te provoca hoy?' }}</h1>
+        <h1 class="rg-rest-hero-title">{{ $siteSettings->hero_title_restaurants }}</h1>
     </div>
 </section>
 

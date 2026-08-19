@@ -7,11 +7,22 @@
             position: relative !important;
             isolation: isolate !important;
             background-color: #1e4d33 !important;
-            background-image: none !important;
             overflow: hidden !important;
         }
 
-        .rg-visit-hero.rg-visit-hero--birds-dark::before,
+        .rg-visit-hero.rg-visit-hero--birds-dark:not(.rg-visit-hero--has-photo),
+        .rg-contact-hero.rg-contact-hero--birds-dark,
+        .rg-static-hero.rg-static-hero--birds-dark {
+            background-image: none !important;
+        }
+
+        .rg-visit-hero.rg-visit-hero--has-photo {
+            background-repeat: no-repeat !important;
+            background-position: center top !important;
+            background-size: cover !important;
+        }
+
+        .rg-visit-hero.rg-visit-hero--birds-dark:not(.rg-visit-hero--has-photo)::before,
         .rg-contact-hero.rg-contact-hero--birds-dark::before,
         .rg-static-hero.rg-static-hero--birds-dark::before {
             content: '' !important;
@@ -24,6 +35,11 @@
             background-position: center top !important;
             background-size: cover !important;
             opacity: 0.55 !important;
+        }
+
+        .rg-visit-hero.rg-visit-hero--has-photo::before {
+            content: none !important;
+            display: none !important;
         }
 
         .rg-contact-hero--birds-dark .rg-contact-hero-overlay {

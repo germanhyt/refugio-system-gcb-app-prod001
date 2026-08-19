@@ -3972,11 +3972,22 @@
   position: relative;
   isolation: isolate;
   background-color: #1e4d33;
-  background-image: none;
   overflow: hidden;
 }
 
-.rg-visit-hero.rg-visit-hero--birds-dark::before,
+.rg-visit-hero.rg-visit-hero--birds-dark:not(.rg-visit-hero--has-photo),
+.rg-contact-hero.rg-contact-hero--birds-dark,
+.rg-static-hero.rg-static-hero--birds-dark {
+  background-image: none;
+}
+
+.rg-visit-hero.rg-visit-hero--has-photo {
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+}
+
+.rg-visit-hero.rg-visit-hero--birds-dark:not(.rg-visit-hero--has-photo)::before,
 .rg-contact-hero.rg-contact-hero--birds-dark::before,
 .rg-static-hero.rg-static-hero--birds-dark::before {
   content: '';
@@ -3989,6 +4000,11 @@
   background-position: center top;
   background-size: cover;
   opacity: 0.55;
+}
+
+.rg-visit-hero.rg-visit-hero--has-photo::before {
+  content: none;
+  display: none;
 }
 
 .rg-visit-hero.rg-visit-hero--birds-dark > .container-refugio,
@@ -4443,6 +4459,15 @@
 .rg-contact-block-link:hover {
   color: #1a1210;
   transform: translateX(3px);
+}
+
+.rg-contact-block-link--static {
+  cursor: default;
+}
+
+.rg-contact-block-link--static:hover {
+  color: #236869;
+  transform: none;
 }
 
 .rg-event-offer-card {

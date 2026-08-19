@@ -22,16 +22,31 @@ class SiteSetting extends Model implements HasMedia
         'seo_title',
         'seo_description',
         'show_blog_section',
+        'show_fixed_social',
         'hero_title_about',
         'hero_title_restaurants',
         'hero_title_events',
         'hero_title_services',
+        'hero_title_complaints',
+        'complaint_book_recipients',
+        'mail_from_name',
+        'mail_from_address',
+        'mail_host',
+        'mail_port',
+        'mail_username',
+        'mail_password',
+        'mail_encryption',
+        'mail_mailer',
     ];
 
     protected function casts(): array
     {
         return [
             'show_blog_section' => 'boolean',
+            'show_fixed_social' => 'boolean',
+            'complaint_book_recipients' => 'array',
+            'mail_port' => 'integer',
+            'mail_password' => 'encrypted',
         ];
     }
 
@@ -43,9 +58,11 @@ class SiteSetting extends Model implements HasMedia
         $this->addMediaCollection('ulima_discounts_pdf')
             ->singleFile()
             ->acceptsMimeTypes(['application/pdf']);
+        $this->addMediaCollection('hero_about')->singleFile();
         $this->addMediaCollection('hero_restaurants')->singleFile();
         $this->addMediaCollection('hero_services')->singleFile();
         $this->addMediaCollection('hero_events')->singleFile();
+        $this->addMediaCollection('hero_complaints')->singleFile();
     }
 
     public function registerMediaConversions(?Media $media = null): void
@@ -56,27 +73,100 @@ class SiteSetting extends Model implements HasMedia
 
         $this->addMediaConversion('webp')
             ->format('webp')
-            ->performOnCollections('logo', 'og_image', 'hero_restaurants', 'hero_services', 'hero_events')
+            ->performOnCollections('logo', 'og_image', 'hero_about', 'hero_restaurants', 'hero_services', 'hero_events', 'hero_complaints')
             ->nonQueued();
     }
 
-    public function pageHeroBannerUrl(string $page): string
+    public function pageHeroBannerUrl(string $page): ?string
     {
         $url = $this->getFirstMediaUrl('hero_'.$page);
 
-        if (filled($url)) {
-            return $url;
+        return filled($url) ? $url : null;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function heroMediaFormState(string $collection): array
+    {
+        $this->loadMissing('media');
+        $media = $this->getFirstMedia($collection);
+
+        if (! $media) {
+            return [];
         }
 
-        $relative = config('restaurant-assets.page_banners.'.$page);
+        $uuid = (string) $media->getAttributeValue('uuid');
 
-        if (is_string($relative) && is_file(public_path($relative))) {
-            return asset($relative);
+        return [$uuid => $uuid];
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function complaintBookRecipients(): array
+    {
+        $stored = $this->complaint_book_recipients;
+
+        if (is_array($stored) && $stored !== []) {
+            return array_values(array_filter(array_map(
+                static fn ($email): string => trim((string) $email),
+                $stored
+            )));
         }
 
-        return $page === 'events'
-            ? asset('images/refugio/eventos-hero.jpg')
-            : asset('images/refugio/restaurantes-hero.jpg');
+        return config('refugio.complaint_book_recipients', []);
+    }
+
+    public function resolvedMailer(): string
+    {
+        if (in_array($this->mail_mailer, ['log', 'smtp'], true)) {
+            return $this->mail_mailer;
+        }
+
+        if (app()->environment('local', 'testing')) {
+            return 'log';
+        }
+
+        return filled($this->mail_host) ? 'smtp' : (string) config('mail.default', 'log');
+    }
+
+    public function usesSimulatedMail(): bool
+    {
+        return $this->resolvedMailer() === 'log';
+    }
+
+    public function applyMailConfig(): void
+    {
+        if (filled($this->mail_from_address)) {
+            config(['mail.from.address' => $this->mail_from_address]);
+        }
+
+        if (filled($this->mail_from_name)) {
+            config(['mail.from.name' => $this->mail_from_name]);
+        }
+
+        if ($this->usesSimulatedMail()) {
+            config(['mail.default' => 'log']);
+
+            return;
+        }
+
+        if (blank($this->mail_host)) {
+            return;
+        }
+
+        $encryption = $this->mail_encryption ?: 'tls';
+        $scheme = $encryption === 'ssl' ? 'smtps' : null;
+
+        config([
+            'mail.default' => 'smtp',
+            'mail.mailers.smtp.host' => $this->mail_host,
+            'mail.mailers.smtp.port' => (int) ($this->mail_port ?: ($encryption === 'ssl' ? 465 : 587)),
+            'mail.mailers.smtp.username' => $this->mail_username,
+            'mail.mailers.smtp.password' => $this->mail_password,
+            'mail.mailers.smtp.scheme' => $scheme,
+        ]);
     }
 
     public function ulimaDiscountsPdfUrl(): ?string
@@ -115,10 +205,17 @@ class SiteSetting extends Model implements HasMedia
                 'seo_title' => 'Refugio Gastronómico | Juntos todo sabe mejor',
                 'seo_description' => '¡Descubre Refugio! Disfruta de una gran variedad de opciones gastronómicas, bebidas, música en vivo, talleres y actividades en Surco.',
                 'show_blog_section' => true,
+                'show_fixed_social' => true,
                 'hero_title_about' => "¿Quiénes\nSomos?",
                 'hero_title_restaurants' => '¿Qué te provoca hoy?',
                 'hero_title_events' => '¡Somos el refugio de tu diversión!',
                 'hero_title_services' => 'Nuestros servicios',
+                'hero_title_complaints' => 'Libro de reclamaciones',
+                'complaint_book_recipients' => [
+                    'leilah@gcb.pe',
+                    'mario@refugiogastronomico.pe',
+                    'nataly@gcb.pe',
+                ],
             ]
         );
     }

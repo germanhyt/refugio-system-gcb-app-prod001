@@ -19,7 +19,7 @@ class EventOfferResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-ticket';
 
-    protected static ?string $navigationGroup = 'Contenido';
+    protected static ?string $navigationGroup = 'Páginas';
 
     protected static ?string $navigationLabel = 'Eventos';
 
@@ -61,6 +61,7 @@ class EventOfferResource extends Resource
                         ->maxLength(100),
                     Forms\Components\TextInput::make('cta_url')
                         ->label('URL CTA')
+                        ->helperText('Si queda vacío, el botón lleva a la sección «¿Dudas? ¡Contáctanos!» del home.')
                         ->maxLength(500),
                     Forms\Components\TextInput::make('sort_order')
                         ->label('Orden')

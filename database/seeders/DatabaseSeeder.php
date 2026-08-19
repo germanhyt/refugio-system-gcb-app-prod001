@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             RestaurantDirectorySeeder::class,
             RestaurantCategoryAssignmentSeeder::class,
             RestaurantParkAssetsSeeder::class,
+            RestaurantMapSeeder::class,
             LocalMediaImportSeeder::class,
             SiteDocumentSeeder::class,
         ]);

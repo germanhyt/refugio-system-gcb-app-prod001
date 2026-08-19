@@ -1,6 +1,6 @@
 @props(['blocks', 'cornerDeco' => null])
 
-<section @class(['rg-contact-blocks', 'rg-section--decorated' => filled($cornerDeco)]) {{ $attributes }}>
+<section id="contacto" @class(['rg-contact-blocks', 'rg-section--decorated' => filled($cornerDeco)]) {{ $attributes }}>
     @if($cornerDeco)
         <x-section-corner-deco :position="$cornerDeco" />
     @endif
@@ -15,22 +15,16 @@
                     @if($block->body)
                         <p class="rg-contact-block-body">{{ $block->body }}</p>
                     @endif
-                    @foreach(($block->emails ?? []) as $email)
-                        <a href="mailto:{{ $email }}" class="rg-contact-block-link">{{ $email }}</a>
-                    @endforeach
-                    @foreach(($block->phones ?? []) as $phone)
-                        @php
-                            $digits = preg_replace('/\D+/', '', (string) $phone);
-                            $whatsapp = strlen((string) $digits) === 9
-                                ? 'https://wa.me/51'.$digits
-                                : (str_starts_with((string) $digits, '51') ? 'https://wa.me/'.$digits : null);
-                            $fallbackTel = preg_replace('/\s+/', '', (string) $phone);
-                        @endphp
-                        <a
-                            href="{{ $whatsapp ?: 'tel:'.$fallbackTel }}"
-                            class="rg-contact-block-link"
-                            @if($whatsapp) target="_blank" rel="noopener noreferrer" @endif
-                        >{{ $phone }}</a>
+                    @foreach($block->contactChannels() as $channel)
+                        @if($channel['href'])
+                            <a
+                                href="{{ $channel['href'] }}"
+                                class="rg-contact-block-link"
+                                @if($channel['external']) target="_blank" rel="noopener noreferrer" @endif
+                            >{{ $channel['label'] }}</a>
+                        @else
+                            <span class="rg-contact-block-link rg-contact-block-link--static">{{ $channel['label'] }}</span>
+                        @endif
                     @endforeach
                 </article>
             @endforeach

@@ -18,7 +18,7 @@ class RestaurantCategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationGroup = 'Contenido';
+    protected static ?string $navigationGroup = 'Páginas';
 
     protected static ?string $navigationLabel = 'Categorías';
 

@@ -20,6 +20,7 @@ class RestaurantDirectorySeeder extends Seeder
 
             $payload = [
                 'name' => $row['name'],
+                'description' => null,
                 'short_description' => $row['short_description'],
                 'website_url' => $row['website_url'],
                 'reservation_phone' => $row['reservation_phone'],

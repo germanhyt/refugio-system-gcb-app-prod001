@@ -29,6 +29,10 @@ class ComplaintBookEntryResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
+            Forms\Components\Placeholder::make('notify')
+                ->label('Notificación')
+                ->content(fn (): string => 'Cada nueva hoja se envía a: '.implode(', ', \App\Models\SiteSetting::current()->complaintBookRecipients()))
+                ->columnSpanFull(),
             Forms\Components\Section::make('Consumidor')->schema([
                 Forms\Components\TextInput::make('document_type')->label('Tipo documento')->disabled(),
                 Forms\Components\TextInput::make('document_number')->label('N° documento')->disabled(),

@@ -27,7 +27,7 @@ class LocalMediaImportSeeder extends Seeder
         $slide = HeroSlide::query()->updateOrCreate(
             ['sort_order' => 0],
             [
-                'title' => '',
+                'title' => "¡DE TODO,\nPARA TODOS!",
                 'subtitle' => null,
                 'description' => null,
                 'media_type' => 'video',
@@ -41,7 +41,6 @@ class LocalMediaImportSeeder extends Seeder
         $slide->clearMediaCollection('background_image');
 
         $this->attachIfPresent($slide, 'background_video', config('local-media-import.hero_video'));
-        $this->attachIfPresent($slide, 'background_image', config('local-media-import.hero_poster'));
     }
 
     private function importAboutGallery(): void

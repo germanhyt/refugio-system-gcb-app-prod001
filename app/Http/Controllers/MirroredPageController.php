@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ComplaintBookReceived;
 use App\Mail\PageInquiryReceived;
 use App\Models\ComplaintBookEntry;
 use App\Models\PageInquiry;
+use App\Models\SiteSetting;
 use App\Models\VisitInfo;
 use App\Services\Scraper\MirroredPageScraper;
 use Illuminate\Http\RedirectResponse;
@@ -35,15 +37,10 @@ class MirroredPageController extends Controller
         return $this->render('convocatoria', $scraper);
     }
 
-    public function contacto(MirroredPageScraper $scraper): View
-    {
-        return $this->render('contacto', $scraper);
-    }
-
     public function storeInquiry(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'page_slug' => ['required', 'in:contacto,convocatorias'],
+            'page_slug' => ['required', 'in:convocatorias'],
             'full_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:40'],
@@ -106,11 +103,21 @@ class MirroredPageController extends Controller
 
         unset($validated['website']);
 
-        ComplaintBookEntry::query()->create([
+        $entry = ComplaintBookEntry::query()->create([
             ...$validated,
             'ip_address' => $request->ip(),
             'user_agent' => (string) $request->userAgent(),
         ]);
+
+        $recipients = SiteSetting::current()->complaintBookRecipients();
+
+        if ($recipients !== []) {
+            try {
+                Mail::to($recipients)->send(new ComplaintBookReceived($entry));
+            } catch (\Throwable $exception) {
+                report($exception);
+            }
+        }
 
         return back()->with(
             'inquiry_success',
@@ -123,10 +130,18 @@ class MirroredPageController extends Controller
         $payload = $scraper->get($page);
 
         $remoteSlug = $payload['remote_slug'];
-        $payload['show_inquiry_form'] = in_array($remoteSlug, ['contacto', 'convocatorias'], true);
+        $payload['show_inquiry_form'] = $remoteSlug === 'convocatorias';
         $payload['show_complaint_form'] = $remoteSlug === 'libro-de-reclamaciones';
         $payload['visit'] = $payload['show_inquiry_form'] ? VisitInfo::current() : null;
         $payload['departments'] = ComplaintBookEntry::departments();
+
+        if ($payload['show_complaint_form']) {
+            $settings = SiteSetting::current();
+            $payload['title'] = filled($settings->hero_title_complaints)
+                ? $settings->hero_title_complaints
+                : ($payload['title'] ?? 'Libro de reclamaciones');
+            $payload['hero_image'] = $settings->pageHeroBannerUrl('complaints') ?: ($payload['hero_image'] ?? null);
+        }
 
         return view('pages.mirrored-page', $payload);
     }

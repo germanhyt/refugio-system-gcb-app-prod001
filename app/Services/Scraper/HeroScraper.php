@@ -32,25 +32,6 @@ class HeroScraper
                 }
             }
 
-            $subtitles = [];
-            foreach ([
-                'Disfruta de espacios impresionantes',
-                'La mejor propuesta gastronómica',
-                'Escapa de la rutina',
-            ] as $subtitle) {
-                if (str_contains($html, $subtitle) || str_contains($html, addcslashes($subtitle, ''))) {
-                    $subtitles[] = $subtitle;
-                }
-            }
-
-            if ($subtitles === []) {
-                $subtitles = [
-                    'Disfruta de espacios impresionantes',
-                    'La mejor propuesta gastronómica',
-                    'Escapa de la rutina',
-                ];
-            }
-
             if ($backgrounds === []) {
                 $backgrounds = [
                     'https://refugiogastronomico.pe/wp-content/uploads/2023/02/fondohome.jpg',
@@ -58,7 +39,6 @@ class HeroScraper
                 ];
             }
 
-            // Keep one slide per background (max 3) with rotating subtitles.
             $slides = array_slice($backgrounds, 0, 3);
 
             if (! $force) {
@@ -71,11 +51,11 @@ class HeroScraper
                 $slide = HeroSlide::query()->updateOrCreate(
                     ['sort_order' => $index + 1],
                     [
-                        'title' => 'Juntos todo sabe mejor',
-                        'subtitle' => $subtitles[$index % count($subtitles)],
-                        'description' => 'Descubre Refugio: gastronomía, música en vivo y espacios para compartir.',
-                        'cta_text' => '¡RESERVA AQUÍ!',
-                        'cta_url' => 'https://wa.link/ltbwxk',
+                        'title' => "¡DE TODO,\nPARA TODOS!",
+                        'subtitle' => null,
+                        'description' => null,
+                        'cta_text' => null,
+                        'cta_url' => null,
                         'is_active' => true,
                     ]
                 );

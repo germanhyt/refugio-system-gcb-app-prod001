@@ -27,5 +27,11 @@ class AppServiceProvider extends ServiceProvider
             $view->with('siteSettings', $settings);
             $view->with('visitInfo', $visit);
         });
+
+        try {
+            SiteSetting::current()->applyMailConfig();
+        } catch (\Throwable) {
+            // DB may be unavailable during early boot / artisan package discovery.
+        }
     }
 }

@@ -20,7 +20,7 @@ class RestaurantResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
 
-    protected static ?string $navigationGroup = 'Contenido';
+    protected static ?string $navigationGroup = 'Páginas';
 
     protected static ?string $navigationLabel = 'Restaurantes';
 
@@ -59,10 +59,11 @@ class RestaurantResource extends Resource
                     Forms\Components\Textarea::make('short_description')
                         ->label('Descripción corta')
                         ->rows(3)
-                        ->helperText('Se muestra en el detalle. Puede quedar vacía.')
+                        ->helperText('Texto principal de la ficha. Puede quedar vacía.')
                         ->columnSpanFull(),
                     Forms\Components\RichEditor::make('description')
-                        ->label('Descripción completa')
+                        ->label('Descripción adicional')
+                        ->helperText('Párrafos extra debajo de la descripción corta. Si replica el texto corto, la ficha no lo duplica.')
                         ->columnSpanFull(),
                 ])->columns(2),
             Forms\Components\Section::make('Medios')
@@ -87,10 +88,9 @@ class RestaurantResource extends Resource
                         ->imageEditor(),
                     SpatieMediaLibraryFileUpload::make('location_image')
                         ->label('Posición en el parque')
-                        ->helperText('Plano del local dentro del Refugio. En la ficha alterna con la foto de frontis al pasar el mouse.')
+                        ->helperText('Plano del local dentro del Refugio (SVG o imagen). En la ficha alterna con el frontis al pasar el mouse.')
                         ->collection('location_image')
-                        ->image()
-                        ->imageEditor(),
+                        ->acceptedFileTypes(['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp']),
                     SpatieMediaLibraryFileUpload::make('facade_image')
                         ->label('Foto de frontis')
                         ->helperText('Fachada del local. En la ficha se muestra al pasar el mouse sobre la posición en el parque.')
@@ -162,7 +162,7 @@ class RestaurantResource extends Resource
                         ->maxLength(500),
                     Forms\Components\TextInput::make('whatsapp_url')
                         ->label('WhatsApp (enlace)')
-                        ->helperText('Si hay teléfono de reservas, se puede dejar este campo; el seeder/panel puede usar wa.me.')
+                        ->helperText('Se completa solo si no hay teléfono de reservas. Si hay teléfono, se genera wa.me automáticamente.')
                         ->url()
                         ->maxLength(500),
                 ])->columns(2),
@@ -214,13 +214,8 @@ class RestaurantResource extends Resource
                         ->addActionLabel('Agregar descuento')
                         ->columnSpanFull(),
                 ]),
-            Forms\Components\Section::make('Contacto y SEO')
+            Forms\Components\Section::make('Visibilidad y SEO')
                 ->schema([
-                    Forms\Components\TextInput::make('google_maps_url')
-                        ->label('Google Maps')
-                        ->helperText('Campo reservado: la ficha pública usa la imagen de posición en el parque, no este enlace. El mapa de «¿Nos visitas?» sale de Nosotros / Visítanos.')
-                        ->url()
-                        ->maxLength(500),
                     Forms\Components\TextInput::make('sort_order')
                         ->label('Orden')
                         ->numeric()

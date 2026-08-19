@@ -35,7 +35,7 @@
     ], fn (array $item): bool => filled($item['url'])));
 @endphp
 
-@if($items !== [])
+@if($settings->show_fixed_social !== false && $items !== [])
     <aside class="rg-fixed-social" aria-label="Redes sociales">
         @foreach($items as $item)
             <a

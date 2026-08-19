@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SiteSetting;
 use App\Models\StaticPage;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class StaticPageController extends Controller
@@ -22,8 +24,14 @@ class StaticPageController extends Controller
         return $this->render('parking');
     }
 
-    public function ulima(): View
+    public function ulima(): View|RedirectResponse
     {
+        $pdf = SiteSetting::current()->ulimaDiscountsPdfUrl();
+
+        if (filled($pdf)) {
+            return redirect()->away($pdf);
+        }
+
         return $this->render('ulima');
     }
 

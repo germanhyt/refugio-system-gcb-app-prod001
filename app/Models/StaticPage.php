@@ -43,6 +43,11 @@ class StaticPage extends Model
         return static::query()->where('slug', $slug)->first();
     }
 
+    public function isDocumentRedirect(): bool
+    {
+        return $this->slug === self::SLUG_ULIMA;
+    }
+
     public function toPageArray(): array
     {
         $defaults = config("static-pages.{$this->slug}", []);

@@ -12,6 +12,8 @@ class HeroSlide extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
+    public const DEFAULT_OVERLAY = "¡DE TODO,\nPARA TODOS!";
+
     protected $fillable = [
         'title',
         'subtitle',
@@ -47,6 +49,18 @@ class HeroSlide extends Model implements HasMedia
             ->format('webp')
             ->performOnCollections('background_image')
             ->nonQueued();
+    }
+
+    public function overlayText(): string
+    {
+        $text = trim((string) $this->title);
+
+        return $text !== '' ? $text : self::DEFAULT_OVERLAY;
+    }
+
+    public function overlayHtml(): string
+    {
+        return nl2br(e($this->overlayText()), false);
     }
 
     public function isVideo(): bool

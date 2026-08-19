@@ -2,17 +2,18 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\ContactBlock;
 use App\Models\EventOffer;
+use App\Models\HomeRestaurantFeature;
 use App\Models\Restaurant;
 use App\Models\ServiceItem;
-use App\Models\ContactBlock;
 use Filament\Widgets\ChartWidget;
 
 class ContentKpisChart extends ChartWidget
 {
     protected static ?string $heading = 'Contenido activo';
 
-    protected static ?string $description = 'Piezas visibles en el sitio restructurado';
+    protected static ?string $description = 'Piezas publicadas en el sitio';
 
     protected static ?int $sort = 2;
 
@@ -30,30 +31,33 @@ class ContentKpisChart extends ChartWidget
 
     protected function getData(): array
     {
-        $restaurants = Restaurant::query()->active()->count();
-        $eventOffers = EventOffer::query()->active()->count();
-        $services = ServiceItem::query()->active()->count();
-        $contactBlocks = ContactBlock::query()->active()->count();
-
         return [
             'datasets' => [
                 [
                     'label' => 'Activos',
-                    'data' => [$restaurants, $eventOffers, $services, $contactBlocks],
+                    'data' => [
+                        Restaurant::query()->active()->count(),
+                        HomeRestaurantFeature::query()->active()->count(),
+                        EventOffer::query()->active()->count(),
+                        ServiceItem::query()->active()->count(),
+                        ContactBlock::query()->active()->count(),
+                    ],
                     'backgroundColor' => [
                         '#A7623D',
                         '#C4895F',
                         '#236869',
                         '#729F9F',
+                        '#3d332c',
                     ],
                     'borderWidth' => 0,
                 ],
             ],
             'labels' => [
                 'Restaurantes',
-                'Ofertas eventos',
+                'Cinta de logos',
+                'Eventos',
                 'Servicios',
-                'Contacto home',
+                'Contacto',
             ],
         ];
     }
