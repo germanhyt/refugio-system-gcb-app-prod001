@@ -30,7 +30,9 @@
 <section class="rg-visit-us" {{ $attributes }}>
     <div class="rg-visit-us-map" aria-hidden="true">
         <iframe
-            src="{{ $mapEmbed }}"
+            data-visit-map
+            data-src="{{ $mapEmbed }}"
+            src="about:blank"
             class="rg-visit-us-iframe"
             loading="lazy"
             tabindex="-1"
@@ -39,7 +41,7 @@
     </div>
 
     <div class="container-refugio relative z-10">
-        <div class="rg-visit-us-card" data-aos="fade-up">
+        <div class="rg-visit-us-card">
             <h2 class="rg-visit-us-title">¿Nos visitas?</h2>
             <p class="rg-visit-us-address">
                 Nos encuentras en <strong>{{ $address }}</strong>

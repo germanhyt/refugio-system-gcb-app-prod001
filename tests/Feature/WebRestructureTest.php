@@ -289,6 +289,8 @@ class WebRestructureTest extends TestCase
         $about->assertDontSee('&lt;p&gt;TODO', false);
         $about->assertDontSee('<p>TODO LO QUE', false);
         $about->assertSee('maps.google.com/maps', false);
+        $about->assertSee('data-visit-map', false);
+        $about->assertDontSee('rg-visit-us-card" data-aos', false);
     }
 
     public function test_complaint_book_notifies_configured_recipients(): void

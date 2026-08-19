@@ -60,7 +60,7 @@ class ManageSiteSettings extends Page implements HasForms
                 ->icon('heroicon-o-paper-airplane')
                 ->color('gray')
                 ->modalHeading('Simular envío de correo')
-                ->modalDescription('Usa el emisor de marketing configurado. En local el envío no sale a internet.')
+                ->modalDescription('Simula el envío con el emisor de marketing. No usa SMTP ni sale a internet.')
                 ->modalSubmitActionLabel('Enviar')
                 ->form([
                     Forms\Components\TextInput::make('email')
@@ -83,10 +83,10 @@ class ManageSiteSettings extends Page implements HasForms
         $mailable = new SiteMailTest($email);
 
         try {
-            Mail::mailer($this->record->resolvedMailer())->to($email)->send($mailable);
+            Mail::mailer('log')->to($email)->send($mailable);
         } catch (Throwable $exception) {
             Notification::make()
-                ->title('No se pudo enviar el correo de prueba')
+                ->title('No se pudo simular el correo')
                 ->body($exception->getMessage())
                 ->danger()
                 ->send();
@@ -98,13 +98,9 @@ class ManageSiteSettings extends Page implements HasForms
         $this->mailPreviewHtml = $mailable->render();
         file_put_contents(storage_path('app/mail-preview.html'), $this->mailPreviewHtml);
 
-        $simulated = $this->record->usesSimulatedMail();
-
         Notification::make()
-            ->title($simulated ? 'Correo simulado' : 'Correo de prueba enviado')
-            ->body($simulated
-                ? "No salió a internet. Destinatario: {$email}. Vista previa abajo y en storage/app/mail-preview.html."
-                : "Enviado a {$email} con la cuenta {$this->record->mail_from_address}.")
+            ->title('Correo simulado')
+            ->body("No salió a internet. Destinatario: {$email}. Vista previa abajo.")
             ->success()
             ->send();
     }

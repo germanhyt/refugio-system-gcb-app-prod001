@@ -19,6 +19,34 @@ document.addEventListener('DOMContentLoaded', () => {
         disable: false,
     });
 
+    document.querySelectorAll('iframe[data-visit-map]').forEach((el) => {
+        const src = el.getAttribute('data-src');
+        if (! src) {
+            return;
+        }
+
+        const loadMap = () => {
+            if (el.getAttribute('src') === src) {
+                return;
+            }
+            el.setAttribute('src', src);
+        };
+
+        if (! ('IntersectionObserver' in window)) {
+            loadMap();
+            return;
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries.some((entry) => entry.isIntersecting)) {
+                loadMap();
+                observer.disconnect();
+            }
+        }, { rootMargin: '240px 0px' });
+
+        observer.observe(el);
+    });
+
     document.querySelectorAll('[data-hero-swiper]').forEach((el) => {
         const slideCount = Number(el.dataset.slideCount || el.querySelectorAll('.swiper-slide').length || 0);
         const multi = slideCount > 1;

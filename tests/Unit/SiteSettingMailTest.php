@@ -29,6 +29,7 @@ class SiteSettingMailTest extends TestCase
         $this->assertSame(587, (int) config('mail.mailers.smtp.port'));
         $this->assertSame('user@example.com', config('mail.mailers.smtp.username'));
         $this->assertSame('secret', config('mail.mailers.smtp.password'));
+        $this->assertSame(8, (int) config('mail.mailers.smtp.timeout'));
     }
 
     public function test_local_mail_is_simulated_even_with_smtp_host(): void

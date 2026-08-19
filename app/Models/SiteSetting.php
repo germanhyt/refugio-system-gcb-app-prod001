@@ -166,6 +166,7 @@ class SiteSetting extends Model implements HasMedia
             'mail.mailers.smtp.username' => $this->mail_username,
             'mail.mailers.smtp.password' => $this->mail_password,
             'mail.mailers.smtp.scheme' => $scheme,
+            'mail.mailers.smtp.timeout' => 8,
         ]);
     }
 
