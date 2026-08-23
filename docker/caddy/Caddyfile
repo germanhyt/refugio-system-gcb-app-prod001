@@ -6,3 +6,7 @@
     encode gzip zstd
     reverse_proxy web:80
 }
+
+www.{$APP_DOMAIN} {
+    redir https://{$APP_DOMAIN}{uri} permanent
+}
