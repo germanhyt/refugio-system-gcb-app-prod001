@@ -12,7 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
-        $middleware->prepend(\App\Http\Middleware\StripTrailingSlash::class);
+        // append (no prepend): debe correr DESPUÉS de TrustProxies para que el
+        // scheme detectado sea https detrás del proxy y los 301 no degraden a http.
+        $middleware->append(\App\Http\Middleware\StripTrailingSlash::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
