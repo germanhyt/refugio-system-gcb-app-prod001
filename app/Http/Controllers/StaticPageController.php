@@ -4,11 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\SiteSetting;
 use App\Models\StaticPage;
+use App\Services\SeoService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class StaticPageController extends Controller
 {
+    public function __construct(private readonly SeoService $seo)
+    {
+    }
+
     public function faq(): View
     {
         return $this->render('faq');
@@ -39,8 +44,15 @@ class StaticPageController extends Controller
     {
         $page = StaticPage::findBySlug($key);
 
+        $pageArray = $page?->toPageArray() ?? config("static-pages.{$key}", []);
+
+        $faqLd = '';
+        if ($key === 'faq') {
+            $faqLd = $this->seo->faqJsonLd($pageArray);
+        }
+
         return view('pages.static.show', [
-            'page' => $page?->toPageArray() ?? config("static-pages.{$key}", []),
-        ]);
+            'page' => $pageArray,
+        ])->with('faqLd', $faqLd);
     }
 }

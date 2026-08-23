@@ -2,6 +2,12 @@
 
 @section('title', $event->title.' | Eventos | Refugio Gastronómico')
 
+@push('json-ld')
+    @if(! empty($eventLd))
+        <script type="application/ld+json">{!! $eventLd !!}</script>
+    @endif
+@endpush
+
 @section('content')
 <section class="relative bg-[var(--color-primary)] pb-10 pt-28 text-white">
     <div class="container-refugio">

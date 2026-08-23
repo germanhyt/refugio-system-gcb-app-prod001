@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\EventOffer;
+use App\Services\SeoService;
 use Illuminate\View\View;
 
 class EventController extends Controller
 {
+    public function __construct(private readonly SeoService $seo)
+    {
+    }
+
     public function index(): View
     {
         $offers = EventOffer::query()
@@ -25,6 +30,7 @@ class EventController extends Controller
 
         $event->load('media');
 
-        return view('pages.events.show', compact('event'));
+        return view('pages.events.show', compact('event'))
+            ->with('eventLd', $this->seo->eventJsonLd($event));
     }
 }

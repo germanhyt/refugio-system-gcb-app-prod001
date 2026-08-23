@@ -1,0 +1,24 @@
+name: geo-strategy
+status: in-progress
+created: 2026-08-21
+updated: 2026-08-21
+phases:
+  exploration: complete
+  proposal: complete
+  design: complete
+  specs: complete
+  tasks: complete
+  apply: complete
+  verify: partial
+  archive: pending
+summary: >
+  Estrategia GEO (Generative Engine Optimization) para Refugio Gastronómico.
+  Fase 1 implementada: SeoService (JSON-LD parque + 21 conceptos + FAQPage +
+  BreadcrumbList + Event), canonicals, Twitter Cards, sitemap XML (comando
+  refugio:sitemap + ruta), robots.txt con Sitemap, llms.txt. Sin migraciones de BD.
+  Corrección: /contacto 404 es intencional (no se toca).
+verify_notes: >
+  Unit tests (SeoServiceTest): 7 pass / 26 assertions — lógica JSON-LD validada.
+  Build (npm run build): verde. Lints: limpios. Comando refugio:sitemap registrado.
+  Ruta /sitemap.xml registrada. Feature tests (SeoTest) requieren BD MySQL sembrada
+  (no disponible en esta máquina; mismo requisito que el suite existente).

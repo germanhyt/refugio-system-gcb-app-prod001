@@ -13,6 +13,13 @@
     @if($ogImage)
         <meta property="og:image" content="{{ $ogImage }}">
     @endif
+    <link rel="canonical" href="{{ url()->current() }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('og_title', $siteSettings->seo_title ?: $siteSettings->site_name)">
+    <meta name="twitter:description" content="@yield('meta_description', $siteSettings->seo_description)">
+    @if($ogImage)
+        <meta name="twitter:image" content="{{ $ogImage }}">
+    @endif
     @php($faviconUrl = $siteSettings->getFirstMediaUrl('favicon') ?: asset('images/refugio/favicon-150x150.png'))
     @php($faviconLargeUrl = asset('images/refugio/favicon-300x300.png'))
     <link rel="icon" href="{{ $faviconUrl }}" sizes="32x32">
@@ -21,6 +28,7 @@
     <link rel="shortcut icon" href="{{ $faviconUrl }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
+    @stack('json-ld')
 </head>
 <body class="min-h-screen bg-[var(--color-surface)] text-[var(--color-text-body)] antialiased" x-data="{ menuOpen: false }" :class="{ 'overflow-hidden': menuOpen }">
     <x-header :settings="$siteSettings" />

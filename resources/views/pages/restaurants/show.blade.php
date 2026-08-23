@@ -3,6 +3,18 @@
 @section('title', ($restaurant->meta_title ?: $restaurant->name).' | Refugio Gastronómico')
 @section('meta_description', $restaurant->meta_description ?: \Illuminate\Support\Str::limit(strip_tags($restaurant->short_description ?: $restaurant->description ?? ''), 160))
 
+@push('json-ld')
+    @if(! empty($parkLd))
+        <script type="application/ld+json">{!! $parkLd !!}</script>
+    @endif
+    @if(! empty($restaurantLd))
+        <script type="application/ld+json">{!! $restaurantLd !!}</script>
+    @endif
+    @if(! empty($breadcrumbLd))
+        <script type="application/ld+json">{!! $breadcrumbLd !!}</script>
+    @endif
+@endpush
+
 @php
     $heroImage = $restaurant->bannerImageUrl() ?: $restaurant->featuredImageUrl() ?: $restaurant->logoUrl();
     $locationImage = $restaurant->parkPositionImageUrl();

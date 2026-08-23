@@ -206,8 +206,38 @@ class WebRestructureTest extends TestCase
         $this->get('/politica-privacidad')->assertOk()->assertSee('Políticas de privacidad', false);
         $this->get('/politicas-de-privacidad')->assertOk();
         $this->get('/libro-de-reclamaciones')->assertOk()->assertSee('Libro de reclamaciones', false);
-        $this->get('/contacto')->assertNotFound();
+        // /contacto ahora redirige 301 a / (contacto fusionado en home, preserva SEO del WP origen)
+        $this->get('/contacto')->assertRedirect('/');
         $this->get('/convocatoria')->assertOk();
+    }
+
+    public function test_legacy_wp_urls_redirect_to_new_laravel_urls(): void
+    {
+        // Slugs de restaurante que cambiaron
+        $this->get('/restaurantes/curich')->assertRedirect('/restaurantes/cremoladas-curich');
+        $this->get('/restaurantes/cavenecia-2')->assertRedirect('/restaurantes/cavenecia');
+        $this->get('/restaurantes/bros')->assertRedirect('/restaurantes/broaster-bros');
+        $this->get('/restaurantes/sisa')->assertRedirect('/restaurantes/sisa-coffee-wine');
+        $this->get('/restaurantes/puerto-mancora')->assertRedirect('/restaurantes/barrio-mancora');
+        $this->get('/restaurantes/saltao')->assertRedirect('/restaurantes/saltao-wok-food');
+        $this->get('/restaurantes/anticuching')->assertRedirect('/restaurantes/anticuchos-anticuching');
+        $this->get('/restaurantes/la-limanesa')->assertRedirect('/restaurantes/limanesas');
+
+        // Restaurantes retirados → listado
+        $this->get('/restaurantes/la-choza-de-la-anaconda')->assertRedirect('/restaurantes');
+        $this->get('/restaurantes/caja-china-criolla')->assertRedirect('/restaurantes');
+
+        // Páginas estáticas fusionadas
+        $this->get('/gracias-contacto')->assertRedirect('/');
+        $this->get('/plantilla')->assertRedirect('/');
+        $this->get('/convocatorias')->assertRedirect('/convocatoria');
+        $this->get('/convoctaria')->assertRedirect('/convocatoria');
+
+        // Etiquetas del WP → listado de restaurantes
+        $this->get('/etiquetas-restaurant/cafeteria')->assertRedirect('/restaurantes');
+
+        // Eventos pasados → índice
+        $this->get('/eventos/la-banda-del-chino')->assertRedirect('/eventos');
     }
 
     public function test_page_banners_follow_hero_titles(): void

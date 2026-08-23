@@ -4,11 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Restaurant;
 use App\Models\RestaurantCategory;
+use App\Models\SiteSetting;
+use App\Models\VisitInfo;
+use App\Services\SeoService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class RestaurantController extends Controller
 {
+    public function __construct(private readonly SeoService $seo)
+    {
+    }
+
     public function index(Request $request): View
     {
         $categorySlug = trim($request->string('categoria')->toString());
@@ -69,6 +76,22 @@ class RestaurantController extends Controller
             ->take(8)
             ->get();
 
-        return view('pages.restaurants.show', compact('restaurant', 'similarRestaurants'));
+        $settings = SiteSetting::current();
+        $visit = VisitInfo::current();
+
+        $parkLd = $this->seo->organizationJsonLd($settings, $visit);
+        $restaurantLd = $this->seo->restaurantJsonLd($restaurant, $settings);
+        $breadcrumbLd = $this->seo->breadcrumbJsonLd([
+            ['name' => 'Inicio', 'url' => url('/')],
+            ['name' => 'Restaurantes', 'url' => route('restaurants.index')],
+            ['name' => $restaurant->name, 'url' => route('restaurants.show', $restaurant)],
+        ]);
+
+        return view('pages.restaurants.show', compact('restaurant', 'similarRestaurants'))
+            ->with([
+                'parkLd' => $parkLd,
+                'restaurantLd' => $restaurantLd,
+                'breadcrumbLd' => $breadcrumbLd,
+            ]);
     }
 }

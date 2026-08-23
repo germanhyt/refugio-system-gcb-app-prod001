@@ -6,10 +6,15 @@ use App\Models\ContactBlock;
 use App\Models\HeroSlide;
 use App\Models\HomeRestaurantFeature;
 use App\Models\ServiceItem;
+use App\Services\SeoService;
 use Illuminate\View\View;
 
 class HomeController extends Controller
 {
+    public function __construct(private readonly SeoService $seo)
+    {
+    }
+
     public function __invoke(): View
     {
         return view('pages.home', [
@@ -28,6 +33,10 @@ class HomeController extends Controller
                 ->limit(8)
                 ->get(),
             'contactBlocks' => ContactBlock::query()->active()->ordered()->get(),
+            'jsonLd' => $this->seo->organizationJsonLd(
+                \App\Models\SiteSetting::current(),
+                \App\Models\VisitInfo::current()
+            ),
         ]);
     }
 }
