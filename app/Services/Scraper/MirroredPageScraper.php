@@ -60,6 +60,13 @@ class MirroredPageScraper
             return $this->fallback($remoteSlug);
         }
 
+        // Post-cutover guard: si el origen es este mismo sitio (p.ej. tras migrar el
+        // dominio del WordPress al Laravel), scrapear sería recursivo. Servir
+        // fallback y no arriesgar una cascada de requests contra nosotros mismos.
+        if ($this->isSelfReferencing()) {
+            return $this->fallback($remoteSlug);
+        }
+
         // Circuit breaker: if origin recently timed out, serve fallback immediately.
         if (Cache::get('mirrored_page:origin_down')) {
             return $this->fallback($remoteSlug);
@@ -245,6 +252,16 @@ class MirroredPageScraper
             'hero_image' => null,
             'is_fallback' => true,
         ];
+    }
+
+    private function isSelfReferencing(): bool
+    {
+        $baseHost = parse_url($this->baseUrl, PHP_URL_HOST);
+        $appHost = parse_url((string) config('app.url'), PHP_URL_HOST);
+
+        return $baseHost !== null
+            && $appHost !== null
+            && strcasecmp((string) $baseHost, (string) $appHost) === 0;
     }
 
     private function http()
