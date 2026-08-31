@@ -131,7 +131,7 @@ class ServiceItem extends Model implements HasMedia
             $message = 'Hola Refugio Gastronómico, quiero información sobre '.$this->title.'.';
         }
 
-        return '<a class="rg-service-whatsapp" href="https://wa.me/'.$phoneDigits.'?text='.rawurlencode($message).'" target="_blank" rel="noopener noreferrer">'.$label.'</a>';
+        return '<a class="rg-service-whatsapp" href="https://wa.me/'.$phoneDigits.'?text='.rawurlencode($message).'" target="_blank" rel="noopener noreferrer" data-rg-track="click_whatsapp" data-rg-label="'.e($this->title).'">'.$label.'</a>';
     }
 
     public static function iconKeyOptions(): array

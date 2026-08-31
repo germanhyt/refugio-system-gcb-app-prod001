@@ -21,6 +21,8 @@ class SiteSetting extends Model implements HasMedia
         'youtube_url',
         'seo_title',
         'seo_description',
+        'google_tag_manager_id',
+        'google_analytics_id',
         'show_blog_section',
         'show_fixed_social',
         'hero_title_about',
@@ -170,6 +172,37 @@ class SiteSetting extends Model implements HasMedia
         ]);
     }
 
+    public function googleTagManagerId(): string
+    {
+        return $this->resolvedMeasurementId(
+            $this->google_tag_manager_id,
+            (string) config('analytics.gtm_id', ''),
+            '/^GTM-[A-Z0-9]+$/'
+        );
+    }
+
+    public function googleAnalyticsId(): string
+    {
+        return $this->resolvedMeasurementId(
+            $this->google_analytics_id,
+            (string) config('analytics.ga4_id', ''),
+            '/^G-[A-Z0-9]+$/'
+        );
+    }
+
+    private function resolvedMeasurementId(mixed $stored, string $fallback, string $pattern): string
+    {
+        foreach ([$stored, $fallback] as $candidate) {
+            $id = strtoupper(trim((string) $candidate));
+
+            if ($id !== '' && preg_match($pattern, $id) === 1) {
+                return $id;
+            }
+        }
+
+        return '';
+    }
+
     public function ulimaDiscountsPdfUrl(): ?string
     {
         $url = $this->getFirstMediaUrl('ulima_discounts_pdf');
@@ -205,6 +238,8 @@ class SiteSetting extends Model implements HasMedia
                 'youtube_url' => null,
                 'seo_title' => 'Refugio Gastronómico | Juntos todo sabe mejor',
                 'seo_description' => '¡Descubre Refugio! Disfruta de una gran variedad de opciones gastronómicas, bebidas, música en vivo, talleres y actividades en Surco.',
+                'google_tag_manager_id' => 'GTM-M8CTGV79',
+                'google_analytics_id' => 'G-4FCNED6QVR',
                 'show_blog_section' => true,
                 'show_fixed_social' => true,
                 'hero_title_about' => "¿Quiénes\nSomos?",

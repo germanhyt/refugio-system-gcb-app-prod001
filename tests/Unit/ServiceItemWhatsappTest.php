@@ -17,6 +17,7 @@ class ServiceItemWhatsappTest extends TestCase
         $html = $service->descriptionWithWhatsappLinks();
 
         $this->assertStringContainsString('wa.me/51991318720', $html);
+        $this->assertStringContainsString('data-rg-track="click_whatsapp"', $html);
         $this->assertStringContainsString('991 318 720', $html);
         $this->assertStringContainsString('Hola%20Refugio', $html);
         $this->assertStringNotContainsString('wa.me/513', $html);

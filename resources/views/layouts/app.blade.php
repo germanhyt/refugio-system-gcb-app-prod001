@@ -26,11 +26,27 @@
     <link rel="icon" href="{{ $faviconLargeUrl }}" sizes="192x192">
     <link rel="apple-touch-icon" href="{{ $faviconLargeUrl }}">
     <link rel="shortcut icon" href="{{ $faviconUrl }}">
+    <x-google-tags />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
     @stack('json-ld')
 </head>
-<body class="min-h-screen bg-[var(--color-surface)] text-[var(--color-text-body)] antialiased" x-data="{ menuOpen: false }" :class="{ 'overflow-hidden': menuOpen }">
+<body
+    class="min-h-screen bg-[var(--color-surface)] text-[var(--color-text-body)] antialiased"
+    data-page="{{ request()->routeIs('home') ? 'home' : (request()->route()?->getName() ?? 'other') }}"
+    x-data="{ menuOpen: false }"
+    :class="{ 'overflow-hidden': menuOpen }"
+>
+    @if(filled($siteSettings->googleTagManagerId()))
+        <noscript>
+            <iframe
+                src="https://www.googletagmanager.com/ns.html?id={{ $siteSettings->googleTagManagerId() }}"
+                height="0"
+                width="0"
+                style="display:none;visibility:hidden"
+            ></iframe>
+        </noscript>
+    @endif
     <x-header :settings="$siteSettings" />
     <x-fixed-social-sidebar :settings="$siteSettings" />
 

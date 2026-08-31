@@ -20,6 +20,8 @@
                             <a
                                 href="{{ $channel['href'] }}"
                                 class="rg-contact-block-link"
+                                data-rg-track="click_contact"
+                                data-rg-label="{{ $block->title }} — {{ $channel['label'] }}"
                                 @if($channel['external']) target="_blank" rel="noopener noreferrer" @endif
                             >{{ $channel['label'] }}</a>
                         @else

@@ -31,6 +31,17 @@ class WebRestructureTest extends TestCase
         $response->assertDontSee('instagram-feed', false);
         $response->assertDontSee('blog-foodies', false);
         $response->assertDontSee('images/refugio/fondohome.jpg', false);
+
+        $settings = \App\Models\SiteSetting::current();
+        if ($settings->googleTagManagerId() !== '') {
+            $response->assertSee($settings->googleTagManagerId(), false);
+            $response->assertSee('googletagmanager.com/gtm.js', false);
+        }
+        if ($settings->googleAnalyticsId() !== '') {
+            $response->assertSee($settings->googleAnalyticsId(), false);
+        }
+        $response->assertSee('data-rg-track="click_reserva"', false);
+        $response->assertSee('data-page="home"', false);
     }
 
     public function test_header_nav_matches_sdd(): void

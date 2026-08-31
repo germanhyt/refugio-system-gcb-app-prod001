@@ -44,6 +44,8 @@
                 rel="noopener noreferrer"
                 class="rg-fixed-social-link"
                 aria-label="{{ $item['label'] }}"
+                data-rg-track="{{ $item['key'] === 'whatsapp' ? 'click_whatsapp' : 'click_social' }}"
+                data-rg-label="{{ $item['label'] }}"
             >
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
                     <path d="{{ $item['icon'] }}"/>

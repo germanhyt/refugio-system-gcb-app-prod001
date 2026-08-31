@@ -23,6 +23,8 @@
                                 href="{{ route('restaurants.show', $restaurant) }}"
                                 class="rg-logo-carousel-item"
                                 aria-label="{{ $restaurant->name }}"
+                                data-rg-track="click_restaurant"
+                                data-rg-label="{{ $restaurant->name }}"
                             >
                                 <img src="{{ $logo }}" alt="{{ $restaurant->name }}" loading="lazy">
                             </a>

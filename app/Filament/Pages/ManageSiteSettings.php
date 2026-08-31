@@ -226,6 +226,28 @@ class ManageSiteSettings extends Page implements HasForms
                             ->rows(3)
                             ->columnSpanFull(),
                     ]),
+                Forms\Components\Section::make('Medición Google')
+                    ->description('IDs públicos de GTM y GA4. Se inyectan en el HTML; no son secretos. Si un campo queda vacío, se usa el valor de .env.')
+                    ->schema([
+                        Forms\Components\TextInput::make('google_tag_manager_id')
+                            ->label('Google Tag Manager')
+                            ->placeholder('GTM-XXXXXXX')
+                            ->maxLength(32)
+                            ->nullable()
+                            ->regex('/^GTM-[A-Za-z0-9]+$/')
+                            ->validationMessages([
+                                'regex' => 'Usa un ID GTM válido, por ejemplo GTM-M8CTGV79.',
+                            ]),
+                        Forms\Components\TextInput::make('google_analytics_id')
+                            ->label('Google Analytics 4')
+                            ->placeholder('G-XXXXXXXXXX')
+                            ->maxLength(32)
+                            ->nullable()
+                            ->regex('/^G-[A-Za-z0-9]+$/')
+                            ->validationMessages([
+                                'regex' => 'Usa un ID GA4 válido, por ejemplo G-4FCNED6QVR.',
+                            ]),
+                    ])->columns(2),
                 Forms\Components\Section::make('Secciones del sitio')
                     ->description('Controla qué bloques aparecen en el frontend público.')
                     ->schema([

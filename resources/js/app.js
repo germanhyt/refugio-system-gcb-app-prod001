@@ -1,4 +1,5 @@
 import './bootstrap';
+import './analytics';
 import Alpine from 'alpinejs';
 import AOS from 'aos';
 import gsap from 'gsap';
