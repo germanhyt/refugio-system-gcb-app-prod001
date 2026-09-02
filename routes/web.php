@@ -77,11 +77,17 @@ Route::get('/terminos-y-condiciones', [MirroredPageController::class, 'terms'])-
 Route::get('/politica-privacidad', [MirroredPageController::class, 'privacy'])->name('legal.privacy');
 Route::get('/politicas-de-privacidad', [MirroredPageController::class, 'privacy']);
 Route::get('/libro-de-reclamaciones', [MirroredPageController::class, 'complaintsBook'])->name('legal.complaints');
-Route::post('/libro-de-reclamaciones', [MirroredPageController::class, 'storeComplaint'])->name('legal.complaints.store');
-Route::post('/informacion', [MirroredPageController::class, 'storeInquiry'])->name('info.store');
+Route::post('/libro-de-reclamaciones', [MirroredPageController::class, 'storeComplaint'])
+    ->middleware('throttle:public-forms')
+    ->name('legal.complaints.store');
+Route::post('/informacion', [MirroredPageController::class, 'storeInquiry'])
+    ->middleware('throttle:public-forms')
+    ->name('info.store');
 Route::get('/nosotros', AboutController::class)->name('about');
 
-Route::post('/newsletter', [NewsletterController::class, 'store'])->name('newsletter.store');
+Route::post('/newsletter', [NewsletterController::class, 'store'])
+    ->middleware('throttle:public-forms')
+    ->name('newsletter.store');
 
 Route::get('/sitemap.xml', function () {
     $path = public_path('sitemap.xml');

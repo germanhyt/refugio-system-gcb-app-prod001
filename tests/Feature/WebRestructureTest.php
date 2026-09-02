@@ -213,8 +213,16 @@ class WebRestructureTest extends TestCase
 
     public function test_legal_and_mirrored_pages_return_ok_with_fallback(): void
     {
-        $this->get('/terminos-y-condiciones')->assertOk()->assertSee('Términos y condiciones', false);
-        $this->get('/politica-privacidad')->assertOk()->assertSee('Políticas de privacidad', false);
+        $this->get('/terminos-y-condiciones')
+            ->assertOk()
+            ->assertSee('Términos y condiciones', false)
+            ->assertSee('leilah@gcb.pe', false)
+            ->assertDontSee('hola@refugiogastronomico.pe', false);
+        $this->get('/politica-privacidad')
+            ->assertOk()
+            ->assertSee('Políticas de privacidad', false)
+            ->assertSee('leilah@gcb.pe', false)
+            ->assertDontSee('hola@refugiogastronomico.pe', false);
         $this->get('/politicas-de-privacidad')->assertOk();
         $this->get('/libro-de-reclamaciones')->assertOk()->assertSee('Libro de reclamaciones', false);
         // /contacto ahora redirige 301 a / (contacto fusionado en home, preserva SEO del WP origen)

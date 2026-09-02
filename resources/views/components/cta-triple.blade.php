@@ -10,7 +10,7 @@
             @php($block = $blocks[$type] ?? null)
             @continue(! $block)
             <a
-                href="{{ $block->link_url ?: url('/#contacto') }}"
+                href="{{ $block->safeLinkUrl() }}"
                 class="group border border-white/15 bg-black/25 p-8 backdrop-blur-sm transition duration-500 hover:-translate-y-1 hover:bg-black/35"
                 data-aos="fade-up"
                 data-aos-delay="{{ $i * 100 }}"

@@ -31,7 +31,7 @@
             @forelse($offers as $offer)
                 @php
                     $cover = $offer->getFirstMediaUrl('cover') ?: asset('images/refugio/eventos-hero.jpg');
-                    $href = $offer->cta_url ?: url('/#contacto');
+                    $href = $offer->safeCtaUrl();
                     $isExternal = str_starts_with($href, 'http://') || str_starts_with($href, 'https://');
                 @endphp
                 <article class="rg-event-offer-card group">

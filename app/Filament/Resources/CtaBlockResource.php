@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CtaBlockResource\Pages;
 use App\Models\CtaBlock;
+use App\Support\SafePublicUrl;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -57,7 +58,9 @@ class CtaBlockResource extends Resource
                 ->columnSpanFull(),
             Forms\Components\TextInput::make('link_url')
                 ->label('URL')
-                ->maxLength(500),
+                ->helperText('Solo http(s), rutas internas (/) o anclas (#).')
+                ->maxLength(500)
+                ->rules(SafePublicUrl::RULE),
             Forms\Components\TextInput::make('link_text')
                 ->label('Texto del enlace')
                 ->maxLength(100),

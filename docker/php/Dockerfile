@@ -58,7 +58,8 @@ RUN apk add --no-cache \
         zip \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
-    && apk del $PHPIZE_DEPS
+    && apk del $PHPIZE_DEPS \
+    && echo 'expose_php = Off' > /usr/local/etc/php/conf.d/security.ini
 
 COPY --from=vendor /app /var/www
 COPY --from=assets /app/public/build /var/www/public/build

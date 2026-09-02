@@ -52,24 +52,24 @@ class MirroredPageScraper
         $cached = Cache::get($cacheKey);
 
         if (is_array($cached) && ($cached['content'] ?? '') !== '') {
-            return $cached;
+            return $this->rewritePublicContactEmail($cached);
         }
 
         // Avoid slow remote calls during automated tests.
         if (app()->runningUnitTests()) {
-            return $this->fallback($remoteSlug);
+            return $this->rewritePublicContactEmail($this->fallback($remoteSlug));
         }
 
         // Post-cutover guard: si el origen es este mismo sitio (p.ej. tras migrar el
         // dominio del WordPress al Laravel), scrapear sería recursivo. Servir
         // fallback y no arriesgar una cascada de requests contra nosotros mismos.
         if ($this->isSelfReferencing()) {
-            return $this->fallback($remoteSlug);
+            return $this->rewritePublicContactEmail($this->fallback($remoteSlug));
         }
 
         // Circuit breaker: if origin recently timed out, serve fallback immediately.
         if (Cache::get('mirrored_page:origin_down')) {
-            return $this->fallback($remoteSlug);
+            return $this->rewritePublicContactEmail($this->fallback($remoteSlug));
         }
 
         $payload = $this->fetch($remoteSlug);
@@ -77,11 +77,11 @@ class MirroredPageScraper
         if ($payload !== null && trim(strip_tags($payload['content'] ?? '')) !== '') {
             Cache::put($cacheKey, $payload, now()->addHours(6));
 
-            return $payload;
+            return $this->rewritePublicContactEmail($payload);
         }
 
         // Never cache failures: remote site may recover later.
-        return $this->fallback($remoteSlug);
+        return $this->rewritePublicContactEmail($this->fallback($remoteSlug));
     }
 
     /**
@@ -239,19 +239,36 @@ class MirroredPageScraper
             'contacto' => '<p>Estamos para ayudarte. Completa el formulario y te contactaremos pronto.</p>',
             'convocatorias' => '<p>¿Quieres ser parte de Refugio Gastronómico? Cuéntanos sobre tu marca o propuesta.</p>',
             'libro-de-reclamaciones' => '<p>Conforme a lo establecido por el Código de Protección y Defensa del Consumidor, ponemos a tu disposición el Libro de Reclamaciones.</p><p>Completa el formulario con tus datos y el detalle de tu queja o reclamo. Te responderemos en un plazo no mayor a 30 días calendario.</p>',
-            'terminos-y-condiciones' => '<p>Estos términos y condiciones regulan el uso del sitio web y los servicios de Refugio Gastronómico.</p><p>El contenido definitivo se sincronizará cuando el origen esté disponible. Si necesitas una copia formal, escríbenos a <a href="mailto:hola@refugiogastronomico.pe">hola@refugiogastronomico.pe</a>.</p>',
-            'politica-privacidad' => '<p>En Refugio Gastronómico protegemos tus datos personales conforme a la normativa vigente.</p><p>El texto completo de la política se sincronizará cuando el origen esté disponible. Para ejercer tus derechos ARCO, contáctanos a <a href="mailto:hola@refugiogastronomico.pe">hola@refugiogastronomico.pe</a>.</p>',
+            'terminos-y-condiciones' => '<p>Estos términos y condiciones regulan el uso del sitio web y los servicios de Refugio Gastronómico.</p><p>El contenido definitivo se sincronizará cuando el origen esté disponible. Si necesitas una copia formal, escríbenos a <a href="mailto:leilah@gcb.pe">leilah@gcb.pe</a>.</p>',
+            'politica-privacidad' => '<p>En Refugio Gastronómico protegemos tus datos personales conforme a la normativa vigente.</p><p>El texto completo de la política se sincronizará cuando el origen esté disponible. Para ejercer tus derechos ARCO, contáctanos a <a href="mailto:leilah@gcb.pe">leilah@gcb.pe</a>.</p>',
             default => '<p>Contenido temporalmente no disponible. Intenta nuevamente en unos minutos.</p>',
         };
 
-        return [
+        return $this->rewritePublicContactEmail([
             'title' => $title,
             'content' => $content,
             'source_url' => url('/'.$remoteSlug),
             'remote_slug' => $remoteSlug,
             'hero_image' => null,
             'is_fallback' => true,
-        ];
+        ]);
+    }
+
+    /**
+     * @param  array{title?: string, content?: string, source_url?: string, remote_slug?: string, hero_image?: ?string, is_fallback?: bool}  $payload
+     * @return array{title?: string, content?: string, source_url?: string, remote_slug?: string, hero_image?: ?string, is_fallback?: bool}
+     */
+    private function rewritePublicContactEmail(array $payload): array
+    {
+        if (isset($payload['content'])) {
+            $payload['content'] = str_ireplace(
+                'hola@refugiogastronomico.pe',
+                'leilah@gcb.pe',
+                (string) $payload['content']
+            );
+        }
+
+        return $payload;
     }
 
     private function isSelfReferencing(): bool

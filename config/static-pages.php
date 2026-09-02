@@ -136,7 +136,7 @@ return [
                     ],
                     [
                         'title' => 'Más información',
-                        'body' => 'Para alianzas institucionales adicionales escríbenos a hola@refugiogastronomico.pe.',
+                        'body' => 'Para alianzas institucionales adicionales escríbenos a leilah@gcb.pe.',
                     ],
                 ],
             ],

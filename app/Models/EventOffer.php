@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\SafePublicUrl;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
@@ -55,5 +56,10 @@ class EventOffer extends Model implements HasMedia
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('sort_order');
+    }
+
+    public function safeCtaUrl(): string
+    {
+        return SafePublicUrl::href($this->cta_url, url('/#contacto'));
     }
 }

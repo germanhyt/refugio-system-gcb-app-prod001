@@ -54,7 +54,7 @@ class PageScraper
                     'schedule' => $schedule,
                     'phone_reservations' => $phoneReservations ?: '991318720',
                     'phone_events' => $phoneEvents ?: '994848723',
-                    'email' => $email ?: 'hola@refugiogastronomico.pe',
+                    'email' => $email ?: 'leilah@gcb.pe',
                     'pedestrian_access' => 'Ingreso peatonal por Av. Manuel Olguín',
                     'vehicle_access' => 'Ingreso vehicular por Av. Javier Prado Este 4492',
                     'amenities' => [

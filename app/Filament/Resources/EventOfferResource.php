@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EventOfferResource\Pages;
 use App\Models\EventOffer;
+use App\Support\SafePublicUrl;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
@@ -61,8 +62,9 @@ class EventOfferResource extends Resource
                         ->maxLength(100),
                     Forms\Components\TextInput::make('cta_url')
                         ->label('URL CTA')
-                        ->helperText('Si queda vacío, el botón lleva a la sección «¿Dudas? ¡Contáctanos!» del home.')
-                        ->maxLength(500),
+                        ->helperText('http(s), ruta interna o ancla. Si queda vacío, el botón lleva a «¿Dudas? ¡Contáctanos!» del home.')
+                        ->maxLength(500)
+                        ->rules(SafePublicUrl::RULE),
                     Forms\Components\TextInput::make('sort_order')
                         ->label('Orden')
                         ->numeric()

@@ -32,6 +32,11 @@ class ManageSiteSettings extends Page implements HasForms
 
     protected static ?int $navigationSort = 2;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
     public ?array $data = [];
 
     public ?SiteSetting $record = null;

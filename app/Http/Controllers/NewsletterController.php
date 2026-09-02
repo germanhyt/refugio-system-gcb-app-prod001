@@ -13,9 +13,12 @@ class NewsletterController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:newsletter_subscribers,email'],
+            'website' => ['nullable', 'max:0'],
         ], [
             'email.unique' => 'Este correo ya está suscrito.',
         ]);
+
+        unset($validated['website']);
 
         NewsletterSubscriber::query()->create([
             'name' => $validated['name'],
